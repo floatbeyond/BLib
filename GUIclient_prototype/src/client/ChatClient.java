@@ -15,7 +15,7 @@ import java.util.ArrayList;
 @SuppressWarnings("unchecked")
 
 /**
- * This class overrides some of the methods defined in the abstract
+ * This class overrides some of the methods defined in the abstrac
  * superclass in order to give more functionality to the client.
  *
  * @author Dr Timothy C. Lethbridge
