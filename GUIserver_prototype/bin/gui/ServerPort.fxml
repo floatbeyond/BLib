@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<Pane prefHeight="196.0" prefWidth="221.0" stylesheets="@ServerPort.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ServerPortFrameController">
+   <children>
+      <Label layoutX="26.0" layoutY="14.0" text="Port">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+      <TextField fx:id="portxt" layoutX="25.0" layoutY="41.0" />
+      <Label fx:id="messageLabel" layoutX="29.0" layoutY="98.0" prefHeight="27.0" prefWidth="163.0" />
+      <Button fx:id="btnExit" layoutX="127.0" layoutY="151.0" minHeight="24.0" minWidth="54.0" mnemonicParsing="false" onAction="#getExitBtn" prefHeight="31.0" prefWidth="54.0" text="Back" />
+      <Button fx:id="btnDone" layoutX="14.0" layoutY="151.0" mnemonicParsing="false" onAction="#Done" text="Connect" />
+   </children>
+</Pane>

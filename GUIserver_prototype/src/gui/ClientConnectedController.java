@@ -1,0 +1,61 @@
+package gui;
+
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
+import server.EchoServer;
+import javafx.scene.control.Button;
+
+
+public class ClientConnectedController {
+
+
+    @FXML private Button backBtn;
+    @FXML private Label infoLabel;
+    @FXML private Label statusLabel;
+
+
+     //initialize info and status txt as null and disconnected
+     public void initialize() {
+         infoLabel.setText("null");
+         statusLabel.setText("Disconnected");
+     }
+
+
+    public void loadClientDetails(String info, String status) {
+        Platform.runLater(() -> {
+            infoLabel.setText(info);
+            statusLabel.setText(status);
+
+            if ("Connected".equals(status)) {
+                statusLabel.setStyle("-fx-text-fill: green;");
+            } else if ("Disconnected".equals(status)) {
+                statusLabel.setStyle("-fx-text-fill: red;");
+            } else {
+                statusLabel.setStyle("-fx-text-fill: black;");
+            }
+        });        
+    }
+
+    public void disconnectBtn(ActionEvent event) throws Exception {
+        EchoServer.getInstance().close();
+        EchoServer.getInstance().stopListening();
+        ((Node)event.getSource()).getScene().getWindow().hide();
+        // Load and display ServerPort GUI
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/ServerPort.fxml"));
+        Pane root = loader.load();
+        Stage stage = new Stage();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.setTitle("Server");
+        stage.setResizable(false);
+        stage.show();
+    }
+    
+}

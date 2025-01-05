@@ -1,0 +1,44 @@
+#btnExit {
+    -fx-background-color: linear-gradient(to bottom, #4a90e2, #007aff);
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-padding: 5px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-border-color: #005bb5;
+    -fx-border-width: 2px;
+    -fx-min-width: 80px;
+    -fx-min-height: 30px;
+}
+
+#btnDone:hover, #btnExit:hover {
+    -fx-background-color: linear-gradient(to bottom, #007aff, #4a90e2);
+}
+
+#infoLabel{
+    -fx-background-color: #e0f7fa;
+    -fx-text-fill: #000000;
+    -fx-font-size: 18px;
+    -fx-padding: 5px;
+    -fx-border-color: #007aff;
+    -fx-border-width: 2px;
+    -fx-border-radius: 0; 
+}
+
+#statusLabel {
+    -fx-background-color: #e0f7fa;
+    -fx-text-fill: #ff0000;
+    -fx-font-size: 18px;
+    -fx-padding: 5px;
+    -fx-border-color: #007aff;
+    -fx-border-width: 2px;
+    -fx-border-radius: 0; 
+}
+
+Label {
+    -fx-font-weight: bold; 
+}
+
+Pane {
+    -fx-background-color: #e0f7fa;
+}
