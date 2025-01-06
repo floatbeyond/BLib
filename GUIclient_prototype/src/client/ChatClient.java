@@ -181,10 +181,10 @@ public class ChatClient extends AbstractClient
 	    try {
         System.out.println("ChatClient: Sending to server: " + message);
         //if (message.equals("details")) {
-            openConnection();
-            connectionStatusFlag = 1; // Set flag to 1 for success
+        openConnection();
+        connectionStatusFlag = 1; // Set flag to 1 for success
             // print client connected
-            System.out.println("ChatClient: Connection successful");
+        System.out.println("ChatClient: Connection successful");
         //}
 
         if (message.equals("disconnect")) {
