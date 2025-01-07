@@ -21,9 +21,8 @@ public class mysqlConnection {
         } catch (Exception ex) {
         	 System.out.println("Driver definition failed");
         	 }
-        try 
-        {
-			String url = String.format("jdbc:mysql://%s/prototype?serverTimezone=IST", ip);
+        try {
+			String url = String.format("jdbc:mysql://%s/blib?serverTimezone=IST", ip);
             Connection conn = DriverManager.getConnection(url, user, password);
             System.out.println("SQL connection succeed");
             return conn;
