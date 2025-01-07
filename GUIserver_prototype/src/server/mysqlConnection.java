@@ -140,8 +140,8 @@ public class mysqlConnection {
 		return null;
 	}
 
-	public static BorrowingRecord addBorrowingRecord(Connection conn, int subscriberId, int bookCopyId, Date borrowDate, Date expectedReturnDate) {
-		String query = "INSERT INTO borrowingrecords (SubID, CopyID, BorrowDate, ReturnDate, Status) VALUES (?, ?, ?, ?)";
+	public static boolean addBorrowingRecord(Connection conn, int subscriberId, int bookCopyId, Date borrowDate, Date expectedReturnDate) {
+		String query = "INSERT INTO borrowrecords (SubID, CopyID, BorrowDate, ReturnDate, Status) VALUES (?, ?, ?, ?, ?)";
 		try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 			stmt.setInt(1, subscriberId);
 			stmt.setInt(2, bookCopyId);
@@ -152,12 +152,13 @@ public class mysqlConnection {
 			ResultSet rs = stmt.getGeneratedKeys();
 			if (rs.next()) {
 				int borrowId = rs.getInt(1);
-				return new BorrowingRecord(borrowId, bookCopyId, subscriberId, borrowDate, expectedReturnDate, null, "Borrowed");
+				return true;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return false;
 		}
-		return null;
+		return false;
 	}
 
 	// show to user all the logs in the DB
