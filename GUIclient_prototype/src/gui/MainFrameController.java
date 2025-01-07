@@ -1,7 +1,8 @@
 package gui;
 
-import client.ChatClient;
+
 import client.ClientUI;
+import client.SharedController;
 import common.Subscriber;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,7 +21,7 @@ public class MainFrameController {
     @FXML private Button btnDisconnect = null;
     @FXML private Button btnDetails = null;
     @FXML private Button btnShow = null;
-	@FXML private Button btnSend = null;
+	@FXML private Button btnFind = null;
 
     @FXML private Label messageLabel;
 
@@ -30,9 +31,9 @@ public class MainFrameController {
 		return idtxt.getText();
 	}
 
-	public void Send(ActionEvent event) throws Exception {
+	public void Find(ActionEvent event) throws Exception {
 		try {
-            ClientUI.cc.accept("details");
+            ClientUI.cc.accept("connect");
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
                 String id = getID();
                 System.out.println("ID entered: " + id);
@@ -45,12 +46,14 @@ public class MainFrameController {
                     displayMessage("ID number too long");
                 } else {
                     System.out.println("Calling ClientUI.cc.accept");
-                    ClientUI.cc.accept("send " + id);
-                    Subscriber foundSubscriber = ChatClient.s1;
+                    ClientUI.cc.accept("sendSubscriber " + id);
+                    Subscriber foundSubscriber = SharedController.getSubscriber();
                     if(foundSubscriber == null) {
                         System.out.println("Subscriber ID Not Found");
                         displayMessage("Subscriber ID Not Found");
                     } else {
+                        // print subscriber found
+                        
                         System.out.println("Subscriber ID Found");
                         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/SubscriberForm.fxml"));
                         if (loader.getLocation() == null) {
@@ -97,7 +100,7 @@ public class MainFrameController {
 
     public void Show(ActionEvent event) throws Exception {
 		try {
-            ClientUI.cc.accept("details");
+            ClientUI.cc.accept("connect");
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/SubscribersTableForm.fxml"));
                 if (loader.getLocation() == null) {
@@ -113,7 +116,7 @@ public class MainFrameController {
                     System.out.println("subscribersTableController is null after loading FXML");
                 } else {
                     System.out.println("subscribersTableController initialized in Show method");
-                    ChatClient.setSubscribersTableController(subscribersTableController);
+                    SharedController.setSubscribersTableController(subscribersTableController);
                 }
                 Scene scene = new Scene(root);
                 scene.getStylesheets().add(getClass().getResource("/gui/SubscribersTableForm.css").toExternalForm());
@@ -152,7 +155,7 @@ public class MainFrameController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/ClientPort.fxml"));
 		Pane root = loader.load();
 		ClientPortController clientPortController = loader.getController();
-        ChatClient.setClientPortController(clientPortController);
+        SharedController.setClientPortController(clientPortController);
 		Stage primaryStage = new Stage();
 		Scene scene = new Scene(root);			
 		scene.getStylesheets().add(getClass().getResource("/gui/ClientPort.css").toExternalForm());

@@ -12,7 +12,7 @@
    <children>
       <Button fx:id="btnShow" layoutX="45.0" layoutY="346.0" mnemonicParsing="false" onAction="#Show" text="Show" />
       <Button fx:id="btnDisconnect" layoutX="343.0" layoutY="346.0" mnemonicParsing="false" onAction="#disconnectBtn" text="Disconnect" />
-      <Button fx:id="btnSend" layoutX="349.0" layoutY="28.0" mnemonicParsing="false" onAction="#Send" text="Search" />
+      <Button fx:id="btnFind" layoutX="349.0" layoutY="28.0" mnemonicParsing="false" onAction="#Find" text="Find" />
       <TextField fx:id="idtxt" layoutX="123.0" layoutY="27.0" prefHeight="25.0" prefWidth="189.0" />
       <Label layoutX="34.0" layoutY="36.0" prefHeight="21.0" prefWidth="80.0" text="Student ID:">
          <font>

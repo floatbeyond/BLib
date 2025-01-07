@@ -14,7 +14,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import server.EchoServer;
+import server.InstanceManager;
 import server.ServerUI;
 
 public class ServerPortFrameController  {
@@ -45,13 +45,13 @@ public class ServerPortFrameController  {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/ClientConnected.fxml"));
 			Parent root = loader.load();
 			ClientConnectedController controller = loader.getController();
-            EchoServer.setClientConnectedController(controller);
+            InstanceManager.setClientConnectedController(controller);
 			Stage stage = new Stage();
 			Scene scene = new Scene(root);
 			stage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
 				try {
-					EchoServer.getInstance().close();
-					EchoServer.getInstance().stopListening();
+					InstanceManager.getInstance().close();
+					InstanceManager.getInstance().stopListening();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

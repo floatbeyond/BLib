@@ -28,7 +28,7 @@ public class ClientUI extends Application {
             Parent root = loader.load();
             Scene scene = new Scene(root);
             ClientPortController clientPortController = loader.getController();
-            ChatClient.setClientPortController(clientPortController);
+            SharedController.setClientPortController(clientPortController);
             scene.getStylesheets().add(getClass().getResource("/gui/ClientPort.css").toExternalForm());
             primaryStage.setOnCloseRequest(new javafx.event.EventHandler<WindowEvent>() {
                 @Override

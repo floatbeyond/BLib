@@ -24,13 +24,13 @@ public class SubscriberFormController {
 	@FXML private Label messageLabel;
 	@FXML private Label lblID;
 	@FXML private Label lblName;
-	@FXML private Label lblHistory;
+	@FXML private Label lblStatus;
 	@FXML private Label lblPNumber;
 	@FXML private Label lblEmail;
 	
 	@FXML private TextField txtID;
 	@FXML private TextField txtName;
-	@FXML private TextField txtHistory;
+	@FXML private TextField txtStatus;
 	@FXML private TextField txtPNumber;
 	@FXML private TextField txtEmail;
 	
@@ -43,8 +43,8 @@ public class SubscriberFormController {
 		this.txtID.setEditable(false);
 		this.txtName.setText(s.getSub_name());
 		this.txtName.setEditable(false);
-		this.txtHistory.setText(String.valueOf(s.getDetailed_sub_history()));	
-		this.txtHistory.setEditable(false);
+		this.txtStatus.setText(s.getSub_status());	
+		this.txtStatus.setEditable(false);
 		this.txtPNumber.setText(s.getSub_phone_num());
 		this.txtEmail.setText(s.getSub_email());
 	}
@@ -77,11 +77,11 @@ public class SubscriberFormController {
 	
 	public void getSaveBtn(ActionEvent event) throws Exception {
 		try {
-			ClientUI.cc.accept("details");
+			ClientUI.cc.accept("connect");
 			if (ClientUI.cc.getConnectionStatusFlag() == 1) {
 				int id = Integer.valueOf(txtID.getText());
 				String name = txtName.getText();
-				int history = Integer.valueOf(txtHistory.getText());
+				String status = txtStatus.getText();
 				String phoneNumber = txtPNumber.getText();
 				String email = txtEmail.getText();
 
@@ -96,8 +96,8 @@ public class SubscriberFormController {
 				}
 
 				if (!phoneNumber.equals(s.getSub_phone_num()) || !email.equals(s.getSub_email())) {
-					s = new Subscriber(id, name, history, phoneNumber, email);
-					ClientUI.cc.accept("change "+ s.toString());
+					s = new Subscriber(id, name, status, phoneNumber, email, s.getSub_penalties(), s.getSub_freeze(), s.getSub_joined(), s.getSub_expiration());
+					ClientUI.cc.accept("updateSubscriber " + s);
 					System.out.println("ID: "+ id);
 					displayMessage("Subscriber updated!");
 				} else {

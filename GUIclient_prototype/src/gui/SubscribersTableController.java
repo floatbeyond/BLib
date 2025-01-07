@@ -38,7 +38,7 @@ public class SubscribersTableController implements Initializable {
     @FXML private TableView<Subscriber> subscriberTable;
     @FXML private TableColumn<Subscriber, Integer> colID;
     @FXML private TableColumn<Subscriber, String> colName;
-    @FXML private TableColumn<Subscriber, Integer> colHistory;
+    @FXML private TableColumn<Subscriber, Integer> colStatus;
     @FXML private TableColumn<Subscriber, String> colPhone;
     @FXML private TableColumn<Subscriber, String> colEmail;
 
@@ -54,7 +54,7 @@ public class SubscribersTableController implements Initializable {
 		assert subscriberTable != null : "fx:id=\"subscriberTable\" was not injected";
 		assert colID != null : "fx:id=\"colID\" was not injected";
 		assert colName != null : "fx:id=\"colName\" was not injected";
-		assert colHistory != null : "fx:id=\"colHistory\" was not injected";
+		assert colStatus != null : "fx:id=\"colHistory\" was not injected";
 		assert colPhone != null : "fx:id=\"colPhone\" was not injected";
 		assert colEmail != null : "fx:id=\"colEmail\" was not injected";
         assert copiedLabel != null : "fx:id=\"copiedLabel\" was not injected";
@@ -84,7 +84,7 @@ public class SubscribersTableController implements Initializable {
 		// Load initial data
 		Platform.runLater(() -> {
 			System.out.println("Loading initial data...");
-			ClientUI.cc.accept("show");
+			ClientUI.cc.accept("showSubscribersTable");
 		});
 	}
 
@@ -97,14 +97,14 @@ public class SubscribersTableController implements Initializable {
         // Set value factories
         colID.setCellValueFactory(new PropertyValueFactory<>("sub_id"));
         colName.setCellValueFactory(new PropertyValueFactory<>("sub_name"));
-        colHistory.setCellValueFactory(new PropertyValueFactory<>("detailed_sub_history"));
+        colStatus.setCellValueFactory(new PropertyValueFactory<>("sub_status"));
         colPhone.setCellValueFactory(new PropertyValueFactory<>("sub_phone_num"));
         colEmail.setCellValueFactory(new PropertyValueFactory<>("sub_email"));
 
         // Set up non-editable cell factories
         colID.setCellFactory(column -> createNonEditableCell());
         colName.setCellFactory(column -> createNonEditableCell());
-        colHistory.setCellFactory(column -> createNonEditableCell());
+        colStatus.setCellFactory(column -> createNonEditableCell());
         colPhone.setCellFactory(column -> createNonEditableCell());
         colEmail.setCellFactory(column -> createNonEditableCell());
 	}

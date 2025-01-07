@@ -7,15 +7,10 @@ package client;
 import ocsf.client.*;
 import common.ChatIF;
 import common.Subscriber;
-import gui.ClientPortController;
-import gui.SubscribersTableController;
 import common.ServerMessage;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.List;
 
 @SuppressWarnings("unchecked")
 
@@ -31,11 +26,9 @@ import java.util.List;
 public class ChatClient extends AbstractClient
 {
   //Instance variables **********************************************
-  
-  public static Subscriber s1 = new Subscriber(0, "" ,0 , "", "");
   public static boolean awaitResponse = false;
-  public static SubscribersTableController stc;
-  public static ClientPortController cpc;
+  // public static SubscribersTableController stc;
+  // public static ClientPortController cpc;
   public static int connectionStatusFlag = 0;
 
 /**
@@ -68,43 +61,7 @@ public class ChatClient extends AbstractClient
    *
    * @param msg The message from the server.
    */
-//   public void handleMessageFromServer(Object msg) {
-//       System.out.println("--> handleMessageFromServer");
-//       System.out.println("Received message type: " + msg.getClass().getName());
 
-//       if (msg instanceof Subscriber) {
-//           Subscriber receivedSubscriber = (Subscriber) msg;
-//           System.out.println("Received Subscriber: " + receivedSubscriber);
-//           ChatClient.s1 = receivedSubscriber;
-//       } else if (msg instanceof String) {
-//           String message = (String) msg;
-//           if (message.equals("Error: Subscriber ID Not Found")) {
-//               System.out.println("Subscriber not found");
-//               ChatClient.s1 = null;
-//           } else if (message.equals("ERROR: Invalid command")) {
-//               System.out.println("Invalid command");
-//           }
-//           System.out.println("Received message: " + message);
-//       } else if (msg instanceof ArrayList<?>) {
-//           ArrayList<?> list = (ArrayList<?>) msg;
-//           System.out.println("Received ArrayList of size: " + list.size());
-
-//           if (!list.isEmpty() && list.stream().allMatch(item -> item instanceof Subscriber)) {
-//               System.out.println("Loading table");
-//               List<Subscriber> subscriberList = (List<Subscriber>) list;
-//               ObservableList<Subscriber> subscribers = FXCollections.observableArrayList(subscriberList);
-//               if (stc != null) {
-//                 System.out.println("subscribersTableController is initialized");
-//                 stc.parseSubscriberList(subscribers);
-//               } else {
-//                 System.out.println("subscribersTableController is null");
-//               }
-//           }
-//       } else {
-//           System.out.println("Received unknown message type: " + msg);
-//       }
-//       awaitResponse = false;
-// }
 // filepath: /c:/Users/alone/Desktop/G16_GUI_prototype_VS/GUIclient_prototype/src/client/ChatClient.java
   public void handleMessageFromServer(Object msg) {
       System.out.println("--> handleMessageFromServer");
@@ -120,47 +77,17 @@ public class ChatClient extends AbstractClient
           switch (type) {
               case "Subscriber":
                   if (data instanceof Subscriber) {
-                      Subscriber receivedSubscriber = (Subscriber) data;
-                      System.out.println("Received Subscriber: " + receivedSubscriber);
-                      ChatClient.s1 = receivedSubscriber;
+                    Logic.parseSubscriber((Subscriber) data);
                   }
                   break;
               case "SubscriberList":
-                  if (data instanceof ArrayList<?>) {
-                      ArrayList<?> list = (ArrayList<?>) data;
-                      System.out.println("Received ArrayList of size: " + list.size());
-
-                      if (!list.isEmpty() && list.stream().allMatch(item -> item instanceof Subscriber)) {
-                          System.out.println("Loading table");
-                          List<Subscriber> subscriberList = (List<Subscriber>) list;
-                          // Handle the subscriber list
-                          ObservableList<Subscriber> subscribers = FXCollections.observableArrayList(subscriberList);
-                          if (stc != null) {
-                            System.out.println("subscribersTableController is initialized");
-                            stc.parseSubscriberList(subscribers);
-                          } else {
-                            System.out.println("subscribersTableController is null");
-                        }
-                      }
-                  }
+                  Logic.parseSubscriberList((ArrayList<Subscriber>) data);
                   break;
               case "Print":
-                  if (data instanceof String) {
-                      String message = (String) data;
-                      System.out.println("Received message: " + message);
-                  }
+                  Logic.print((String) data);
                   break;
               case "Error":
-                  if (data instanceof String) {
-                      String errorMessage = (String) data;
-                      if (errorMessage.equals("Subscriber ID Not Found")) {
-                          System.out.println("Subscriber not found");
-                          ChatClient.s1 = null;
-                      } else if (errorMessage.equals("Invalid command")) {
-                          System.out.println("Invalid command");
-                      }
-                      System.out.println("Received error message: " + errorMessage);
-                  }
+                  Logic.printError((String) data);
                   break;
               default:
                   System.out.println("Unknown message type: " + type);
@@ -180,23 +107,24 @@ public class ChatClient extends AbstractClient
   {
 	    try {
         System.out.println("ChatClient: Sending to server: " + message);
-        //if (message.equals("details")) {
         openConnection();
         connectionStatusFlag = 1; // Set flag to 1 for success
-            // print client connected
+        // print client connected
         System.out.println("ChatClient: Connection successful");
-        //}
+
+        sendToServer(message);
 
         if (message.equals("disconnect")) {
-            closeConnection();
-            connectionStatusFlag = 0; // Set flag to 0 for failure
-            // print client disconnected
-            System.out.println("ChatClient: Connection closed");
+          closeConnection();
+          connectionStatusFlag = 0; // Set flag to 0 for failure
+          // print client disconnected
+          System.out.println("ChatClient: Connection closed");
+          awaitResponse = false;
+          
+        } else {
+          System.out.println("ChatClient: Setting awaitResponse to true");
+          awaitResponse = true;
         }
-
-        System.out.println("ChatClient: Setting awaitResponse to true");
-        awaitResponse = true;
-        sendToServer(message);
 
         long startTime = System.currentTimeMillis();
         while (awaitResponse) {
@@ -212,30 +140,18 @@ public class ChatClient extends AbstractClient
             }
         }
         System.out.println("ChatClient: Finished waiting for response");
-    } catch(IOException e) {
-        System.out.println("ChatClient: Error sending message: " + e.getMessage());
-        if (e.getMessage().equals("Connection timed out: connect") || e.getMessage().equals("Connection refused: connect")) {
-          connectionStatusFlag = 0; // Set flag to 0 for failure
-        }  // if (cpc != null) {
-          //   cpc.displayMessage("Invalid IP");
-        // } else {
-        e.printStackTrace();
-        }
-        
-        //quit();
-  }
-
-  public static void setSubscribersTableController(SubscribersTableController controller) {
-    stc = controller;
-  }
-
-  public static void setClientPortController(ClientPortController controller) {
-    cpc = controller;
+      } catch(IOException e) {
+          System.out.println("ChatClient: Error sending message: " + e.getMessage());
+          if (e.getMessage().equals("Connection timed out: connect") || e.getMessage().equals("Connection refused: connect")) {
+            connectionStatusFlag = 0; // Set flag to 0 for failure
+            }  
+          e.printStackTrace();
+      }
   }
 
   public int getConnectionStatusFlag() {
-    return connectionStatusFlag;
-}
+		return connectionStatusFlag;
+	}
 
   /**
    * This method terminates the client.
