@@ -2,7 +2,9 @@ package server;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.sql.Date;
 
+import common.BorrowingRecord;
 import common.Subscriber;
 import ocsf.server.ConnectionToClient;
 import gui.ClientConnectedController;
@@ -12,7 +14,10 @@ public class Logic {
     private static Connection conn = InstanceManager.getDbConnection();
     private static ClientConnectedController ccc = InstanceManager.getClientConnectedController();
     private static Subscriber s;
+    private static BorrowingRecord br;
 
+
+    // Subscriber
 
     public static void specificSubscriber(String msg, int subscriberId, ConnectionToClient client) {
         Subscriber subscriber = mysqlConnection.findSubscriber(conn, subscriberId);
@@ -33,8 +38,7 @@ public class Logic {
         }
     }
 
-
-    public static void updateSubscriberDetails(String message, ConnectionToClient client) {
+    public static void updateSubscriberDetails(ConnectionToClient client) {
         int subscriberId = s.getSub_id();
         String phoneNumber = s.getSub_phone_num();
         String email = s.getSub_email();
@@ -47,6 +51,35 @@ public class Logic {
         ArrayList<Subscriber> table = mysqlConnection.getSubscribers(conn);
         MessageUtils.sendResponseToClient("SubscriberList", table, client);
     }
+
+
+    // Books
+
+    public static void addBorrow(ConnectionToClient client) {
+        int bookCopyId = br.getCopyId();
+        int subscriberId = br.getSubId();
+        Date borrowDate = br.getBorrowDate();
+        Date expectedReturnDate = br.getExpectedReturnDate();
+        boolean success = mysqlConnection.addBorrowingRecord(conn, subscriberId, bookCopyId, borrowDate, expectedReturnDate);
+        MessageUtils.sendResponseToClient("BorrowStatus", success ? "Borrow added successfully." : "ERROR: Couldn't add borrow.", client);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Client connection
 
     public static void connect(ConnectionToClient client) {
         String clientInfo = client.toString();

@@ -5,6 +5,8 @@ package server;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+
+import common.ServerMessage;
 import gui.ClientConnectedController;
 import ocsf.server.*;
 
@@ -53,42 +55,49 @@ public class EchoServer extends AbstractServer
 	
 	public void handleMessageFromClient(Object msg, ConnectionToClient client) {
 		System.out.println("Message received: " + msg + " from " + client);
+    // ccc = InstanceManager.getClientConnectedController();
+    
+		  if (msg instanceof ServerMessage) {
+        ServerMessage serverMessage = (ServerMessage) msg;
+        String type = serverMessage.getType();
+        Object data = serverMessage.getData();
 	
-		String message = (String) msg;
-		//conn = InstanceManager.getDbConnection();
-		ccc = InstanceManager.getClientConnectedController();
-	
-		try {
-			switch (message.split(" ")[0]) {
-				case "updateSubscriber": {
-					System.out.println("updateSubscriber");
-					Logic.updateSubscriberDetails(message, client);
-					break;
-				} case "showSubscribersTable": {
-					// test am i here
-					System.out.println("showSubscribersTable");
-					Logic.showSubscribersTable(client);
-					break;
-				} case "sendSubscriber": {
-					System.out.println("sendSubscriber");
-					int subscriberId = Integer.parseInt(message.split(" ")[1]);
-					Logic.specificSubscriber("send", subscriberId, client);
-					break;
-				} case "connect": {
-					Logic.connect(client);
-					break;
-				} case "disconnect": {
-					Logic.disconnect(client);
-					break;
-				} default: {
-					System.out.println("Invalid command");
-					MessageUtils.sendResponseToClient("Error", "Invalid command", client);
-					break;
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        try {
+          switch (type) {
+            case "updateSubscriber": {
+              System.out.println("updateSubscriber");
+              Logic.updateSubscriberDetails(client);
+              break;
+            } case "showSubscribersTable": {
+              System.out.println("showSubscribersTable");
+              Logic.showSubscribersTable(client);
+              break;
+            } case "sendSubscriber": {
+              System.out.println("sendSubscriber");
+              Logic.specificSubscriber("send", Integer.parseInt(data.toString()), client);
+              break;
+            } case "newBorrow": {
+              System.out.println("newBorrow");
+              Logic.addBorrow(client);
+              break;
+            } case "connect": {
+              Logic.connect(client);
+              break;
+            } case "disconnect": {
+              Logic.disconnect(client);
+              break;
+            } default: {
+              System.out.println("Invalid command");
+              MessageUtils.sendResponseToClient("Error", "Invalid command", client);
+              break;
+            }
+          }
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      } else {
+        System.out.println("Unknown message type: " + msg.getClass().getName());
+      }
 	}
 
 
