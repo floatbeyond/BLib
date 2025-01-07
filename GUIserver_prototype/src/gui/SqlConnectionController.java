@@ -11,7 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import server.EchoServer;
+import server.InstanceManager;
 import server.mysqlConnection;
 
 
@@ -59,7 +59,7 @@ public class SqlConnectionController {
             if (connection == null) {
                 displayMessage("Could not connect to DB");
             } else {
-                EchoServer.setDbConnection(connection);
+                InstanceManager.setDbConnection(connection);
                 ((Parent)event.getSource()).getScene().getWindow().hide(); //hiding primary window
                 // Load and display the Server Port GUI
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/ServerPort.fxml"));

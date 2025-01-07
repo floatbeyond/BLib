@@ -80,7 +80,7 @@ public class ClientPortController  {
 	}
 	
 	public void getExitBtn(ActionEvent event) throws Exception {
-		System.out.println("Exit Mentormatch Client");
+		System.out.println("Exiting Subscriber Management Tool");
 		System.exit(1);	
 	}
 

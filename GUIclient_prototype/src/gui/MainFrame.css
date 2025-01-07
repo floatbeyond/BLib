@@ -1,4 +1,4 @@
-#btnShow, #btnDisconnect, #btnSend, #btnDetails {
+Button {
     -fx-background-color: linear-gradient(to bottom, #4a90e2, #007aff);
     -fx-text-fill: white;
     -fx-font-size: 12px; 
