@@ -173,9 +173,11 @@ public class mysqlConnection {
 		List<Object> results = new ArrayList<>();
 		String bookQuery = "SELECT * FROM books WHERE " + searchType + " LIKE ?";
 		String bookCopyQuery = "SELECT * FROM bookcopies WHERE BookID = ?";
+		String borrowingRecordQuery = "SELECT * FROM borrowrecords WHERE CopyID = ? AND Status = 'Borrowed'";
 
 		try (PreparedStatement bookStmt = conn.prepareStatement(bookQuery);
-			PreparedStatement bookCopyStmt = conn.prepareStatement(bookCopyQuery)) {
+			PreparedStatement bookCopyStmt = conn.prepareStatement(bookCopyQuery);
+			PreparedStatement borrowingRecordStmt = conn.prepareStatement(borrowingRecordQuery)) {
 
 			// Set the search text for the book query
 			bookStmt.setString(1, "%" + searchText + "%");
@@ -206,6 +208,24 @@ public class mysqlConnection {
 					// Create a BookCopy object and add it to the results list
 					BookCopy bookCopy = new BookCopy(copyId, bookId, location, status);
 					results.add(bookCopy);
+
+					// Set the CopyID for the borrowing record query
+                    borrowingRecordStmt.setInt(1, copyId);
+                    ResultSet borrowingRecordRs = borrowingRecordStmt.executeQuery();
+
+                    // Iterate through the result set of the borrowing record query
+                    while (borrowingRecordRs.next()) {
+                        int borrowId = borrowingRecordRs.getInt("BorrowID");
+                        int subId = borrowingRecordRs.getInt("SubID");
+                        Date borrowDate = borrowingRecordRs.getDate("BorrowDate");
+                        Date expectedReturnDate = borrowingRecordRs.getDate("ExpectedReturnDate");
+                        Date actualReturnDate = borrowingRecordRs.getDate("ActualReturnDate");
+                        String borrowStatus = borrowingRecordRs.getString("Status");
+
+                        // Create a BorrowingRecord object and add it to the results list
+                        BorrowingRecord borrowingRecord = new BorrowingRecord(borrowId, copyId, subId, borrowDate, expectedReturnDate, actualReturnDate, borrowStatus);
+                        results.add(borrowingRecord);
+                    }
 				}
 			}
 

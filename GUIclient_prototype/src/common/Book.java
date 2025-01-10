@@ -1,6 +1,10 @@
 package common;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.Comparator;
 
 public class Book implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -9,6 +13,7 @@ public class Book implements Serializable {
     private String author;
     private String genre;
     private String description;
+    private List<BookCopy> copies;
 
     public Book(int bookId, String title, String author, String genre, String description) {
         this.bookId = bookId;
@@ -16,26 +21,43 @@ public class Book implements Serializable {
         this.author = author;
         this.genre = genre;
         this.description = description;
+        this.copies = new ArrayList<>();
     }
 
-    public int getBookId() {
-        return bookId;
+    // Getters
+    public int getBookId() { return bookId; }
+    public String getTitle() { return title; }
+    public String getAuthor() { return author; }
+    public String getGenre() { return genre; }
+    public String getDescription() { return description; }
+
+    // Copy management
+    public List<BookCopy> getAllCopies() { return copies; }
+    
+    public List<BookCopy> getAvailableCopies() {
+        return copies.stream()
+            .filter(copy -> copy.getStatus().equals("Available"))
+            .collect(Collectors.toList());
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public String getGenre() {
-        return genre;
-    }
-
-    public String getDescription() {
-        return description;
+    public void setCopies(List<BookCopy> copies) { this.copies = copies; }
+    
+    public String getCopyCount() {
+        // if (copies == null) return "None available until";
+        long available = getAvailableCopies().size();
+        if (available == 0) {
+            BookCopy earliestCopy = copies.stream()
+                .filter(copy -> copy.getBorrowingRecord() != null)
+                .min(Comparator.comparing(copy -> copy.getBorrowingRecord().getExpectedReturnDate()))
+                .orElse(null);
+            
+            if (earliestCopy != null) {
+                return "None available until " + earliestCopy.getBorrowingRecord().getExpectedReturnDate();
+            }
+        } else {
+            return available + " available out of " + copies.size();
+        }
+        return "No copies available";
     }
 
     @Override
