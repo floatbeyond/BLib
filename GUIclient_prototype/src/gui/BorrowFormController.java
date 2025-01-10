@@ -11,7 +11,9 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import client.ClientUI;
-    
+import common.Book;
+import common.Subscriber;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
     
@@ -38,32 +40,42 @@ import java.time.format.DateTimeFormatter;
         @FXML
         private void handleBorrowAction(ActionEvent event) throws Exception {
             try {
-                ClientUI.cc.accept("connect");
-                if (ClientUI.cc.getConnectionStatusFlag() == 1) {
+                // Input validation
+                if (txtID.getText().isEmpty() || txtCopyId.getText().isEmpty()) {
+                    messageLabel.setText("Please fill in all fields.");
+                    return;
+                }
+        
+                try {
                     subscriberID = Integer.valueOf(txtID.getText());
                     copyID = Integer.valueOf(txtCopyId.getText());
-
-                    // Add: תקינות קלט לפני ששולחים לסרבר גם לספר וגם למנוי
+                } catch (NumberFormatException e) {
+                    messageLabel.setText("Please enter valid numeric values.");
+                    return;
+                }
         
+                ClientUI.cc.accept("connect");
+                if (ClientUI.cc.getConnectionStatusFlag() == 1) {
                     // Send subscriberID to the server
                     ClientUI.cc.accept("sendSubscriber" + subscriberID);
         
                     // Assuming the server response is stored in a static variable in ClientUI
                     String serverResponse = ClientUI.cc.getStatus(); //אלון תחזיר לי חזרה מהשרת אם המנוי קפוא או לא. במידה וקפוא תחזיר כן אחרת לא
-                    ALON COMMENT: אני מחזיר לכם את הסטודנט עם כל המידע, אתם יכולים לעשות 
-                    ALON COMMENT: s.getSub_status() ולראות אם הוא קפוא או לא
                     if ("YES".equals(serverResponse)) {
                         messageLabel.setText("Subscriber Frozen");
                     } else if ("NO".equals(serverResponse)) {
-                        // Add: אם הוא לא קפוא לשלוח לסרבר את הספר
                         // Add: keyword to send "Borrow add" + subscriberID + copyID + borrowDate + INSERTED return date (by the librarian)
-                        
-                        messageLabel.setText("Borrow successfully");
-                         // Calculate return date
-                    LocalDate returnDate = LocalDate.now().plusDays(14);
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                    txtReturnDate.setText("Return Date: " + returnDate.format(formatter));
-
+                        LocalDate borrowDate = LocalDate.now();
+                        LocalDate returnDate = borrowDate.plusDays(14);
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                        String formattedBorrowDate = borrowDate.format(formatter);
+                        String formattedReturnDate = returnDate.format(formatter);
+                    
+                        String borrowInfo = "Borrow add " + subscriberID + " " + copyID + " " + formattedBorrowDate + " " + formattedReturnDate;
+                        ClientUI.cc.accept(borrowInfo);
+                    
+                        // Display return date
+                        lblReturnDate.setText("Return Date: " + formattedReturnDate);
                     } else {
                         messageLabel.setText("Unexpected server response");
                     }
@@ -71,14 +83,18 @@ import java.time.format.DateTimeFormatter;
                     displayMessage("No server connection");
                     return;
                 }
-            } catch (NumberFormatException e) {
-                displayMessage("Please check your input values!");
+            } catch (Exception e) {
+                displayMessage("An error occurred: " + e.getMessage());
             }
         }
-        
+
+
+
     public void displayMessage(String message) {
         messageLabel.setText(message);
     }
+
+
 
     public void goBackBtn(ActionEvent event) throws Exception {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/LibrarianMainFrame.fxml"));
