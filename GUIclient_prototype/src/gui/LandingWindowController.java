@@ -76,15 +76,28 @@ public class LandingWindowController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        double totalWidth = searchField.getLayoutX() + searchField.getPrefWidth();  // Total width to maintain
         // Adjust the width of the MenuButton based on the initial text
-        adjustMenuButtonWidth(menuButton.getText());
+        //adjustMenuButtonWidth(menuButton.getText());
 
-        // Add a listener to adjust the width whenever the selected item changes
-        menuButton.textProperty().addListener((obs, oldVal, newVal) -> adjustMenuButtonWidth(newVal));
+        // Only add text change listener for dynamic updates
+        menuButton.textProperty().addListener((obs, oldVal, newVal) -> {
+        if (!oldVal.equals(newVal)) {  // Only adjust if text actually changed
+            adjustMenuButtonWidth(newVal);
+        }
+    });
 
-        // Force a layout pass to ensure the initial width is set correctly
-        Platform.runLater(() -> adjustMenuButtonWidth(menuButton.getText()));
+        // Add width property listener to menuButton
+        menuButton.widthProperty().addListener((obs, oldWidth, newWidth) -> {
+            double newMenuWidth = newWidth.doubleValue();
+            searchField.setLayoutX(menuButton.getLayoutX() + newMenuWidth);
+            searchField.setPrefWidth(totalWidth - searchField.getLayoutX());
+        });
 
+        // Add text change listener that triggers width adjustment
+        menuButton.textProperty().addListener((obs, oldVal, newVal) -> {
+            adjustMenuButtonWidth(newVal);
+        });
         // Verify FXML injection
         assert bookTable != null : "fx:id=\"bookTable\" was not injected";
         assert bookNameColumn != null : "fx:id=\"bookNameColumn\" was not injected";

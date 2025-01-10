@@ -13,7 +13,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="797.0" styleClass="anchor-pane" stylesheets="@LandingWindow.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.LandingWindowController">
    <children>
-      <TextField fx:id="searchField" layoutX="191.0" layoutY="69.0" prefHeight="46.0" prefWidth="362.0" promptText="Search..." />
+      <TextField fx:id="searchField" layoutX="193.0" layoutY="69.0" prefHeight="46.0" prefWidth="362.0" promptText="Search..." />
       <MenuButton fx:id="menuButton" layoutX="116.0" layoutY="69.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="77.0" text="Title">
         <items>
             <MenuItem onAction="#handleMenuItemAction" text="Title" />
