@@ -7,6 +7,7 @@ import gui.SubscriberFormController;
 import gui.LoginWindowController;
 import common.Subscriber;
 import common.Librarian;
+import gui.SubMainFrameController;
 
 public class SharedController {
     private static Subscriber subscriber;
@@ -15,7 +16,11 @@ public class SharedController {
     public static ClientPortController cpc;
     public static SubscriberFormController sfc;
     public static LandingWindowController lwc;
+<<<<<<< HEAD
     public static LoginWindowController logwc;
+=======
+    public static SubMainFrameController smfc;
+>>>>>>> 2270b72 (submainframecontrolller java and fxml)
 
     // Setters and getters
  
@@ -33,10 +38,6 @@ public class SharedController {
 
     public static Librarian getLibrarian() {
         return librarian;
-    }
-
-    public static void setSubscribersTableController(SubscribersTableController controller) {
-      stc = controller;
     }
 
     public static SubscribersTableController getSubscribersTableController() {
@@ -67,13 +68,14 @@ public class SharedController {
       return lwc;
     }
 
-    public static void setLoginWindowController(LoginWindowController controller) {
-      logwc = controller;
+    public static void setSubMainFrameController(SubMainFrameController controller) {
+      smfc = controller;
+    }
+    public static SubMainFrameController getSubMainFrameController() {
+      return smfc;
+     
     }
 
-    public static LoginWindowController getLoginWindowController() {
-      return logwc;
-    }
 
 }
 

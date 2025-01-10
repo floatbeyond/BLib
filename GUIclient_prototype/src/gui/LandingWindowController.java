@@ -8,7 +8,6 @@ import common.BorrowingRecord;
 import common.MessageUtils;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -61,10 +60,13 @@ public class LandingWindowController implements Initializable {
 
     @FXML private Label messageLabel;
 
-    private Map<Integer, Stage> openDialogs = new HashMap<>(); // Track open dialogs
+    private String getSearch() {
+        return searchField.getText();
+    }
 
-    private String getSearch() { return searchField.getText(); }
-    private String getMenu() { return menuButton.getText(); }
+    private String getMenu() {
+        return menuButton.getText();
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
