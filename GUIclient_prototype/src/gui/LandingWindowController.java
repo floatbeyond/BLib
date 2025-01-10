@@ -4,10 +4,11 @@ import client.ClientUI;
 import client.SharedController;
 import common.Book;
 import common.BookCopy;
-import common.BookDetails;
+import common.BorrowingRecord;
 import common.MessageUtils;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -19,30 +20,29 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import javafx.util.Duration;
 import javafx.event.ActionEvent;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.HashMap;
+import java.util.Map;
 
-@SuppressWarnings("rawtypes")
 public class LandingWindowController implements Initializable {
 
     @FXML private MenuButton menuButton;
@@ -51,37 +51,40 @@ public class LandingWindowController implements Initializable {
     @FXML private ImageView searchIcon;
     @FXML private Button loginButton;
 
-    @FXML private TableView<BookDetails> bookTable;
-    @FXML private TableColumn<BookDetails, String> bookNameColumn;
-    @FXML private TableColumn<BookDetails, String> authorColumn;
-    @FXML private TableColumn<BookDetails, String> genreColumn;
-    @FXML private TableColumn<BookDetails, String> descriptionColumn;
-    @FXML private TableColumn<BookDetails, String> locationColumn;
-    @FXML private TableColumn<BookDetails, String> availabilityColumn;
+    @FXML private TableView<Book> bookTable;
+    @FXML private TableColumn<Book, String> bookNameColumn;
+    @FXML private TableColumn<Book, String> authorColumn;
+    @FXML private TableColumn<Book, String> genreColumn;
+    @FXML private TableColumn<Book, String> descriptionColumn;
+    @FXML private TableColumn<Book, String> copiesColumn;
+    @FXML private TableColumn<Book, Void> actionColumn;
 
-    @FXML private Label copiedLabel;
     @FXML private Label messageLabel;
 
-    private String getSearch() {
-        return searchField.getText();
-    }
+    private Map<Integer, Stage> openDialogs = new HashMap<>(); // Track open dialogs
 
-    private String getMenu() {
-        return menuButton.getText();
-    }
+    private String getSearch() { return searchField.getText(); }
+    private String getMenu() { return menuButton.getText(); }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        setupButtonWidth();
+        setupColumns();
+        setupSearch();
+
+        // Set the controller in SharedController
+        SharedController.setLandingWindowController(this);
+    }
+
+    private void setupButtonWidth() {
         double totalWidth = searchField.getLayoutX() + searchField.getPrefWidth();  // Total width to maintain
-        // Adjust the width of the MenuButton based on the initial text
-        //adjustMenuButtonWidth(menuButton.getText());
 
         // Only add text change listener for dynamic updates
         menuButton.textProperty().addListener((obs, oldVal, newVal) -> {
-        if (!oldVal.equals(newVal)) {  // Only adjust if text actually changed
-            adjustMenuButtonWidth(newVal);
-        }
-    });
+            if (!oldVal.equals(newVal)) {  // Only adjust if text actually changed
+                adjustMenuButtonWidth(newVal);
+            }
+        });
 
         // Add width property listener to menuButton
         menuButton.widthProperty().addListener((obs, oldWidth, newWidth) -> {
@@ -94,39 +97,15 @@ public class LandingWindowController implements Initializable {
         menuButton.textProperty().addListener((obs, oldVal, newVal) -> {
             adjustMenuButtonWidth(newVal);
         });
-        // Verify FXML injection
-        assert bookTable != null : "fx:id=\"bookTable\" was not injected";
-        assert bookNameColumn != null : "fx:id=\"bookNameColumn\" was not injected";
-        assert authorColumn != null : "fx:id=\"authorColumn\" was not injected";
-        assert genreColumn != null : "fx:id=\"genreColumn\" was not injected";
-        assert descriptionColumn != null : "fx:id=\"descriptionColumn\" was not injected";
-        assert locationColumn != null : "fx:id=\"locationColumn\" was not injected";
-        assert availabilityColumn != null : "fx:id=\"availabilityColumn\" was not injected";
+    }
 
-        // Initialize columns
-        setupColumns();
-
-        // Enable cell selection
-        bookTable.getSelectionModel().setCellSelectionEnabled(true);
-        bookTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        bookTable.setEditable(false);
-
-        // Copy functionality - Ctrl + C
-        bookTable.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.C && event.isControlDown()) {
-                copySelectionToClipboard();
+    private void setupSearch() {
+        searchButton.setOnAction(e -> handleSearchAction(e));
+        searchField.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                handleSearchAction(null);
             }
         });
-
-        // Copy functionality - Mouse press
-        bookTable.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
-                copySelectionToClipboard();
-            }
-        });
-
-        // Set the controller in SharedController
-        SharedController.setLandingWindowController(this);
     }
 
     private void setupColumns() {
@@ -135,65 +114,65 @@ public class LandingWindowController implements Initializable {
             return;
         }
 
-        // Set value factories
-        bookNameColumn.setCellValueFactory(new PropertyValueFactory<>("bookName"));
+        bookNameColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
         authorColumn.setCellValueFactory(new PropertyValueFactory<>("author"));
         genreColumn.setCellValueFactory(new PropertyValueFactory<>("genre"));
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
-        locationColumn.setCellValueFactory(new PropertyValueFactory<>("location"));
-        availabilityColumn.setCellValueFactory(new PropertyValueFactory<>("availability"));
 
-        // Set up non-editable cell factories
-        bookNameColumn.setCellFactory(column -> createNonEditableCell());
-        authorColumn.setCellFactory(column -> createNonEditableCell());
-        genreColumn.setCellFactory(column -> createNonEditableCell());
-        descriptionColumn.setCellFactory(column -> createNonEditableCell());
-        locationColumn.setCellFactory(column -> createNonEditableCell());
-        availabilityColumn.setCellFactory(column -> createNonEditableCell());
-    }
+        copiesColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getCopyCount()));
 
-    private <T> TableCell<BookDetails, T> createNonEditableCell() {
-        return new TableCell<BookDetails, T>() {
+        actionColumn.setCellFactory(param -> new TableCell<Book, Void>() {
+            private final Button copiesButton = new Button("Show Copies");
+            {
+                copiesButton.setOnAction(event -> {
+                    Book book = getTableView().getItems().get(getIndex());
+                    showCopiesDialog(book);
+                });
+            }
+
             @Override
-            protected void updateItem(T item, boolean empty) {
+            protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
+                if (empty) {
+                    setGraphic(null);
                 } else {
-                    setText(item.toString());
+                    setGraphic(copiesButton);
                 }
-                setStyle("-fx-selection-bar: -fx-accent; -fx-selection-bar-non-focused: -fx-accent;");
             }
-        };
+        });
     }
 
-    private void copySelectionToClipboard() {
-        StringBuilder clipboardString = new StringBuilder();
-        ObservableList<TablePosition> positionList = bookTable.getSelectionModel().getSelectedCells();
-
-        int prevRow = -1;
-        for (TablePosition position : positionList) {
-            if (prevRow != -1 && prevRow != position.getRow()) {
-                clipboardString.append('\n');
-            }
-            Object cell = bookTable.getColumns().get(position.getColumn())
-                    .getCellData(position.getRow());
-            clipboardString.append(cell == null ? "" : cell.toString()).append('\t');
-            prevRow = position.getRow();
+    private void showCopiesDialog(Book book) {
+        if (openDialogs.containsKey(book.getBookId())) {
+            // Bring the existing dialog to the front
+            Stage existingDialog = openDialogs.get(book.getBookId());
+            existingDialog.toFront();
+            return;
         }
 
-        final ClipboardContent content = new ClipboardContent();
-        content.putString(clipboardString.toString());
-        Clipboard.getSystemClipboard().setContent(content);
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/CopiesDialog.fxml"));
+            AnchorPane pane = loader.load();
 
-        showCopiedMessage();
-    }
+            CopiesDialogController controller = loader.getController();
+            controller.setCopiesData(FXCollections.observableArrayList(book.getAllCopies()));
 
-    private void showCopiedMessage() {
-        copiedLabel.setVisible(true);
-        PauseTransition pause = new PauseTransition(Duration.seconds(1));
-        pause.setOnFinished(event -> copiedLabel.setVisible(false));
-        pause.play();
+            Stage dialog = new Stage();
+            Scene scene = new Scene(pane);
+            dialog.setScene(scene);
+            dialog.setTitle("Copies of: " + book.getTitle());
+            dialog.setResizable(false);
+
+            // Add to open dialogs map
+            openDialogs.put(book.getBookId(), dialog);
+
+            // Remove from map when closed
+            dialog.setOnCloseRequest(event -> openDialogs.remove(book.getBookId()));
+
+            dialog.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -214,31 +193,41 @@ public class LandingWindowController implements Initializable {
     }
 
     public void loadBookDetails(List<Object> list) {
-        // print
-        System.out.println("Loading book details...");
         Platform.runLater(() -> {
             displayMessage("");
-            System.err.println("list size in landing window: " + list.size());
-            ObservableList<BookDetails> bookDetailsList = FXCollections.observableArrayList();
-            Book currentBook = null;
+            ObservableList<Book> books = FXCollections.observableArrayList();
+            Map<Integer, Book> bookMap = new HashMap<>();
+            Map<Integer, List<BookCopy>> copyMap = new HashMap<>();
+            Map<Integer, BorrowingRecord> borrowingRecordMap = new HashMap<>();
+
+            
             for (Object item : list) {
                 if (item instanceof Book) {
-                    currentBook = (Book) item;
-                } else if (item instanceof BookCopy && currentBook != null) {
-                    BookCopy bookCopy = (BookCopy) item;
-                    BookDetails bookDetails = new BookDetails(
-                            currentBook.getTitle(),
-                            currentBook.getAuthor(),
-                            currentBook.getGenre(),
-                            currentBook.getDescription(),
-                            bookCopy.getLocation(),
-                            bookCopy.getStatus()
-                    );
-                    bookDetailsList.add(bookDetails);
+                    Book book = (Book) item;
+                    bookMap.put(book.getBookId(), book);
+                    copyMap.put(book.getBookId(), new ArrayList<>());
+                } else if (item instanceof BookCopy) {
+                    BookCopy copy = (BookCopy) item;
+                    copyMap.get(copy.getBookId()).add(copy);
+                } else if (item instanceof BorrowingRecord) {
+                    BorrowingRecord record = (BorrowingRecord) item;
+                    borrowingRecordMap.put(record.getCopyId(), record);
                 }
             }
-
-            bookTable.setItems(bookDetailsList);
+            
+            for (Map.Entry<Integer, Book> entry : bookMap.entrySet()) {
+                Book book = entry.getValue();
+                List<BookCopy> copies = copyMap.get(book.getBookId());
+                for (BookCopy copy : copies) {
+                    if (borrowingRecordMap.containsKey(copy.getCopyId())) {
+                        copy.setBorrowingRecord(borrowingRecordMap.get(copy.getCopyId()));
+                    }
+                }
+                book.setCopies(copies);
+                books.add(book);
+            }
+    
+            bookTable.setItems(books);
             bookTable.setVisible(true);
         });
     }
@@ -301,7 +290,6 @@ public class LandingWindowController implements Initializable {
             displayMessage("Error: " + e.getMessage());
         }
     }
-
 
     public void displayMessage(String message) {
         messageLabel.setText(message);

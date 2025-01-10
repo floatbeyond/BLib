@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -35,8 +36,18 @@ public class LoginWindowController {
 
     @FXML
     public void initialize() {
+        setupLogin();
         // Set the controller in SharedController
         SharedController.setLoginWindowController(this);
+    }
+
+    private void setupLogin() {
+        loginButton.setOnAction(e -> handleLoginAction(e));
+        idField.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                handleLoginAction(null);
+            }
+        });
     }
 
     public void handleLoginAction(ActionEvent event) {
@@ -47,7 +58,7 @@ public class LoginWindowController {
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
                 System.out.println("Entered ID: " + idText);
                 if (idText.trim().isEmpty()) {
-                    displayMessage("Please enter a search term"); 
+                    displayMessage("Please enter ID"); 
                 } else if (idText.length() > 9 || !idText.matches("\\d+")) {
                     displayMessage("Please enter a valid ID number");
                 } else { 
@@ -76,7 +87,8 @@ public class LoginWindowController {
                                 }
                             });
                             stage.setScene(scene);
-                            stage.setTitle("Main Frame");
+                            String windowTitle = userType + " Main Frame";
+                            stage.setTitle(windowTitle);
                             stage.setResizable(false);
                             stage.show();
                         } else {
