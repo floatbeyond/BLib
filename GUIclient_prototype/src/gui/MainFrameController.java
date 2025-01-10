@@ -34,7 +34,7 @@ public class MainFrameController {
 
 	public void Find(ActionEvent event) throws Exception {
 		try {
-            MessageUtils.sendMessage(ClientUI.cc, "connect", null);
+            MessageUtils.sendMessage(ClientUI.cc, "user",  "connect", null);
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
                 String id = getID();
                 System.out.println("ID entered: " + id);
@@ -48,7 +48,7 @@ public class MainFrameController {
                 } else {
                     System.out.println("Calling ClientUI.cc.accept");
                     // ClientUI.cc.accept("sendSubscriber " + id);
-                    MessageUtils.sendMessage(ClientUI.cc, "sendSubscriber", id);
+                    MessageUtils.sendMessage(ClientUI.cc,"user",  "sendSubscriber", id);
                     Subscriber foundSubscriber = SharedController.getSubscriber();
                     if(foundSubscriber == null) {
                         System.out.println("Subscriber ID Not Found");
@@ -126,7 +126,7 @@ public class MainFrameController {
                 primaryStage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
                     try {
                         if (ClientUI.chat != null) {
-                            MessageUtils.sendMessage(ClientUI.cc, "disconnect", null);
+                            MessageUtils.sendMessage(ClientUI.cc, "user",  "disconnect", null);
                             ClientUI.chat.quit();
                         }
                     } catch (Exception e) {

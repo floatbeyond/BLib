@@ -5,8 +5,8 @@ import ocsf.server.ConnectionToClient;
 import common.ServerMessage;
 
 public class MessageUtils {
-    public static void sendResponseToClient(String messageType, Object data, ConnectionToClient client) {
-        ServerMessage response = new ServerMessage(messageType, data);
+    public static void sendResponseToClient(String user, String messageType, Object data, ConnectionToClient client) {
+        ServerMessage response = new ServerMessage(user, messageType, data);
         try {
             // print message being sent and data
             System.out.println("Sending message type: " + messageType);

@@ -6,14 +6,13 @@ import common.Book;
 import common.BookCopy;
 import common.BorrowingRecord;
 import common.MessageUtils;
-import javafx.animation.PauseTransition;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -33,22 +32,26 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.event.ActionEvent;
+import javafx.scene.Node;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.ResourceBundle;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
-public class LandingWindowController implements Initializable {
+
+public class SubscriberMainFrameController implements Initializable {
 
     @FXML private MenuButton menuButton;
     @FXML private Button searchButton;
     @FXML private TextField searchField;
     @FXML private ImageView searchIcon;
-    @FXML private Button loginButton;
+    @FXML private Button btnLogOut = null;
+    @FXML private Button btnLogs = null;
+    @FXML private Button btnPersonalDetails = null;
 
     @FXML private TableView<Book> bookTable;
     @FXML private TableColumn<Book, String> bookNameColumn;
@@ -58,15 +61,13 @@ public class LandingWindowController implements Initializable {
     @FXML private TableColumn<Book, String> copiesColumn;
     @FXML private TableColumn<Book, Void> actionColumn;
 
+    private Map<Integer, Stage> openDialogs = new HashMap<>(); // Track open dialogs
+
     @FXML private Label messageLabel;
 
-    private String getSearch() {
-        return searchField.getText();
-    }
+    private String getSearch() { return searchField.getText(); }
 
-    private String getMenu() {
-        return menuButton.getText();
-    }
+    private String getMenu() { return menuButton.getText(); }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -75,7 +76,7 @@ public class LandingWindowController implements Initializable {
         setupSearch();
 
         // Set the controller in SharedController
-        SharedController.setLandingWindowController(this);
+        SharedController.setSubscriberMainFrameController(this);
     }
 
     private void setupButtonWidth() {
@@ -100,7 +101,6 @@ public class LandingWindowController implements Initializable {
             adjustMenuButtonWidth(newVal);
         });
     }
-
     private void setupSearch() {
         searchButton.setOnAction(e -> handleSearchAction(e));
         searchField.setOnKeyPressed(e -> {
@@ -177,6 +177,7 @@ public class LandingWindowController implements Initializable {
         }
     }
 
+
     @FXML
     private void handleMenuItemAction(ActionEvent event) {
         MenuItem menuItem = (MenuItem) event.getSource();
@@ -239,14 +240,14 @@ public class LandingWindowController implements Initializable {
         String selectedMenu = getMenu();
         // Implement your search logic here
         try {
-            MessageUtils.sendMessage(ClientUI.cc,"user", "connect" , null);
+            MessageUtils.sendMessage(ClientUI.cc, "subscriber", "connect" , null);
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
                 if (searchText.trim().isEmpty()) {
                     displayMessage("Please enter a search term");
                 } else { 
                     System.out.println("Searching for: " + searchText);
                     System.out.println("Selected menu: " + selectedMenu);
-                    MessageUtils.sendMessage(ClientUI.cc, "user",  "sendSearchedBooks", selectedMenu + ":" + searchText);
+                    MessageUtils.sendMessage(ClientUI.cc,"subscriber",  "sendSearchedBooks", selectedMenu + ":" + searchText);
                 }
             }
         } catch (Exception e) {
@@ -254,46 +255,81 @@ public class LandingWindowController implements Initializable {
         }        
     }
 
-    public void noBooksFound() {
-        bookTable.setVisible(false);
-        displayMessage("No books found");
-    }
 
-    public void handleLoginAction(ActionEvent event) {
-        try {
-            MessageUtils.sendMessage(ClientUI.cc, "user",  "connect" , null);
-            if (ClientUI.cc.getConnectionStatusFlag() == 1) {
-                ((Node) event.getSource()).getScene().getWindow().hide();
-                // Load and display MainFrame GUI
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/LoginWindow.fxml"));
-                Pane root = loader.load();
-                Stage stage = new Stage();
-                Scene scene = new Scene(root);
-                stage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
-                    try {
-                        // print message to console
-                        System.out.println("clientui.chat: " + ClientUI.chat);
-                        if (ClientUI.chat != null) {
-                            ClientUI.chat.quit();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                });
-                stage.setScene(scene);
-                stage.setTitle("User login");
-                stage.setResizable(false);
-                stage.show();
-            } else {
-                displayMessage("Connection failed");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            displayMessage("Error: " + e.getMessage());
-        }
-    }
-
+    
     public void displayMessage(String message) {
         messageLabel.setText(message);
+    }
+
+    public void logoutBtn(ActionEvent event) throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/LandingWindow.fxml"));
+        Pane root = loader.load();
+        
+        Stage primaryStage = new Stage();
+        Scene scene = new Scene(root);			
+        primaryStage.setTitle("Landing Window");
+        primaryStage.setScene(scene);
+        primaryStage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
+            try {
+                if (ClientUI.chat != null) {
+                    ClientUI.cc.accept("disconnect");
+                    ClientUI.chat.quit();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        
+        ((Node)event.getSource()).getScene().getWindow().hide();
+        primaryStage.setResizable(false);
+        primaryStage.show();
+    }
+
+    public void logsBtn(ActionEvent event) throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/SubscriberLogs.fxml"));
+        Pane root = loader.load();
+        
+        Stage primaryStage = new Stage();
+        Scene scene = new Scene(root);			
+        primaryStage.setTitle("Subscriber Logs");
+        primaryStage.setScene(scene);
+        primaryStage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
+            try {
+                if (ClientUI.chat != null) {
+                    ClientUI.cc.accept("disconnect");
+                    ClientUI.chat.quit();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        
+        ((Node)event.getSource()).getScene().getWindow().hide();
+        primaryStage.setResizable(false);
+        primaryStage.show();
+    }
+
+    public void personalDetailsBtn(ActionEvent event) throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/PersonalDetails.fxml"));
+        Pane root = loader.load();
+        
+        Stage primaryStage = new Stage();
+        Scene scene = new Scene(root);			
+        primaryStage.setTitle("Personal Details");
+        primaryStage.setScene(scene);
+        primaryStage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
+            try {
+                if (ClientUI.chat != null) {
+                    ClientUI.cc.accept("disconnect");
+                    ClientUI.chat.quit();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        
+        ((Node)event.getSource()).getScene().getWindow().hide();
+        primaryStage.setResizable(false);
+        primaryStage.show();
     }
 }
