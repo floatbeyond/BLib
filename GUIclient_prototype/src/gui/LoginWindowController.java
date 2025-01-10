@@ -54,7 +54,7 @@ public class LoginWindowController {
         String idText = getId();
         // Implement your search logic here
         try {
-           MessageUtils.sendMessage(ClientUI.cc, "connect", null);
+           MessageUtils.sendMessage(ClientUI.cc, "user",  "connect", null);
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
                 System.out.println("Entered ID: " + idText);
                 if (idText.trim().isEmpty()) {
@@ -62,7 +62,7 @@ public class LoginWindowController {
                 } else if (idText.length() > 9 || !idText.matches("\\d+")) {
                     displayMessage("Please enter a valid ID number");
                 } else { 
-                    MessageUtils.sendMessage(ClientUI.cc, "login" , Integer.parseInt(idText));
+                    MessageUtils.sendMessage(ClientUI.cc, "user", "login" , Integer.parseInt(idText));
                     if (userType == "NotFound") {
                         displayMessage("User not found");
                     } else {

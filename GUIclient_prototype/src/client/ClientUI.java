@@ -40,7 +40,7 @@ public class ClientUI extends Application {
                         if (chat != null) {
                             // print cc
                             System.out.println("cc: " + cc);
-                            MessageUtils.sendMessage(cc, "disconnect", null);
+                            MessageUtils.sendMessage(cc, "user", "disconnect", null);
                             chat.quit();
                         }
                     } catch (Exception e) {

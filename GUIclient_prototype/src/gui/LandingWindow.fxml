@@ -41,7 +41,6 @@
             <TableColumn fx:id="actionColumn" editable="false" prefWidth="110.0" resizable="false" text="Actions" />
          </columns>
       </TableView>
-      <Label fx:id="copiedLabel" layoutX="253.0" layoutY="6.0" prefWidth="57.0" text="Copied!" visible="false" />
       <Label fx:id="messageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="379.0" layoutY="130.0" prefHeight="46.0" prefWidth="396.0" />
    </children>
 </AnchorPane>
