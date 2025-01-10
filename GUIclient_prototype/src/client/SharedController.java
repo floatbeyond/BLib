@@ -7,6 +7,7 @@ import gui.SubscriberFormController;
 import gui.LoginWindowController;
 import common.Subscriber;
 import common.Librarian;
+import gui.SubMainFrameController;
 
 public class SharedController {
     private static Subscriber subscriber;
@@ -16,6 +17,7 @@ public class SharedController {
     public static SubscriberFormController sfc;
     public static LandingWindowController lwc;
     public static LoginWindowController logwc;
+    public static SubMainFrameController smfc;
 
     // Setters and getters
  
@@ -33,10 +35,6 @@ public class SharedController {
 
     public static Librarian getLibrarian() {
         return librarian;
-    }
-
-    public static void setSubscribersTableController(SubscribersTableController controller) {
-      stc = controller;
     }
 
     public static SubscribersTableController getSubscribersTableController() {
@@ -74,6 +72,14 @@ public class SharedController {
     public static LoginWindowController getLoginWindowController() {
       return logwc;
     }
+    public static void setSubMainFrameController(SubMainFrameController controller) {
+      smfc = controller;
+    }
+    public static SubMainFrameController getSubMainFrameController() {
+      return smfc;
+     
+    }
+
 
 }
 

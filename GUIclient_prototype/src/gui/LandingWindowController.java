@@ -6,7 +6,6 @@ import common.Book;
 import common.BookCopy;
 import common.BorrowingRecord;
 import common.MessageUtils;
-import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
