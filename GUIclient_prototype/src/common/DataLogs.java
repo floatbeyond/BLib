@@ -1,7 +1,6 @@
 package common;
 
 import java.util.Date;
-
 import java.io.Serializable;
 
 public class DataLogs implements Serializable {
