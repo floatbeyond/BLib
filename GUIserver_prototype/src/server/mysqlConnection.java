@@ -9,6 +9,7 @@ import common.Book;
 import common.BookCopy;
 import common.BorrowingRecord;
 import common.OrderRecord;
+import common.DataLogs;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -158,6 +159,31 @@ public class mysqlConnection {
 		}
 		return null;
 	}
+
+	// show to user all the logs in the DB
+	public static ArrayList<DataLogs> getDataLogs(Connection conn) {
+		ArrayList<DataLogs> dataLogs = new ArrayList<>();
+		String query = "SELECT * FROM datalogs";
+		
+		try (Statement st = conn.createStatement();
+			 ResultSet rs = st.executeQuery(query)) {
+			
+			while (rs.next()) {
+				DataLogs log = new DataLogs(
+					rs.getInt("LogID"),
+					rs.getInt("SubID"),
+					rs.getString("Action"),
+					rs.getDate("Timestamp")
+				);
+				dataLogs.add(s);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return dataLogs;
+	}
+	
 
 }
 

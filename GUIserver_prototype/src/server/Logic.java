@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.util.ArrayList;
 
 import common.Subscriber;
+import common.DataLogs; 
 import ocsf.server.ConnectionToClient;
 import gui.ClientConnectedController;
 
@@ -47,6 +48,11 @@ public class Logic {
         ArrayList<Subscriber> table = mysqlConnection.getSubscribers(conn);
         MessageUtils.sendResponseToClient("SubscriberList", table, client);
     }
+    
+     public static void showDataLogs(ConnectionToClient client) {
+        ArrayList<DataLogs> dataLogs = mysqlConnection.getDataLogs(conn);
+        MessageUtils.sendResponseToClient("DataLogsList", dataLogs, client);
+    }
 
     public static void connect(ConnectionToClient client) {
         String clientInfo = client.toString();
@@ -61,6 +67,9 @@ public class Logic {
         ccc.loadClientDetails("null", "Disconnected");
         MessageUtils.sendResponseToClient("Print", "Server disconnected", client);
     }
+
+    
+}
 
 
 
