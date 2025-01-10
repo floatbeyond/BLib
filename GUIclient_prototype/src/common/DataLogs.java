@@ -2,9 +2,12 @@ package common;
 
 import java.util.Date;
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> 79059ca (PersonalDetails+DataLogs)
+=======
+>>>>>>> 4c9f9e2 (personal details +data logs filter)
 import java.io.Serializable;
 
 public class DataLogs implements Serializable {

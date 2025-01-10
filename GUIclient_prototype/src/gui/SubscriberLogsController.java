@@ -7,9 +7,13 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 <<<<<<< HEAD
+<<<<<<< HEAD
 import javafx.scene.control.ComboBox;
 =======
 >>>>>>> 79059ca (PersonalDetails+DataLogs)
+=======
+import javafx.scene.control.ComboBox;
+>>>>>>> 4c9f9e2 (personal details +data logs filter)
 import javafx.scene.control.ListView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -18,16 +22,24 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 4c9f9e2 (personal details +data logs filter)
 import java.util.ArrayList;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.ZoneId;
+<<<<<<< HEAD
 import java.util.List;
 import java.util.stream.Collectors;
 =======
 import java.util.List;
 
 >>>>>>> 79059ca (PersonalDetails+DataLogs)
+=======
+import java.util.List;
+import java.util.stream.Collectors;
+>>>>>>> 4c9f9e2 (personal details +data logs filter)
 
 import client.ClientUI;
 
@@ -35,22 +47,32 @@ public class SubscriberLogsController {
 	
 	@FXML private Button btnBack = null;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 4c9f9e2 (personal details +data logs filter)
     @FXML private ListView<String> listViewLogs;
     @FXML private ComboBox<Month> monthComboBox;
     @FXML private Button filterButton;
 
     private List<DataLogs> allDataLogs;
+<<<<<<< HEAD
 =======
     @FXML private ListView<String> listViewLogs; // Add this line
 >>>>>>> 79059ca (PersonalDetails+DataLogs)
+=======
+>>>>>>> 4c9f9e2 (personal details +data logs filter)
 
 
     // Method to populate the ListView with data logs
     public void showDataLogs(List<DataLogs> dataLogs) {
 <<<<<<< HEAD
+<<<<<<< HEAD
         this.allDataLogs = dataLogs; // Store all logs
 =======
 >>>>>>> 79059ca (PersonalDetails+DataLogs)
+=======
+        this.allDataLogs = dataLogs; // Store all logs
+>>>>>>> 4c9f9e2 (personal details +data logs filter)
         ObservableList<String> items = FXCollections.observableArrayList();
         for (DataLogs log : dataLogs) {
             items.add(log.toString());
@@ -59,6 +81,9 @@ public class SubscriberLogsController {
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 4c9f9e2 (personal details +data logs filter)
      // Method to filter logs by selected month
     @FXML
     public void filterLogsByMonth() {
@@ -74,8 +99,11 @@ public class SubscriberLogsController {
         }
     }
 
+<<<<<<< HEAD
 =======
 >>>>>>> 79059ca (PersonalDetails+DataLogs)
+=======
+>>>>>>> 4c9f9e2 (personal details +data logs filter)
      public void goBackBtn(ActionEvent event) throws Exception {
         System.out.println("goBackBtn clicked");
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/MainFrame.fxml"));

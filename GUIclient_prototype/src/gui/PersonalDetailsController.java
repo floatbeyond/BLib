@@ -62,12 +62,15 @@ public class PersonalDetailsController {
 		this.txtPNumber.setText(s.getSub_phone_num());
 		this.txtEmail.setText(s.getSub_email());
 <<<<<<< HEAD
+<<<<<<< HEAD
         this.txtJoinDate.setText(s.getSub_joined().toString());
 		this.txtExDate.setText(s.getSub_expiration().toString());
         this.txtNumBookBorrowed.setText(String.valueOf(s.getSub_num_books_borrowed()));
         this.txtNumBookOrdered.setText(String.valueOf(s.getSub_num_books_ordered()));
 	}
 =======
+=======
+>>>>>>> 4c9f9e2 (personal details +data logs filter)
 		// Convert Date to String
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		this.txtJoinDate.setText(dateFormat.format(s.getSub_joined()));
@@ -87,7 +90,17 @@ public class PersonalDetailsController {
     public void handleBooksInBorrowCountResponse(int count) {
         this.txtNumBookBorrowed.setText(String.valueOf(count));
     }
+<<<<<<< HEAD
 >>>>>>> 79059ca (PersonalDetails+DataLogs)
+=======
+=======
+        this.txtJoinDate.setText(s.getSub_joined().toString());
+		this.txtExDate.setText(s.getSub_expiration().toString());
+        this.txtNumBookBorrowed.setText(String.valueOf(s.getSub_num_books_borrowed()));
+        this.txtNumBookOrdered.setText(String.valueOf(s.getSub_num_books_ordered()));
+	}
+>>>>>>> 280d498 (personal details +data logs filter)
+>>>>>>> 4c9f9e2 (personal details +data logs filter)
 
 
     public void goBackBtn(ActionEvent event) throws Exception {
@@ -145,10 +158,17 @@ public class PersonalDetailsController {
 
 				if (!phoneNumber.equals(s.getSub_phone_num()) || !email.equals(s.getSub_email())) {
 <<<<<<< HEAD
+<<<<<<< HEAD
 					s = new Subscriber(id, name, s.getSub_status(), phoneNumber, email, s.getSub_penalties(), s.getSub_freeze(), joinDate, exDate);//לא תואם לקונסטרקטור של מנוי צריך להחליט איזה ממבר יש למנוי
 =======
 					s = new Subscriber(id, name,s.getSub_status(), phoneNumber, email,s.getSub_penalties(),s.getSub_freeze(), joinDate, exDate);
 >>>>>>> 79059ca (PersonalDetails+DataLogs)
+=======
+					s = new Subscriber(id, name,s.getSub_status(), phoneNumber, email,s.getSub_penalties(),s.getSub_freeze(), joinDate, exDate);
+=======
+					s = new Subscriber(id, name, s.getSub_status(), phoneNumber, email, s.getSub_penalties(), s.getSub_freeze(), joinDate, exDate);//לא תואם לקונסטרקטור של מנוי צריך להחליט איזה ממבר יש למנוי
+>>>>>>> 280d498 (personal details +data logs filter)
+>>>>>>> 4c9f9e2 (personal details +data logs filter)
 					ClientUI.cc.accept("change "+ s.toString());
 					System.out.println("ID: "+ id);
 					displayMessage("Subscriber updated!");
