@@ -20,6 +20,23 @@ public class Logic {
     // public static SubscriberFormController sfc = SharedController.getSubscriberFormController();
     // public static LandingWindowController lwc = SharedController.getLandingWindowController();
 
+    // Login
+
+    public static void parseLogin(Object user) {
+        if (user instanceof Librarian) {
+            System.out.println("User is a librarian");
+            SharedController.setLibrarian((Librarian) user);
+            SharedController.logwc.userType = "Librarian";
+        } else if (user instanceof Subscriber) {
+            System.out.println("User is a subscriber");
+            SharedController.setSubscriber((Subscriber) user);
+            SharedController.logwc.userType = "Subscriber";
+        } else {
+            System.out.println("User not found");
+            SharedController.logwc.userType = "NotFound";
+        }
+    }
+
     // Librarian
 
     public static void parseLibrarian(Librarian receivedLibrarian) {

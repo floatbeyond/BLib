@@ -1,0 +1,37 @@
+AnchorPane {
+    -fx-background-color: #e1dcc5;
+}
+
+#loginButton, #backButton { 
+    -fx-font-size: 14px;
+    -fx-font-family: "Arial";
+    -fx-background-color: #F2F0E8;
+    -fx-text-fill: #000000;
+    -fx-prompt-text-fill: #a0a0a0;
+    -fx-border-color: #ccc; /* Match the default TextField border color */
+    -fx-border-width: 1px; /* Match the default TextField border width */
+    -fx-border-radius: 4px; /* Match the default TextField border radius */
+    -fx-background-radius: 4px; /* Match the background radius to the border radius */
+    -fx-padding: 5px; /* Add padding to match the TextField */
+    
+}
+
+TextField {
+    -fx-font-size: 14px;
+    -fx-font-family: "Arial";
+    -fx-prompt-text-fill: #a0a0a0;
+    -fx-padding: 0 50px 0 10px; /* Add right padding to stop text before the button */
+}
+
+TextField:focused {
+    -fx-border-color: #ccc; /* Remove blue focus border */
+    -fx-background-color: #fff; /* Ensure background color remains white */
+}
+
+
+#messageLabel {
+    -fx-text-fill: #a30303;
+    -fx-font-size: 16px;
+    -fx-font-family: "Arial";
+    -fx-padding: 2px;
+}

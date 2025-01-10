@@ -1,5 +1,6 @@
 package gui;
 
+<<<<<<< HEAD
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -179,4 +180,8 @@ public class LibrarianMainFrameController {
             e.printStackTrace();
         }
     }
+=======
+public class LibrarianMainFrameController {
+    
+>>>>>>> 3ee753d (Finished search and login page)
 }
