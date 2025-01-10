@@ -75,7 +75,7 @@ public class Logic {
 
     // Book
 
-    public static void parseBookList(List<Object> list) {
+    public static void parseBookList(String user, List<Object> list) {
         // print book list
         System.out.println("parseBookList method called");
         
@@ -84,12 +84,22 @@ public class Logic {
 
         Platform.runLater(() -> {
             if (!list.isEmpty() && list.stream().allMatch(item -> item instanceof Object)) {
-                System.out.println("Loading table");
-                if (SharedController.lwc != null) {
-                    System.out.println("SearchBookTable is initialized");
-                    SharedController.lwc.loadBookDetails(list);
-                } else {
-                    System.out.println("SearchBookTable is null");
+                if (user.equals("user")) {
+                    System.out.println("Loading table");
+                    if (SharedController.lwc != null) {
+                        System.out.println("SearchBookTable is initialized");
+                        SharedController.lwc.loadBookDetails(list);
+                    } else {
+                        System.out.println("SearchBookTable is null");
+                    }
+                } else if (user.equals("subscriber")) {
+                        System.out.println("Loading subscriber table");
+                        if (SharedController.smfc != null) {
+                            System.out.println("SubscriberTable is initialized");
+                            SharedController.smfc.loadBookDetails(list);
+                        } else {
+                            System.out.println("SubscriberTable is null");
+                        }
                 }
             } else {
                 System.out.println("Error in parsing book list");

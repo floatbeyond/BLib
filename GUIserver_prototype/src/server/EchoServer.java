@@ -54,53 +54,59 @@ public class EchoServer extends AbstractServer
 	
 	
 	public void handleMessageFromClient(Object msg, ConnectionToClient client) {
-		System.out.println("Message received: " + msg + " from " + client);
+		//System.out.println("Message received: " + msg + " from " + client);
     // ccc = InstanceManager.getClientConnectedController();
     
 		  if (msg instanceof ServerMessage) {
         ServerMessage serverMessage = (ServerMessage) msg;
+        String user = serverMessage.getUser();
         String type = serverMessage.getType();
         Object data = serverMessage.getData();
+
+        System.out.println("Received message type: " + type + " from user: " + user);
 	
         try {
           switch (type) {
             case "login" : {
               System.out.println("login");
-              Logic.userLogin((int) data, client);
+              Logic.userLogin(user, (int) data, client);
+              break;
             }
             case "updateSubscriber": {
               System.out.println("updateSubscriber");
-              Logic.updateSubscriberDetails(client);
+              Logic.updateSubscriberDetails(user, client);
               break;
             } case "showSubscribersTable": {
               System.out.println("showSubscribersTable");
-              Logic.showSubscribersTable(client);
+              Logic.showSubscribersTable(user, client);
               break;
             } case "sendSubscriber": {
               System.out.println("sendSubscriber");
-              Logic.specificSubscriber(Integer.parseInt(data.toString()), client);
+              Logic.specificSubscriber(user, Integer.parseInt(data.toString()), client);
               break;
             } case "sendSearchedBooks": {
               String searchCriteria = (String) data;
               String[] parts = searchCriteria.split(":", 2);
               String searchType = parts[0];
               String searchText = parts[1];
+              // print search type and text
+              System.out.println("Search type: " + searchType + " Search text: " + searchText);
               System.out.println("sendSearchedBooks");
-              Logic.sendSearchedBooks(searchType, searchText, client);
+              Logic.sendSearchedBooks(user, searchType, searchText, client);
               break;
             } case "newBorrow": {
               System.out.println("newBorrow");
-              Logic.addBorrow(client);
+              Logic.addBorrow(user, client);
               break;
             } case "connect": {
-              Logic.connect(client);
+              Logic.connect(user, client);
               break;
             } case "disconnect": {
-              Logic.disconnect(client);
+              Logic.disconnect(user, client);
               break;
             } default: {
               System.out.println("Invalid command");
-              MessageUtils.sendResponseToClient("Error", "Invalid command", client);
+              MessageUtils.sendResponseToClient(user, "Error", "Invalid command", client);
               break;
             }
           }

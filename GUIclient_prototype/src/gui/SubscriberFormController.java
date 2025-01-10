@@ -79,7 +79,7 @@ public class SubscriberFormController {
 	public void getSaveBtn(ActionEvent event) throws Exception {
 		try {
 			// ClientUI.cc.accept("connect");
-			MessageUtils.sendMessage(ClientUI.cc, "connect", null);
+			MessageUtils.sendMessage(ClientUI.cc, "subscriber", "connect", null);
 			if (ClientUI.cc.getConnectionStatusFlag() == 1) {
 				int id = Integer.valueOf(txtID.getText());
 				String name = txtName.getText();
@@ -100,7 +100,7 @@ public class SubscriberFormController {
 				if (!phoneNumber.equals(s.getSub_phone_num()) || !email.equals(s.getSub_email())) {
 					s = new Subscriber(id, name, status, phoneNumber, email, s.getSub_penalties(), s.getSub_freeze(), s.getSub_joined(), s.getSub_expiration());
 					// ClientUI.cc.accept("updateSubscriber " + s);
-					MessageUtils.sendMessage(ClientUI.cc, "updateSubscriber", s);
+					MessageUtils.sendMessage(ClientUI.cc, "subscriber", "updateSubscriber", s);
 					System.out.println("ID: "+ id);
 					// displayMessage("Subscriber updated!");
 				} else {
