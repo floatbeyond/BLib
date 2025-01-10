@@ -34,14 +34,61 @@ public class mysqlConnection {
 			InstanceManager.setDbConnection(conn);
             System.out.println("SQL connection succeed");
             return conn;
-     	} catch (SQLException ex) 
-     	    {/* handle any errors*/
+     	} catch (SQLException ex) {
+			/* handle any errors*/
             System.out.println("SQLException: " + ex.getMessage());
             System.out.println("SQLState: " + ex.getSQLState());
             System.out.println("VendorError: " + ex.getErrorCode());
             return null;
-            }
+        }
    	}
+
+	/**
+	 * check if the user exists in the DB
+	 * get - id(PK)
+	 * return - true if exists in DB otherwise false
+	 */
+
+	public static Object userLogin(Connection conn, int userId) {
+		// Check librarians first
+		String librarianQuery = "SELECT * FROM librarians WHERE LibID = ?";
+		try (PreparedStatement stmt = conn.prepareStatement(librarianQuery)) {
+			stmt.setInt(1, userId);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				return new Librarian(
+					rs.getInt("LibID"), 
+					rs.getString("Name")
+				);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		// Check subscribers next
+		String subscriberQuery = "SELECT * FROM subscribers WHERE SubID = ?";
+		try (PreparedStatement stmt = conn.prepareStatement(subscriberQuery)) {
+			stmt.setInt(1, userId);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				return new Subscriber(
+					rs.getInt("SubID"), 
+					rs.getString("Name"), 
+					rs.getString("Status"), 
+					rs.getString("PhoneNumber"), 
+					rs.getString("Email"),
+					rs.getInt("Penalties"),
+					rs.getDate("FreezeUntil"),
+					rs.getDate("Joined"),
+					rs.getDate("Expiration")
+				);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
 	
 	// show to user all the subscribers in the DB
 	public static ArrayList<Subscriber> getSubscribers(Connection conn) {

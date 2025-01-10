@@ -21,8 +21,8 @@ public class Logic {
     // Login
 
     public static void userLogin(int userId, ConnectionToClient client) {
-        boolean success = mysqlConnection.userLogin(conn, userId);
-        MessageUtils.sendResponseToClient("LoginStatus", success ? "Login successful." : "ERROR: Invalid username or password.", client);
+        Object user = mysqlConnection.userLogin(conn, userId);
+        MessageUtils.sendResponseToClient("LoginStatus", user, client);
     }
 
     // Subscriber

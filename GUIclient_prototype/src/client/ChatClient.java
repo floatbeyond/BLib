@@ -7,12 +7,10 @@ package client;
 import ocsf.client.*;
 import common.ChatIF;
 import common.Subscriber;
-import common.Librarian;
 import common.ServerMessage;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.List;
 
 @SuppressWarnings("unchecked")
 
@@ -89,6 +87,10 @@ public class ChatClient extends AbstractClient
                   // print book list
                   System.out.println("ChatClient: Received book list");
                   Logic.parseBookList((ArrayList<Object>) data);
+                  break;
+              case "LoginStatus":
+                  // add logic
+                  Logic.parseLogin(data);
                   break;
               case "UpdateStatus":
                   Logic.updateSubscriberStatus((String) data);

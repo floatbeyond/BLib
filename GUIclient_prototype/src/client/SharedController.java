@@ -4,6 +4,7 @@ import gui.SubscribersTableController;
 import gui.ClientPortController;
 import gui.LandingWindowController;
 import gui.SubscriberFormController;
+import gui.LoginWindowController;
 import common.Subscriber;
 import common.Librarian;
 
@@ -14,6 +15,7 @@ public class SharedController {
     public static ClientPortController cpc;
     public static SubscriberFormController sfc;
     public static LandingWindowController lwc;
+    public static LoginWindowController logwc;
 
     // Setters and getters
  
@@ -65,6 +67,13 @@ public class SharedController {
       return lwc;
     }
 
+    public static void setLoginWindowController(LoginWindowController controller) {
+      logwc = controller;
+    }
+
+    public static LoginWindowController getLoginWindowController() {
+      return logwc;
+    }
 
 }
 
