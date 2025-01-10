@@ -23,6 +23,13 @@
     -fx-font-size: 14px;
 }
 
+#txtReturnDate {
+    -fx-background-image: url('dateIcon.png');
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: right center;
+    -fx-padding: 5px 30px 5px 5px; /* Adjust padding to make space for the icon */
+}
+
 .label {
     -fx-text-fill: #01579b;
     -fx-font-size: 14px;
