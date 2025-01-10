@@ -6,7 +6,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+<<<<<<< HEAD
 import javafx.scene.control.ComboBox;
+=======
+>>>>>>> 79059ca (PersonalDetails+DataLogs)
 import javafx.scene.control.ListView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -14,28 +17,40 @@ import javafx.stage.WindowEvent;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+<<<<<<< HEAD
 import java.util.ArrayList;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
+=======
+import java.util.List;
+
+>>>>>>> 79059ca (PersonalDetails+DataLogs)
 
 import client.ClientUI;
 
 public class SubscriberLogsController {
 	
 	@FXML private Button btnBack = null;
+<<<<<<< HEAD
     @FXML private ListView<String> listViewLogs;
     @FXML private ComboBox<Month> monthComboBox;
     @FXML private Button filterButton;
 
     private List<DataLogs> allDataLogs;
+=======
+    @FXML private ListView<String> listViewLogs; // Add this line
+>>>>>>> 79059ca (PersonalDetails+DataLogs)
 
 
     // Method to populate the ListView with data logs
     public void showDataLogs(List<DataLogs> dataLogs) {
+<<<<<<< HEAD
         this.allDataLogs = dataLogs; // Store all logs
+=======
+>>>>>>> 79059ca (PersonalDetails+DataLogs)
         ObservableList<String> items = FXCollections.observableArrayList();
         for (DataLogs log : dataLogs) {
             items.add(log.toString());
@@ -43,6 +58,7 @@ public class SubscriberLogsController {
         listViewLogs.setItems(items);
     }
 
+<<<<<<< HEAD
      // Method to filter logs by selected month
     @FXML
     public void filterLogsByMonth() {
@@ -58,6 +74,8 @@ public class SubscriberLogsController {
         }
     }
 
+=======
+>>>>>>> 79059ca (PersonalDetails+DataLogs)
      public void goBackBtn(ActionEvent event) throws Exception {
         System.out.println("goBackBtn clicked");
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/MainFrame.fxml"));

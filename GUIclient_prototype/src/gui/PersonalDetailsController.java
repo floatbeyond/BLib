@@ -1,6 +1,10 @@
 package gui;
 
 import client.ClientUI;
+<<<<<<< HEAD
+=======
+import common.MessageUtils;
+>>>>>>> 79059ca (PersonalDetails+DataLogs)
 import common.Subscriber;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,6 +18,11 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import java.sql.Date;
+<<<<<<< HEAD
+=======
+import java.text.SimpleDateFormat;
+
+>>>>>>> 79059ca (PersonalDetails+DataLogs)
 
 
 public class PersonalDetailsController {
@@ -52,11 +61,33 @@ public class PersonalDetailsController {
 		this.txtName.setEditable(false);
 		this.txtPNumber.setText(s.getSub_phone_num());
 		this.txtEmail.setText(s.getSub_email());
+<<<<<<< HEAD
         this.txtJoinDate.setText(s.getSub_joined().toString());
 		this.txtExDate.setText(s.getSub_expiration().toString());
         this.txtNumBookBorrowed.setText(String.valueOf(s.getSub_num_books_borrowed()));
         this.txtNumBookOrdered.setText(String.valueOf(s.getSub_num_books_ordered()));
 	}
+=======
+		// Convert Date to String
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		this.txtJoinDate.setText(dateFormat.format(s.getSub_joined()));
+		this.txtExDate.setText(dateFormat.format(s.getSub_expiration()));
+
+
+		MessageUtils.sendMessage(ClientUI.cc, "subscriber","sendBooksInOrderCount", s.getSub_id());
+		MessageUtils.sendMessage(ClientUI.cc, "subscriber","sendBooksInBorrowCount", s.getSub_id());
+    }
+
+    // Method to handle the response from the server for books in order count
+    public void handleBooksInOrderCountResponse(int count) {
+        this.txtNumBookOrdered.setText(String.valueOf(count));
+    }
+
+    // Method to handle the response from the server for borrowing count
+    public void handleBooksInBorrowCountResponse(int count) {
+        this.txtNumBookBorrowed.setText(String.valueOf(count));
+    }
+>>>>>>> 79059ca (PersonalDetails+DataLogs)
 
 
     public void goBackBtn(ActionEvent event) throws Exception {
@@ -95,9 +126,12 @@ public class PersonalDetailsController {
 				String email = txtEmail.getText();
                 Date joinDate = Date.valueOf(txtJoinDate.getText());
                 Date exDate = Date.valueOf(txtExDate.getText());
+<<<<<<< HEAD
                 int numBookBorrowed = Integer.valueOf(txtNumBookBorrowed.getText());
                 int numBookOrdered = Integer.valueOf(txtNumBookOrdered.getText());
 
+=======
+>>>>>>> 79059ca (PersonalDetails+DataLogs)
 
 				if (!isValidPhoneNumber(phoneNumber)) {
 					displayMessage("Invalid phone number");
@@ -110,7 +144,11 @@ public class PersonalDetailsController {
 				}
 
 				if (!phoneNumber.equals(s.getSub_phone_num()) || !email.equals(s.getSub_email())) {
+<<<<<<< HEAD
 					s = new Subscriber(id, name, s.getSub_status(), phoneNumber, email, s.getSub_penalties(), s.getSub_freeze(), joinDate, exDate);//לא תואם לקונסטרקטור של מנוי צריך להחליט איזה ממבר יש למנוי
+=======
+					s = new Subscriber(id, name,s.getSub_status(), phoneNumber, email,s.getSub_penalties(),s.getSub_freeze(), joinDate, exDate);
+>>>>>>> 79059ca (PersonalDetails+DataLogs)
 					ClientUI.cc.accept("change "+ s.toString());
 					System.out.println("ID: "+ id);
 					displayMessage("Subscriber updated!");

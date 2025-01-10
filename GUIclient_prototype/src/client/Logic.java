@@ -12,6 +12,7 @@ import javafx.application.Platform;
 // import gui.LandingWindowController;
 // import gui.SubscriberFormController;
 import common.Subscriber;
+import gui.PersonalDetailsController;
 import common.BookCopy;
 import common.Librarian;
 
@@ -71,6 +72,28 @@ public class Logic {
         SharedController.sfc.displayMessage(status);
     }
 
+    // Method to handle the response for books in order count
+    public static void BooksInOrderCountResponse(int count) {
+        PersonalDetailsController controller = SharedController.getPersonalDetailsController();
+        if (controller != null) {
+            controller.handleBooksInOrderCountResponse(count);
+            System.out.println("Books in order count: " + count);
+        } else {
+            System.out.println("PersonalDetailsController is null");
+        }
+    }
+
+    // Method to handle the response for books in borrow count
+    public static void BooksInBorrowCountResponse(int count) {
+        PersonalDetailsController controller = SharedController.getPersonalDetailsController();
+        if (controller != null) {
+            controller.handleBooksInBorrowCountResponse(count);
+            System.out.println("Books in borrow count: " + count);
+        } else {
+            System.out.println("PersonalDetailsController is null");
+        }
+    }
+
   
     // Book
 
@@ -111,8 +134,6 @@ public class Logic {
             }
         });
     }
-
-
 
 
     // Prints

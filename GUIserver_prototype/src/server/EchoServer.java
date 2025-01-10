@@ -96,7 +96,13 @@ public class EchoServer extends AbstractServer
             } case "disconnect": {
               Logic.disconnect(user, client);
               break;
-            } default: {
+            }case "sendBooksInOrderCount": {
+              Logic.getBooksInOrderCount(user,(int) data, client);
+              break;
+            } case "sendBooksInBorrowCount":
+              Logic.getBooksInBorrowCount(user,(int) data, client);
+              break;
+            default: {
               MessageUtils.sendResponseToClient(user, "Error", "Invalid command", client);
               break;
             }

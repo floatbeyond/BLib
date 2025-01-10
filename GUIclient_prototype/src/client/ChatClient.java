@@ -106,6 +106,12 @@ public class ChatClient extends AbstractClient
               case "Error":
                   Logic.printError((String) data);
                   break;
+              case "BooksInOrderCount":
+                  Logic.BooksInOrderCountResponse((Integer) data);
+                  break;
+              case "BooksInBorrowCount":
+                  Logic.BooksInBorrowCountResponse((Integer) data);
+                  break;
               default:
                   System.out.println("Unknown message type: " + type);
                   break;

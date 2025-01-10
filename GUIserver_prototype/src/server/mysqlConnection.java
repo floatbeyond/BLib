@@ -291,7 +291,11 @@ public class mysqlConnection {
 					rs.getString("Action"),
 					rs.getDate("Timestamp")
 				);
+<<<<<<< HEAD
 				dataLogs.add(s);
+=======
+				dataLogs.add(log);
+>>>>>>> 79059ca (PersonalDetails+DataLogs)
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -299,6 +303,37 @@ public class mysqlConnection {
 		
 		return dataLogs;
 	}
+<<<<<<< HEAD
+=======
+
+	public static int getBooksInOrderCount(Connection conn, int subscriberId) {
+        String query = "SELECT COUNT(*) FROM orderrecord WHERE status = 'In Order' AND subscriber_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, subscriberId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public static int getBooksInBorrowCount(Connection conn, int subscriberId) {
+        String query = "SELECT COUNT(*) FROM borrowingrecord WHERE status = 'Borrowed' AND subscriber_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, subscriberId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+>>>>>>> 79059ca (PersonalDetails+DataLogs)
 	
 
 }

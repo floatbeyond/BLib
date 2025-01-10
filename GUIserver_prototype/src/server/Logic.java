@@ -8,8 +8,12 @@ import java.util.List;
 import common.BorrowingRecord;
 import common.Subscriber;
 <<<<<<< HEAD
+<<<<<<< HEAD
 import common.DataLogs; 
 =======
+=======
+import common.DataLogs; 
+>>>>>>> 79059ca (PersonalDetails+DataLogs)
 import common.BookCopy;
 >>>>>>> 1667a39 (Connected login page to librarian main frame)
 import ocsf.server.ConnectionToClient;
@@ -55,10 +59,32 @@ public class Logic {
         MessageUtils.sendResponseToClient(user, "SubscriberList", table, client);
     }
     
+<<<<<<< HEAD
      public static void showDataLogs(ConnectionToClient client) {
         ArrayList<DataLogs> dataLogs = mysqlConnection.getDataLogs(conn);
         MessageUtils.sendResponseToClient("DataLogsList", dataLogs, client);
     }
+=======
+     public static void showDataLogs(String user, ConnectionToClient client) {
+        ArrayList<DataLogs> dataLogs = mysqlConnection.getDataLogs(conn);
+        MessageUtils.sendResponseToClient(user,"DataLogsList", dataLogs, client);
+    }
+
+      // Method to get the count of books in order for a specific subscriber and send it to the client
+      public static void getBooksInOrderCount(String user, int subscriberId, ConnectionToClient client) {
+        int count = mysqlConnection.getBooksInOrderCount(conn, subscriberId);
+        MessageUtils.sendResponseToClient(user, "BooksInOrderCount", count, client);
+    }
+
+    // Method to get the count of books currently being borrowed for a specific subscriber and send it to the client
+    public static void getBooksInBorrowCount(String user, int subscriberId, ConnectionToClient client) {
+        int count = mysqlConnection.getBooksInBorrowCount(conn, subscriberId);
+        MessageUtils.sendResponseToClient(user, "BooksInBorrowCount", count, client);
+    }
+
+
+
+>>>>>>> 79059ca (PersonalDetails+DataLogs)
 
 
     // Books
@@ -92,18 +118,6 @@ public class Logic {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
     // Client connection
 
     public static void connect(String user, ConnectionToClient client) {
@@ -119,6 +133,7 @@ public class Logic {
         ccc.loadClientDetails("null", "Disconnected");
         MessageUtils.sendResponseToClient(user, "Print", "Server disconnected", client);
     }
+<<<<<<< HEAD
 
     
 }
@@ -126,4 +141,8 @@ public class Logic {
 
 
 
+=======
+   
+>>>>>>> 79059ca (PersonalDetails+DataLogs)
 }
+

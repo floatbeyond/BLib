@@ -10,6 +10,7 @@ import gui.controllers.SubscriberFormController;
 import gui.controllers.SubscriberMainFrameController;
 import gui.controllers.SubscribersTableController;
 import gui.controllers.ScanWindowController;
+import gui.PersonalDetailsController;
 import gui.controllers.BorrowFormController;
 
 public class SharedController {
@@ -33,7 +34,11 @@ public class SharedController {
     public static BorrowFormController bfc;
     public static ScanWindowController swc;
     private static BookCopy bc;
+<<<<<<< HEAD
 >>>>>>> 1667a39 (Connected login page to librarian main frame)
+=======
+    private static PersonalDetailsController pdc;
+>>>>>>> 79059ca (PersonalDetails+DataLogs)
 
     // Setters and getters
  
@@ -91,6 +96,9 @@ public class SharedController {
 
     public static void setScanWindowController(ScanWindowController controller) { swc = controller; }
     public static ScanWindowController getScanWindowController() { return swc; }
+    
+    public static void setPersonalDetailsController(PersonalDetailsController controller) { pdc = controller; }
+    public static PersonalDetailsController getPersonalDetailsController() { return pdc; }
 
 
 }

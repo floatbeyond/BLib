@@ -1,6 +1,10 @@
 package common;
 
 import java.util.Date;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 79059ca (PersonalDetails+DataLogs)
 import java.io.Serializable;
 
 public class DataLogs implements Serializable {
