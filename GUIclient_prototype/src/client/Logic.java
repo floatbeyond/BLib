@@ -5,14 +5,21 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.application.Platform;
 
-import gui.SubscribersTableController;
-import gui.ClientPortController;
+// import gui.SubscribersTableController;
+// import gui.ClientPortController;
+// import gui.LandingWindowController;
+// import gui.SubscriberFormController;
 import common.Subscriber;
 
 public class Logic {
-    public static SubscribersTableController stc = SharedController.getSubscribersTableController();
-    public static ClientPortController cpc = SharedController.getClientPortController();
+    // public static SubscribersTableController stc = SharedController.getSubscribersTableController();
+    // public static ClientPortController cpc = SharedController.getClientPortController();
+    // public static SubscriberFormController sfc = SharedController.getSubscriberFormController();
+    // public static LandingWindowController lwc = SharedController.getLandingWindowController();
+
+    // Subscriber
 
     public static void parseSubscriber(Subscriber receivedSubscriber) {
         SharedController.setSubscriber(receivedSubscriber);
@@ -33,6 +40,41 @@ public class Logic {
             }
         }
     }
+
+    public static void updateSubscriberStatus(String status) {
+        SharedController.sfc.displayMessage(status);
+    }
+
+
+    // Book
+
+    public static void parseBookList(List<Object> list) {
+        // print book list
+        System.out.println("parseBookList method called");
+        
+        // Print the size of the list
+        System.out.println("List size: " + list.size());
+
+        Platform.runLater(() -> {
+            if (!list.isEmpty() && list.stream().allMatch(item -> item instanceof Object)) {
+                System.out.println("Loading table");
+                if (SharedController.lwc != null) {
+                    System.out.println("SearchBookTable is initialized");
+                    SharedController.lwc.loadBookDetails(list);
+                } else {
+                    System.out.println("SearchBookTable is null");
+                }
+            } else {
+                System.out.println("Error in parsing book list");
+                SharedController.lwc.noBooksFound();
+            }
+        });
+    }
+
+
+
+
+    // Prints
 
     public static void print(String message) {
         System.out.println("Received message: " + message);

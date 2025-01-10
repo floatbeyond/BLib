@@ -11,6 +11,7 @@ import common.ServerMessage;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("unchecked")
 
@@ -83,6 +84,14 @@ public class ChatClient extends AbstractClient
               case "SubscriberList":
                   Logic.parseSubscriberList((ArrayList<Subscriber>) data);
                   break;
+              case "BookList":
+                  // print book list
+                  System.out.println("ChatClient: Received book list");
+                  Logic.parseBookList((ArrayList<Object>) data);
+                  break;
+              case "UpdateStatus":
+                  Logic.updateSubscriberStatus((String) data);
+                  break;
               case "Print":
                   Logic.print((String) data);
                   break;
@@ -103,18 +112,23 @@ public class ChatClient extends AbstractClient
    *
    * @param message The message from the UI.    
    */
-  public void handleMessageFromClientUI(String message)  
+  public void handleMessageFromClientUI(Object message)  
   {
+    System.out.println("ChatClient: Sending to server: " + message);
+
+    if (message instanceof ServerMessage) {
+      ServerMessage serverMessage = (ServerMessage) message;
+      String type = serverMessage.getType();
+      // Object data = serverMessage.getData(); -- not needed atm
 	    try {
-        System.out.println("ChatClient: Sending to server: " + message);
         openConnection();
         connectionStatusFlag = 1; // Set flag to 1 for success
         // print client connected
         System.out.println("ChatClient: Connection successful");
 
-        sendToServer(message);
+        sendToServer(serverMessage);
 
-        if (message.equals("disconnect")) {
+        if (type == "disconnect" || type == "quit") {
           closeConnection();
           connectionStatusFlag = 0; // Set flag to 0 for failure
           // print client disconnected
@@ -147,6 +161,9 @@ public class ChatClient extends AbstractClient
             }  
           e.printStackTrace();
       }
+    } else {
+      System.out.println("ChatClient: Unknown message format");
+    }
   }
 
   public int getConnectionStatusFlag() {
