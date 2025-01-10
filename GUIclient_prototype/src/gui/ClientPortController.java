@@ -2,6 +2,8 @@ package gui;
 
 import client.ClientController;
 import client.ClientUI;
+import client.SharedController;
+import common.MessageUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -42,12 +44,20 @@ public class ClientPortController  {
 				System.out.println("IP at Done: " + ip);
 				ClientUI clientUI = ClientUI.getInstance();
 				clientUI.startClient(ip);
-				ClientUI.cc.accept("connect");
+				// ClientUI.cc.accept("connect");
+				MessageUtils.sendMessage(ClientUI.cc, "connect", null);
 				if (ClientUI.cc.getConnectionStatusFlag() == 1) {
 					((Node) event.getSource()).getScene().getWindow().hide();
 					// Load and display MainFrame GUI
-					FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/MainFrame.fxml"));
+					FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/LandingWindow.fxml"));
 					Pane root = loader.load();
+					LandingWindowController landingWindowController = loader.getController();
+                    if (landingWindowController == null) {
+                        System.out.println("landingWindowController is null after loading FXML");
+                    } else {
+                        System.out.println("landingWindowController initialized in Show method");
+                        SharedController.setLandingWindowController(landingWindowController);
+                    }
 					Stage stage = new Stage();
 					Scene scene = new Scene(root);
 					stage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
@@ -55,7 +65,6 @@ public class ClientPortController  {
 							// print message to console
 							System.out.println("clientui.chat: " + ClientUI.chat);
                 			if (ClientUI.chat != null) {
-								ClientUI.cc.accept("disconnect");
 								ClientUI.chat.quit();
 							}
 						} catch (Exception e) {

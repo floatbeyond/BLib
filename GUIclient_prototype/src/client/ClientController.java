@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import common.ChatIF;
 // import gui.*;
+import common.ServerMessage;
 
 
 /**
@@ -63,9 +64,10 @@ public class ClientController implements ChatIF
    * received, it sends it to the client's message handler.
    */
 
-public void accept(String str) {
-    System.out.println("ClientController: Sending message: " + str);
-    client.handleMessageFromClientUI(str);
+public void accept(Object message) {
+    ServerMessage serverMessage = (ServerMessage) message;
+    System.out.println("ClientController: Sending message: " + message.toString());
+    client.handleMessageFromClientUI(serverMessage);
     System.out.println("ClientController: Message sent");
 }
 

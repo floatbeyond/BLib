@@ -35,8 +35,8 @@ Label {
 
 #messageLabel {
     -fx-text-fill: #ff0000;
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-font-family: "Arial";
     -fx-effect: dropshadow(one-pass-box, black, 3, 2, 0, 0),
                 dropshadow(one-pass-box, black, 2, -2, 0, 0),
                 dropshadow(one-pass-box, black, 2, 0, 2, 0),

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="797.0" styleClass="anchor-pane" stylesheets="@LandingWindow.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.LandingWindowController">
+   <children>
+      <TextField fx:id="searchField" layoutX="191.0" layoutY="69.0" prefHeight="46.0" prefWidth="362.0" promptText="Search..." />
+      <MenuButton fx:id="menuButton" layoutX="116.0" layoutY="69.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="77.0" text="Title">
+        <items>
+            <MenuItem onAction="#handleMenuItemAction" text="Title" />
+            <MenuItem onAction="#handleMenuItemAction" text="Genre" />
+            <MenuItem onAction="#handleMenuItemAction" text="Description" />
+        </items>
+      </MenuButton>
+      <Button fx:id="searchButton" graphicTextGap="0.0" layoutX="507.0" layoutY="73.0" mnemonicParsing="false" onAction="#handleSearchAction" prefHeight="0.0" prefWidth="29.0">
+         <graphic>
+            <ImageView fx:id="searchIcon" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@search_magnifying_glass.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button fx:id="loginButton" layoutX="710.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleLoginAction" prefHeight="38.0" prefWidth="67.0" text="Login" />
+      <TableView fx:id="bookTable" layoutX="13.0" layoutY="167.0" prefHeight="364.0" prefWidth="768.0" visible="false">
+        <columns>
+            <TableColumn fx:id="bookNameColumn" prefWidth="125.0" text="Title" />
+            <TableColumn fx:id="authorColumn" prefWidth="125.0" text="Author" />
+            <TableColumn fx:id="genreColumn" prefWidth="125.0" text="Genre" />
+            <TableColumn fx:id="descriptionColumn" prefWidth="125.0" text="Description" />
+            <TableColumn fx:id="locationColumn" prefWidth="125.0" text="Location" />
+            <TableColumn fx:id="availabilityColumn" prefWidth="125.0" text="Availability" />
+         </columns>
+      </TableView>
+      <Label fx:id="copiedLabel" layoutX="253.0" layoutY="6.0" prefWidth="57.0" text="Copied!" visible="false" />
+      <Label fx:id="messageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="164.0" layoutY="118.0" prefHeight="46.0" prefWidth="396.0" />
+   </children>
+</AnchorPane>

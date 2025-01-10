@@ -5,7 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-
+import common.MessageUtils;
 import gui.ClientPortController;
 
 
@@ -40,7 +40,7 @@ public class ClientUI extends Application {
                         if (chat != null) {
                             // print cc
                             System.out.println("cc: " + cc);
-                            cc.accept("disconnect");
+                            MessageUtils.sendMessage(cc, "disconnect", null);
                             chat.quit();
                         }
                     } catch (Exception e) {
@@ -48,7 +48,7 @@ public class ClientUI extends Application {
                     }
                 }
             });
-            primaryStage.setTitle("Client");
+            primaryStage.setTitle("BLib");
             primaryStage.setScene(scene);
             primaryStage.setResizable(false);
             primaryStage.show();

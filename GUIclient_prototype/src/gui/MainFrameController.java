@@ -3,6 +3,7 @@ package gui;
 
 import client.ClientUI;
 import client.SharedController;
+import common.MessageUtils;
 import common.Subscriber;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -33,7 +34,7 @@ public class MainFrameController {
 
 	public void Find(ActionEvent event) throws Exception {
 		try {
-            ClientUI.cc.accept("connect");
+            MessageUtils.sendMessage(ClientUI.cc, "connect", null);
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
                 String id = getID();
                 System.out.println("ID entered: " + id);
@@ -46,7 +47,8 @@ public class MainFrameController {
                     displayMessage("ID number too long");
                 } else {
                     System.out.println("Calling ClientUI.cc.accept");
-                    ClientUI.cc.accept("sendSubscriber " + id);
+                    // ClientUI.cc.accept("sendSubscriber " + id);
+                    MessageUtils.sendMessage(ClientUI.cc, "sendSubscriber", id);
                     Subscriber foundSubscriber = SharedController.getSubscriber();
                     if(foundSubscriber == null) {
                         System.out.println("Subscriber ID Not Found");
@@ -64,6 +66,7 @@ public class MainFrameController {
                         Stage primaryStage = new Stage();
                         Pane root = loader.load();
                         SubscriberFormController subscriberFormController = loader.getController();
+                        SharedController.setSubscriberFormController(subscriberFormController);
                         if (subscriberFormController == null) {
                             System.out.println("subscriberFormController is null after loading FXML");
                         } else {
@@ -123,7 +126,7 @@ public class MainFrameController {
                 primaryStage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
                     try {
                         if (ClientUI.chat != null) {
-                            ClientUI.cc.accept("disconnect");
+                            MessageUtils.sendMessage(ClientUI.cc, "disconnect", null);
                             ClientUI.chat.quit();
                         }
                     } catch (Exception e) {
