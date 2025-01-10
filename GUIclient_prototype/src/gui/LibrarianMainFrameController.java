@@ -15,12 +15,12 @@ public class LibrarianMainFrameController {
     @FXML
     private void goShowSubscribers(ActionEvent event) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gui/ShowSubscribers.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gui/SubscribersTableForm.fxml"));
             Parent root = fxmlLoader.load();
             Stage stage = new Stage();
             stage.setTitle("Show Subscribers");
             Scene scene = new Scene(root);
-            scene.getStylesheets().add(getClass().getResource("/gui/ShowSubscribers.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("/gui/SubscribersTableForm.css").toExternalForm());
             stage.setScene(scene);
             stage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
                 try {
@@ -155,12 +155,12 @@ public class LibrarianMainFrameController {
     @FXML
     private void goLogOut(ActionEvent event) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gui/LogOut.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gui/LandingWindow.fxml"));
             Parent root = fxmlLoader.load();
             Stage stage = new Stage();
             stage.setTitle("Log Out");
             Scene scene = new Scene(root);
-            scene.getStylesheets().add(getClass().getResource("/gui/LogOut.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("/gui/LandingWindow.css").toExternalForm());
             stage.setScene(scene);
             stage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
                 try {
