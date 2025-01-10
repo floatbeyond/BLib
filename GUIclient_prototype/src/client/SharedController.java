@@ -5,9 +5,11 @@ import gui.ClientPortController;
 import gui.LandingWindowController;
 import gui.SubscriberFormController;
 import common.Subscriber;
+import common.Librarian;
 
 public class SharedController {
     private static Subscriber subscriber;
+    private static Librarian librarian;
     public static SubscribersTableController stc;
     public static ClientPortController cpc;
     public static SubscriberFormController sfc;
@@ -21,6 +23,14 @@ public class SharedController {
 
     public static Subscriber getSubscriber() {
         return subscriber;
+    }
+
+    public static void setLibrarian(Librarian lib) {
+        librarian = lib;
+    }
+
+    public static Librarian getLibrarian() {
+        return librarian;
     }
 
     public static void setSubscribersTableController(SubscribersTableController controller) {

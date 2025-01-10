@@ -18,6 +18,13 @@ public class Logic {
     private static BorrowingRecord br;
 
 
+    // Login
+
+    public static void userLogin(int userId, ConnectionToClient client) {
+        boolean success = mysqlConnection.userLogin(conn, userId);
+        MessageUtils.sendResponseToClient("LoginStatus", success ? "Login successful." : "ERROR: Invalid username or password.", client);
+    }
+
     // Subscriber
 
     public static void specificSubscriber(int subscriberId, ConnectionToClient client) {

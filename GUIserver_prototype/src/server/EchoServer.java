@@ -64,6 +64,10 @@ public class EchoServer extends AbstractServer
 	
         try {
           switch (type) {
+            case "login" : {
+              System.out.println("login");
+              Logic.userLogin(data, client);
+            }
             case "updateSubscriber": {
               System.out.println("updateSubscriber");
               Logic.updateSubscriberDetails(client);
