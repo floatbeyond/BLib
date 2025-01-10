@@ -7,6 +7,7 @@ package client;
 import ocsf.client.*;
 import common.ChatIF;
 import common.Subscriber;
+import common.Librarian;
 import common.ServerMessage;
 
 import java.io.*;

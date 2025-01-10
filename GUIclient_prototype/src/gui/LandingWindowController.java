@@ -217,27 +217,6 @@ public class LandingWindowController implements Initializable {
         return tempText.getLayoutBounds().getWidth();
     }
 
-    
-    public void handleSearchAction(ActionEvent event) {
-        String searchText = getSearch();
-        String selectedMenu = getMenu();
-        // Implement your search logic here
-        try {
-            MessageUtils.sendMessage(ClientUI.cc, "connect" , null);
-            if (ClientUI.cc.getConnectionStatusFlag() == 1) {
-                if (searchText.trim().isEmpty()) {
-                    displayMessage("Please enter a search term");
-                } else { 
-                    System.out.println("Searching for: " + searchText);
-                    System.out.println("Selected menu: " + selectedMenu);
-                    MessageUtils.sendMessage(ClientUI.cc, "sendSearchedBooks", selectedMenu + ":" + searchText);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }        
-    }
-
     public void loadBookDetails(List<Object> list) {
         // print
         System.out.println("Loading book details...");
@@ -268,6 +247,26 @@ public class LandingWindowController implements Initializable {
         });
     }
 
+    public void handleSearchAction(ActionEvent event) {
+        String searchText = getSearch();
+        String selectedMenu = getMenu();
+        // Implement your search logic here
+        try {
+            MessageUtils.sendMessage(ClientUI.cc, "connect" , null);
+            if (ClientUI.cc.getConnectionStatusFlag() == 1) {
+                if (searchText.trim().isEmpty()) {
+                    displayMessage("Please enter a search term");
+                } else { 
+                    System.out.println("Searching for: " + searchText);
+                    System.out.println("Selected menu: " + selectedMenu);
+                    MessageUtils.sendMessage(ClientUI.cc, "sendSearchedBooks", selectedMenu + ":" + searchText);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }        
+    }
+
     public void noBooksFound() {
         bookTable.setVisible(false);
         displayMessage("No books found");
@@ -275,10 +274,30 @@ public class LandingWindowController implements Initializable {
 
     public void handleLoginAction(ActionEvent event) {
         String idText = searchField.getText();
+        try {
+            MessageUtils.sendMessage(ClientUI.cc, "connect" , null);
+            if (ClientUI.cc.getConnectionStatusFlag() == 1) {
+                if (idText.trim().isEmpty()) {
+                    displayMessage("Please enter an ID");
+                } else if (idText.length() > 9 || !idText.matches("\\d+")){
+                    displayMessage("Please enter valid ID");
+                } else {
+                    System.out.println("Logging in with ID: " + idText);
+                    MessageUtils.sendMessage(ClientUI.cc, "login", idText);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         // Implement your search logic here
         // displayMessage(searchText);
         System.out.println("Searching for: " + idText);
     }
+
+    public void noMatchingId() {
+        displayMessage("No matching ID found");
+    }
+
 
     public void displayMessage(String message) {
         messageLabel.setText(message);

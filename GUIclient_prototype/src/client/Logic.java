@@ -12,12 +12,20 @@ import javafx.application.Platform;
 // import gui.LandingWindowController;
 // import gui.SubscriberFormController;
 import common.Subscriber;
+import common.Librarian;
 
 public class Logic {
     // public static SubscribersTableController stc = SharedController.getSubscribersTableController();
     // public static ClientPortController cpc = SharedController.getClientPortController();
     // public static SubscriberFormController sfc = SharedController.getSubscriberFormController();
     // public static LandingWindowController lwc = SharedController.getLandingWindowController();
+
+    // Librarian
+
+    public static void parseLibrarian(Librarian receivedLibrarian) {
+        SharedController.setLibrarian(receivedLibrarian);
+        System.out.println("Received Librarian: " + receivedLibrarian);
+    }
 
     // Subscriber
 
@@ -44,6 +52,8 @@ public class Logic {
     public static void updateSubscriberStatus(String status) {
         SharedController.sfc.displayMessage(status);
     }
+
+  
 
 
     // Book
