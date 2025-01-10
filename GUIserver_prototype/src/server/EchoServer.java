@@ -74,7 +74,15 @@ public class EchoServer extends AbstractServer
               break;
             } case "sendSubscriber": {
               System.out.println("sendSubscriber");
-              Logic.specificSubscriber("send", Integer.parseInt(data.toString()), client);
+              Logic.specificSubscriber(Integer.parseInt(data.toString()), client);
+              break;
+            } case "sendSearchedBooks": {
+              String searchCriteria = (String) data;
+              String[] parts = searchCriteria.split(":", 2);
+              String searchType = parts[0];
+              String searchText = parts[1];
+              System.out.println("sendSearchedBooks");
+              Logic.sendSearchedBooks(searchType, searchText, client);
               break;
             } case "newBorrow": {
               System.out.println("newBorrow");

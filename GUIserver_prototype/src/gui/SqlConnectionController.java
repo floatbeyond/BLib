@@ -59,7 +59,7 @@ public class SqlConnectionController {
             if (connection == null) {
                 displayMessage("Could not connect to DB");
             } else {
-                InstanceManager.setDbConnection(connection);
+                // InstanceManager.setDbConnection(connection);
                 ((Parent)event.getSource()).getScene().getWindow().hide(); //hiding primary window
                 // Load and display the Server Port GUI
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/ServerPort.fxml"));

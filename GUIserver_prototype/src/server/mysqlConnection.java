@@ -2,6 +2,7 @@ package server;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.List;
 
 import common.Subscriber;
 import common.Librarian;
@@ -119,6 +120,53 @@ public class mysqlConnection {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public static List<Object> searchBooks(Connection conn, String searchType, String searchText) {
+		List<Object> results = new ArrayList<>();
+		String bookQuery = "SELECT * FROM books WHERE " + searchType + " LIKE ?";
+		String bookCopyQuery = "SELECT * FROM bookcopies WHERE BookID = ?";
+
+		try (PreparedStatement bookStmt = conn.prepareStatement(bookQuery);
+			PreparedStatement bookCopyStmt = conn.prepareStatement(bookCopyQuery)) {
+
+			// Set the search text for the book query
+			bookStmt.setString(1, "%" + searchText + "%");
+			ResultSet bookRs = bookStmt.executeQuery();
+
+			// Iterate through the result set of the book query
+			while (bookRs.next()) {
+				int bookId = bookRs.getInt("BookID");
+				String title = bookRs.getString("Title");
+				String author = bookRs.getString("Author");
+				String genre = bookRs.getString("Genre");
+				String description = bookRs.getString("Description");
+
+				// Create a Book object and add it to the results list
+				Book book = new Book(bookId, title, author, genre, description);
+				results.add(book);
+
+				// Set the BookID for the book copy query
+				bookCopyStmt.setInt(1, bookId);
+				ResultSet bookCopyRs = bookCopyStmt.executeQuery();
+
+				// Iterate through the result set of the book copy query
+				while (bookCopyRs.next()) {
+					int copyId = bookCopyRs.getInt("CopyID");
+					String location = bookCopyRs.getString("Location");
+					String status = bookCopyRs.getString("Status");
+
+					// Create a BookCopy object and add it to the results list
+					BookCopy bookCopy = new BookCopy(copyId, bookId, location, status);
+					results.add(bookCopy);
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return results;
 	}
 	
 
