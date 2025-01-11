@@ -1,13 +1,16 @@
 package client;
 
-import gui.SubscribersTableController;
-import gui.ClientPortController;
-import gui.LandingWindowController;
-import gui.SubscriberFormController;
-import gui.LoginWindowController;
 import common.Subscriber;
 import common.Librarian;
-import gui.SubscriberMainFrameController;
+import common.BookCopy;
+import gui.controllers.ClientPortController;
+import gui.controllers.LandingWindowController;
+import gui.controllers.LoginWindowController;
+import gui.controllers.SubscriberFormController;
+import gui.controllers.SubscriberMainFrameController;
+import gui.controllers.SubscribersTableController;
+import gui.controllers.ScanWindowController;
+import gui.controllers.BorrowFormController;
 
 public class SharedController {
     private static Subscriber subscriber;
@@ -18,6 +21,9 @@ public class SharedController {
     public static LandingWindowController lwc;
     public static LoginWindowController logwc;
     public static SubscriberMainFrameController smfc;
+    public static BorrowFormController bfc;
+    public static ScanWindowController swc;
+    private static BookCopy bc;
 
     // Setters and getters
  
@@ -26,6 +32,9 @@ public class SharedController {
 
     public static void setLibrarian(Librarian lib) { librarian = lib; }
     public static Librarian getLibrarian() { return librarian; }
+
+    public static void setBookCopy(BookCopy bc) { SharedController.bc = bc; }
+    public static BookCopy getBookCopy() { return bc; }
 
     public static void setSubscribersTableController(SubscribersTableController controller) { stc = controller; }
     public static SubscribersTableController getSubscribersTableController() { return stc; }
@@ -44,6 +53,12 @@ public class SharedController {
 
     public static void setSubscriberMainFrameController(SubscriberMainFrameController controller) { smfc = controller; }
     public static SubscriberMainFrameController getSubscriberMainFrameController() { return smfc; }
+
+    public static void setBorrowFormController(BorrowFormController controller) { bfc = controller; }
+    public static BorrowFormController getBorrowFormController() { return bfc; }
+
+    public static void setScanWindowController(ScanWindowController controller) { swc = controller; }
+    public static ScanWindowController getScanWindowController() { return swc; }
 
 
 }
