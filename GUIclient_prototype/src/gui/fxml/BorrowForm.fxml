@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="searchHome" prefHeight="349.0" prefWidth="344.0" styleClass="anchor-pane" stylesheets="@../css/BorrowForm.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.BorrowFormController">
+   <children>
+      <Button fx:id="btnBorrow" layoutX="237.0" layoutY="295.0" mnemonicParsing="false" onAction="#handleBorrowAction" styleClass="button" text="Borrow" />
+      <Button fx:id="btnBack" layoutX="73.0" layoutY="295.0" mnemonicParsing="false" onAction="#goBackBtn" styleClass="button" text="Back" />
+      <TextField id="lblID" fx:id="txtID" layoutX="114.0" layoutY="110.0" prefWidth="180.0" styleClass="text-field" />
+      <Label id="lblID" layoutX="22.0" layoutY="114.0" styleClass="label" text="SubscriberID" />
+      <TextField id="lblCopyId" fx:id="txtCopyId" layoutX="114.0" layoutY="162.0" prefWidth="180.0" styleClass="text-field" />
+      <Label id="lblCopyId" layoutX="15.0" layoutY="166.0" styleClass="label" text="CopyId Book:" />
+      <TextField id="lblReturnDate" fx:id="txtReturnDate" layoutX="114.0" layoutY="206.0" prefWidth="180.0" styleClass="text-field" />
+      <Label id="lblReturnDate" layoutX="23.0" layoutY="210.0" styleClass="label" text="Return Date:" />
+      <Label fx:id="messageLabel" alignment="CENTER" layoutX="34.0" layoutY="255.0" prefHeight="40.0" prefWidth="275.0" styleClass="label" />
+      <Label id="lblBorrowBook" layoutX="125.0" layoutY="55.0" prefHeight="17.0" prefWidth="122.0" styleClass="label" text="Borrow Book" />
+      <ImageView fitHeight="30.0" fitWidth="33.0" layoutX="260.0" layoutY="207.0">
+         <image>
+            <Image url="@../images/dateIcon.jpg" />
+         </image>
+      </ImageView>
+      <Button fx:id="scanButton" layoutX="281.0" layoutY="14.0" mnemonicParsing="false" onAction="#showScanWindow" prefHeight="40.0" prefWidth="49.0" styleClass="button" text="Scan" />
+   </children>
+</AnchorPane>

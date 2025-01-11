@@ -63,25 +63,20 @@ public class EchoServer extends AbstractServer
         String type = serverMessage.getType();
         Object data = serverMessage.getData();
 
-        System.out.println("Received message type: " + type + " from user: " + user);
-	
+        System.out.println("Received message, Case: " + type + " from user: " + user);
         try {
           switch (type) {
             case "login" : {
-              System.out.println("login");
               Logic.userLogin(user, (int) data, client);
               break;
             }
             case "updateSubscriber": {
-              System.out.println("updateSubscriber");
               Logic.updateSubscriberDetails(user, client);
               break;
             } case "showSubscribersTable": {
-              System.out.println("showSubscribersTable");
               Logic.showSubscribersTable(user, client);
               break;
             } case "sendSubscriber": {
-              System.out.println("sendSubscriber");
               Logic.specificSubscriber(user, Integer.parseInt(data.toString()), client);
               break;
             } case "sendSearchedBooks": {
@@ -90,13 +85,10 @@ public class EchoServer extends AbstractServer
               String searchType = parts[0];
               String searchText = parts[1];
               // print search type and text
-              System.out.println("Search type: " + searchType + " Search text: " + searchText);
-              System.out.println("sendSearchedBooks");
               Logic.sendSearchedBooks(user, searchType, searchText, client);
               break;
-            } case "newBorrow": {
-              System.out.println("newBorrow");
-              Logic.addBorrow(user, client);
+            } case "scanBookCopy":{
+              Logic.scan(user, type, Integer.parseInt(data.toString()), client);
               break;
             } case "connect": {
               Logic.connect(user, client);
@@ -105,7 +97,6 @@ public class EchoServer extends AbstractServer
               Logic.disconnect(user, client);
               break;
             } default: {
-              System.out.println("Invalid command");
               MessageUtils.sendResponseToClient(user, "Error", "Invalid command", client);
               break;
             }

@@ -1,13 +1,16 @@
 package client;
 
-import gui.SubscribersTableController;
-import gui.ClientPortController;
-import gui.LandingWindowController;
-import gui.SubscriberFormController;
-import gui.LoginWindowController;
 import common.Subscriber;
 import common.Librarian;
-import gui.SubscriberMainFrameController;
+import common.BookCopy;
+import gui.controllers.ClientPortController;
+import gui.controllers.LandingWindowController;
+import gui.controllers.LoginWindowController;
+import gui.controllers.SubscriberFormController;
+import gui.controllers.SubscriberMainFrameController;
+import gui.controllers.SubscribersTableController;
+import gui.controllers.ScanWindowController;
+import gui.controllers.BorrowFormController;
 
 public class SharedController {
     private static Subscriber subscriber;
@@ -24,7 +27,13 @@ public class SharedController {
 >>>>>>> 2270b72 (submainframecontrolller java and fxml)
 =======
     public static SubscriberMainFrameController smfc;
+<<<<<<< HEAD
 >>>>>>> 6b00fd9 (Connected login to subscriber main frame)
+=======
+    public static BorrowFormController bfc;
+    public static ScanWindowController swc;
+    private static BookCopy bc;
+>>>>>>> 1667a39 (Connected login page to librarian main frame)
 
     // Setters and getters
  
@@ -33,6 +42,9 @@ public class SharedController {
 
     public static void setLibrarian(Librarian lib) { librarian = lib; }
     public static Librarian getLibrarian() { return librarian; }
+
+    public static void setBookCopy(BookCopy bc) { SharedController.bc = bc; }
+    public static BookCopy getBookCopy() { return bc; }
 
     public static void setSubscribersTableController(SubscribersTableController controller) { stc = controller; }
     public static SubscribersTableController getSubscribersTableController() { return stc; }
@@ -73,6 +85,12 @@ public class SharedController {
     public static void setSubscriberMainFrameController(SubscriberMainFrameController controller) { smfc = controller; }
     public static SubscriberMainFrameController getSubscriberMainFrameController() { return smfc; }
 >>>>>>> 6b00fd9 (Connected login to subscriber main frame)
+
+    public static void setBorrowFormController(BorrowFormController controller) { bfc = controller; }
+    public static BorrowFormController getBorrowFormController() { return bfc; }
+
+    public static void setScanWindowController(ScanWindowController controller) { swc = controller; }
+    public static ScanWindowController getScanWindowController() { return swc; }
 
 
 }

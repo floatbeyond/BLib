@@ -12,6 +12,7 @@ import javafx.application.Platform;
 // import gui.LandingWindowController;
 // import gui.SubscriberFormController;
 import common.Subscriber;
+import common.BookCopy;
 import common.Librarian;
 
 public class Logic {
@@ -71,9 +72,12 @@ public class Logic {
     }
 
   
-
-
     // Book
+
+    public static void parseBookCopy(String user, BookCopy bookCopy) {
+        System.out.println("Book copy found");
+        SharedController.setBookCopy(bookCopy);
+    }
 
     public static void parseBookList(String user, List<Object> list) {
         // print book list

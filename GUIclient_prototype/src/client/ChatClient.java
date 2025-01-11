@@ -8,6 +8,7 @@ import ocsf.client.*;
 import common.ChatIF;
 import common.Subscriber;
 import common.ServerMessage;
+import common.BookCopy;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -88,6 +89,9 @@ public class ChatClient extends AbstractClient
                   // print book list
                   System.out.println("ChatClient: Received book list");
                   Logic.parseBookList(user, (ArrayList<Object>) data);
+                  break;
+              case "BookCopy":
+                  Logic.parseBookCopy(user, (BookCopy) data);
                   break;
               case "LoginStatus":
                   // add logic

@@ -6,7 +6,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import common.MessageUtils;
-import gui.ClientPortController;
+import gui.controllers.ClientPortController;
 
 
 public class ClientUI extends Application {
@@ -24,12 +24,11 @@ public class ClientUI extends Application {
         instance = this;
 		try {
             // Load FXML and get controller
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/ClientPort.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/ClientPort.fxml"));
             Parent root = loader.load();
             Scene scene = new Scene(root);
             ClientPortController clientPortController = loader.getController();
             SharedController.setClientPortController(clientPortController);
-            scene.getStylesheets().add(getClass().getResource("/gui/ClientPort.css").toExternalForm());
             primaryStage.setOnCloseRequest(new javafx.event.EventHandler<WindowEvent>() {
                 @Override
                 public void handle(WindowEvent event) {

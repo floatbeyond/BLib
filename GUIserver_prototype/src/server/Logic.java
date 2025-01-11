@@ -7,7 +7,11 @@ import java.util.List;
 
 import common.BorrowingRecord;
 import common.Subscriber;
+<<<<<<< HEAD
 import common.DataLogs; 
+=======
+import common.BookCopy;
+>>>>>>> 1667a39 (Connected login page to librarian main frame)
 import ocsf.server.ConnectionToClient;
 import gui.ClientConnectedController;
 
@@ -16,6 +20,7 @@ public class Logic {
     private static Connection conn = InstanceManager.getDbConnection();
     private static ClientConnectedController ccc = InstanceManager.getClientConnectedController();
     private static Subscriber s;
+    private static BookCopy bc;
     private static BorrowingRecord br;
 
 
@@ -29,11 +34,10 @@ public class Logic {
     // Subscriber
 
     public static void specificSubscriber(String user, int subscriberId, ConnectionToClient client) {
-        Subscriber subscriber = mysqlConnection.findSubscriber(conn, subscriberId);
-        if (subscriber == null) {
-            MessageUtils.sendResponseToClient(user, "Error", "Subscriber ID Not Found", client);
+        if ((s = mysqlConnection.findSubscriber(conn, subscriberId)) != null) {
+            MessageUtils.sendResponseToClient(user, "Subscriber", s, client);
         } else {
-            MessageUtils.sendResponseToClient(user, "Subscriber", subscriber, client);
+            MessageUtils.sendResponseToClient(user, "Error", "Subscriber ID Not Found", client);
         }
     }
 
@@ -75,7 +79,17 @@ public class Logic {
         MessageUtils.sendResponseToClient(user, "BorrowStatus", success ? "Borrow added successfully." : "ERROR: Couldn't add borrow.", client);
     }
 
+    // Scan
 
+    public static void scan(String user, String msg, int unparsedId, ConnectionToClient client) {
+        if ((bc = mysqlConnection.findBookCopy(conn, unparsedId)) != null) {
+            MessageUtils.sendResponseToClient(user, "BookCopy", bc, client);
+        } else if ((s = mysqlConnection.findSubscriber(conn, unparsedId)) != null) {
+            MessageUtils.sendResponseToClient(user, "Subscriber", s, client);
+        } else {
+            MessageUtils.sendResponseToClient(user, "Error", "Scan failed", client);
+        }
+    }
 
 
 
