@@ -11,7 +11,6 @@ import common.ServerMessage;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.List;
 
 @SuppressWarnings("unchecked")
 
@@ -70,10 +69,11 @@ public class ChatClient extends AbstractClient
 
       if (msg instanceof ServerMessage) {
           ServerMessage serverMessage = (ServerMessage) msg;
+          String user = serverMessage.getUser();
           String type = serverMessage.getType();
           Object data = serverMessage.getData();
           // print server type
-          System.out.println("Received message type: " + type);
+          System.out.println("Received message type: " + type + " to user: " + user);
           awaitResponse = false;
           switch (type) {
               case "Subscriber":
@@ -87,7 +87,11 @@ public class ChatClient extends AbstractClient
               case "BookList":
                   // print book list
                   System.out.println("ChatClient: Received book list");
-                  Logic.parseBookList((ArrayList<Object>) data);
+                  Logic.parseBookList(user, (ArrayList<Object>) data);
+                  break;
+              case "LoginStatus":
+                  // add logic
+                  Logic.parseLogin(data);
                   break;
               case "UpdateStatus":
                   Logic.updateSubscriberStatus((String) data);

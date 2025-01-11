@@ -12,12 +12,37 @@ import javafx.application.Platform;
 // import gui.LandingWindowController;
 // import gui.SubscriberFormController;
 import common.Subscriber;
+import common.Librarian;
 
 public class Logic {
     // public static SubscribersTableController stc = SharedController.getSubscribersTableController();
     // public static ClientPortController cpc = SharedController.getClientPortController();
     // public static SubscriberFormController sfc = SharedController.getSubscriberFormController();
     // public static LandingWindowController lwc = SharedController.getLandingWindowController();
+
+    // Login
+
+    public static void parseLogin(Object user) {
+        if (user instanceof Librarian) {
+            System.out.println("User is a librarian");
+            SharedController.setLibrarian((Librarian) user);
+            SharedController.logwc.userType = "Librarian";
+        } else if (user instanceof Subscriber) {
+            System.out.println("User is a subscriber");
+            SharedController.setSubscriber((Subscriber) user);
+            SharedController.logwc.userType = "Subscriber";
+        } else {
+            System.out.println("User not found");
+            SharedController.logwc.userType = "NotFound";
+        }
+    }
+
+    // Librarian
+
+    public static void parseLibrarian(Librarian receivedLibrarian) {
+        SharedController.setLibrarian(receivedLibrarian);
+        System.out.println("Received Librarian: " + receivedLibrarian);
+    }
 
     // Subscriber
 
@@ -45,10 +70,12 @@ public class Logic {
         SharedController.sfc.displayMessage(status);
     }
 
+  
+
 
     // Book
 
-    public static void parseBookList(List<Object> list) {
+    public static void parseBookList(String user, List<Object> list) {
         // print book list
         System.out.println("parseBookList method called");
         
@@ -57,12 +84,22 @@ public class Logic {
 
         Platform.runLater(() -> {
             if (!list.isEmpty() && list.stream().allMatch(item -> item instanceof Object)) {
-                System.out.println("Loading table");
-                if (SharedController.lwc != null) {
-                    System.out.println("SearchBookTable is initialized");
-                    SharedController.lwc.loadBookDetails(list);
-                } else {
-                    System.out.println("SearchBookTable is null");
+                if (user.equals("user")) {
+                    System.out.println("Loading table");
+                    if (SharedController.lwc != null) {
+                        System.out.println("SearchBookTable is initialized");
+                        SharedController.lwc.loadBookDetails(list);
+                    } else {
+                        System.out.println("SearchBookTable is null");
+                    }
+                } else if (user.equals("subscriber")) {
+                        System.out.println("Loading subscriber table");
+                        if (SharedController.smfc != null) {
+                            System.out.println("SubscriberTable is initialized");
+                            SharedController.smfc.loadBookDetails(list);
+                        } else {
+                            System.out.println("SubscriberTable is null");
+                        }
                 }
             } else {
                 System.out.println("Error in parsing book list");
