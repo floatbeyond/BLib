@@ -14,6 +14,7 @@ import javafx.application.Platform;
 import common.Subscriber;
 import common.BookCopy;
 import common.Librarian;
+import common.BorrowingRecord;
 
 public class Logic {
     // public static SubscribersTableController stc = SharedController.getSubscribersTableController();
@@ -50,6 +51,11 @@ public class Logic {
     public static void parseSubscriber(Subscriber receivedSubscriber) {
         SharedController.setSubscriber(receivedSubscriber);
         System.out.println("Received Subscriber: " + receivedSubscriber);
+    }
+
+    public static void parseBorrowingRecord(BorrowingRecord receivedBorrowingRecord) {
+        SharedController.setBorrowingRecord(receivedBorrowingRecord);
+        System.out.println("Received BorrowingRecord: " + receivedBorrowingRecord);
     }
 
     public static void parseSubscriberList(ArrayList<Subscriber> list) {

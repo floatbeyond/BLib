@@ -3,6 +3,7 @@ package client;
 import common.Subscriber;
 import common.Librarian;
 import common.BookCopy;
+import common.BorrowingRecord;
 import gui.controllers.ClientPortController;
 import gui.controllers.LandingWindowController;
 import gui.controllers.LoginWindowController;
@@ -23,6 +24,7 @@ public class SharedController {
     public static SubscriberMainFrameController smfc;
     public static BorrowFormController bfc;
     public static ScanWindowController swc;
+    private static BorrowingRecord br;
     private static BookCopy bc;
 
     // Setters and getters
@@ -59,6 +61,9 @@ public class SharedController {
 
     public static void setScanWindowController(ScanWindowController controller) { swc = controller; }
     public static ScanWindowController getScanWindowController() { return swc; }
+
+    public static void setBorrowingRecord(BorrowingRecord br) { SharedController.br = br; }
+    public static BorrowingRecord getBorrowingRecord() { return br; }
 
 
 }

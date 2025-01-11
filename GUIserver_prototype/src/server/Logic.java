@@ -1,6 +1,7 @@
 package server;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.sql.Date;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
 import common.BorrowingRecord;
 import common.Subscriber;
 import common.BookCopy;
+import common.BorrowingRecord;
 import ocsf.server.ConnectionToClient;
 import gui.ClientConnectedController;
 
@@ -37,6 +39,21 @@ public class Logic {
         }
     }
 
+    public static void returnSubscriber(String user, int bookId, int subscriberId, ConnectionToClient client){
+        BorrowingRecord book= mysqlConnection.returnSubscriber(conn, bookId, subscriberId);
+        if (book == null) {
+            MessageUtils.sendResponseToClient(user, "Error", "Not Found", client);
+        } else {
+            MessageUtils.sendResponseToClient(user, "Return", book, client);
+        }
+    }
+
+    public static void updateActualReturnDate(String user, int bookId, int subscriberId, Date actualReturnDate, ConnectionToClient client){
+        boolean success = mysqlConnection.updateActualReturnDate(conn, subscriberId, bookId, actualReturnDate);
+        MessageUtils.sendResponseToClient(user, "UpdateStatus", success ? "actualReturnDate updated successfully." : "ERROR: Couldn't update actualReturnDate.", client);
+    }
+
+
     public static void updateSubscriberDetails(String user, ConnectionToClient client) {
         int subscriberId = s.getSub_id();
         String phoneNumber = s.getSub_phone_num();
@@ -49,6 +66,15 @@ public class Logic {
     public static void showSubscribersTable(String user, ConnectionToClient client) {
         ArrayList<Subscriber> table = mysqlConnection.getSubscribers(conn);
         MessageUtils.sendResponseToClient(user, "SubscriberList", table, client);
+    }
+
+    public static void freezeSubscriber(String user, int subscriberId, ConnectionToClient client) {
+        boolean success = mysqlConnection.freezeSubscriber(conn, subscriberId);
+        MessageUtils.sendResponseToClient(user, "FreezeStatus", success ? "Subscriber frozen!" : "ERROR: Couldn't freeze subscriber", client);
+    }
+    public static void returnBook(String user, int copyId, ConnectionToClient client) {
+        boolean success = mysqlConnection.returnBook(conn, copyId);
+        MessageUtils.sendResponseToClient(user, "ReturnStatus", success ? "Book returned!" : "ERROR: Couldn't return book", client);
     }
 
 

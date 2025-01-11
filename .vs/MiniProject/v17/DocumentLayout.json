@@ -1,0 +1,31 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Owner\\Desktop\\\u05D1\u05E8\u05D0\u05D5\u05D3\u05D4\\\u05E1\u05DE\u05E1\u05D8\u05E8 5\\\u05E4\u05E8\u05D5\u05D9\u05E7\u05D8\\\u05E9\u05D9\u05D8\u05D5\u05EA\\MiniProject\\",
+  "Documents": [],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{e1b7d1f8-9b3c-49b1-8f4f-bfc63a88835d}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{40ea2e6b-2121-4bb8-a43e-c83c04b51041}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

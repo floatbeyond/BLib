@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 import common.ServerMessage;
 import gui.ClientConnectedController;
 import ocsf.server.*;
+import common.BorrowingRecord;
 
 /**
  * This class overrides some of the methods in the abstract 
@@ -54,6 +55,7 @@ public class EchoServer extends AbstractServer
 	
 	
 	public void handleMessageFromClient(Object msg, ConnectionToClient client) {
+
 		//System.out.println("Message received: " + msg + " from " + client);
     // ccc = InstanceManager.getClientConnectedController();
     
@@ -96,7 +98,37 @@ public class EchoServer extends AbstractServer
             } case "disconnect": {
               Logic.disconnect(user, client);
               break;
-            } default: {
+            }  case "freezeSubscriber": {
+              Logic.freezeSubscriber(user, Integer.parseInt(data.toString()), client);
+              break;
+            }
+            case "returnBook ": {
+              Logic.returnBook(user, Integer.parseInt(data.toString()), client);
+              break;
+            } case "returnSubscriber": {
+              System.out.println("returnSubscriber");
+              String message = (String) data;
+              String[] parts = message.split(" ");
+              int subscriberId = Integer.parseInt(parts[1]);
+              int bookID = Integer.parseInt(parts[2]); // Parse bookID as an integer
+              System.out.println("Subscriber ID: " + subscriberId);
+              System.out.println("Book ID: " + bookID);
+              Logic.returnSubscriber(user, bookID,subscriberId,client);
+              break;
+            } 
+            case "updateActualReturnDate": {
+              System.out.println("updateActualReturnDate");
+              String message = (String) data;
+              String[] updateParts = message.split(" ");
+                    int copyId = Integer.parseInt(updateParts[1]);
+                    LocalDate actualReturnDate = Date.valueOf(updateParts[2]); // Parse the date
+                    int subId = Integer.parseInt(updateParts[3]);
+    
+                    // Call the logic to update the actual return date
+                    Logic.updateActualReturnDate(copyId,subId, actualReturnDate, client);
+              break;
+            }
+            default: {
               MessageUtils.sendResponseToClient(user, "Error", "Invalid command", client);
               break;
             }

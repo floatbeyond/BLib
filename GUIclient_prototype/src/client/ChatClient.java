@@ -7,6 +7,7 @@ package client;
 import ocsf.client.*;
 import common.ChatIF;
 import common.Subscriber;
+import common.BorrowingRecord;
 import common.ServerMessage;
 import common.BookCopy;
 
@@ -106,6 +107,12 @@ public class ChatClient extends AbstractClient
               case "Error":
                   Logic.printError((String) data);
                   break;
+              case "Return":
+                  if (data instanceof BorrowingRecord) {
+                    Logic.parseBorrowingRecord((BorrowingRecord) data);
+                  }
+                  break;
+              
               default:
                   System.out.println("Unknown message type: " + type);
                   break;

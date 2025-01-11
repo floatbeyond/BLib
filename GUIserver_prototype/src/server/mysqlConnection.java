@@ -137,6 +137,51 @@ public class mysqlConnection {
 	        return false;
 	    }
 	}
+
+	//update the actual return date of a book returned by a subscriber
+	public static boolean updateActualReturnDate(Connection con, int subscriberId, int bookId, Date actualReturnDate) {
+	    String query = "UPDATE borrowrecords SET ActualReturnDate = ?  WHERE BorrowID = ?";
+	    try (PreparedStatement ps = con.prepareStatement(query)) {
+	        ps.setDate(1, actualReturnDate);
+	        ps.setInt(2, bookId);
+	        ps.executeUpdate();
+	        return true;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return false;
+	    }
+	}
+
+	/**
+     * update status of a subscriber to 'Frozen'
+     * get - id(PK)
+	 */
+	public static boolean freezeSubscriber(Connection con, int subscriberId) {
+		String query = "UPDATE subscribers SET Status = 'Frozen' WHERE SubID = ?";
+		try (PreparedStatement ps = con.prepareStatement(query)) {
+			ps.setInt(1, subscriberId);
+			ps.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	/**
+     * update status of borrow record to 'Returned'
+     * get - borrowid(PK)
+	 */
+	public static boolean returnBook(Connection con, int copyId) {
+		String query = "UPDATE borrowrecords SET Status = 'Returned' WHERE CopyID = ?";
+		try (PreparedStatement ps = con.prepareStatement(query)) {
+			ps.setInt(1, copyId);
+			ps.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 	
 
 	/**
@@ -233,6 +278,28 @@ public class mysqlConnection {
 		}
 
 		return results;
+	}
+	
+	public static BorrowingRecord returnSubscriber(Connection conn, int bookCopyId, int subscriberId) {
+		String query = "SELECT * FROM borrowrecords WHERE SubID = ?  AND CopyID = ?";
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setInt(1, subscriberId);
+			stmt.setInt(2, bookCopyId);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				int BorrowId = rs.getInt("BorrowID");
+				int CopyID = rs.getInt("CopyID");
+				int SubID= rs.getInt("SubID");
+				Date BorrowDate = rs.getDate("BorrowDate");
+				Date expectedReturnDateDate = rs.getDate("ExpectedReturnDate"); 
+				Date actualReturnDate = rs.getDate("ActualReturnDate"); 
+				String status = rs.getString("Status");
+				return new BorrowingRecord(BorrowId, CopyID, SubID, BorrowDate, expectedReturnDateDate, actualReturnDate, status);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 
