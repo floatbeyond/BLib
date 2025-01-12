@@ -1,0 +1,34 @@
+
+.anchor-pane {
+    -fx-background-color: #e0f7fa; 
+}
+
+
+.button {
+    -fx-background-color: #0288d1; 
+    -fx-text-fill: white;          
+    -fx-font-size: 14px;           
+    -fx-padding: 10px;             
+    -fx-border-radius: 5px;        
+    -fx-background-radius: 5px;   
+}
+
+
+.button:hover {
+    -fx-background-color: #0277bd; 
+}
+
+
+.text-field {
+    -fx-background-color: #ffffff; 
+    -fx-border-color: #0288d1;     
+    -fx-border-width: 1px;        
+    -fx-padding: 5px;              
+    -fx-font-size: 14px;           
+}
+
+
+.label {
+    -fx-text-fill: #01579b;       
+    -fx-font-size: 14px;           
+}
