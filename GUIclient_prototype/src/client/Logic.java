@@ -48,6 +48,11 @@ public class Logic {
 
     // Subscriber
 
+    public static void newSubscriber(int subscriberId) {
+        // Send subscriberId to new subscriber window to display
+        System.out.println("New Subscriber: " + subscriberId);
+    }
+
     public static void parseSubscriber(Subscriber receivedSubscriber) {
         SharedController.setSubscriber(receivedSubscriber);
         System.out.println("Received Subscriber: " + receivedSubscriber);
@@ -74,7 +79,7 @@ public class Logic {
     }
 
     public static void updateSubscriberStatus(String status) {
-        SharedController.sfc.displayMessage(status);
+        // SharedController.sfc.successfulBorrow(status);
     }
 
   
@@ -116,6 +121,15 @@ public class Logic {
                 SharedController.lwc.noBooksFound();
             }
         });
+    }
+
+    // Borrow
+
+    public static void newBorrowStatus(String status) {
+        Platform.runLater(() -> {
+            SharedController.bfc.successfulBorrow(status);
+        });
+        
     }
 
 

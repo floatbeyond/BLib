@@ -9,6 +9,7 @@ import common.Librarian;
 import common.Book;
 import common.BookCopy;
 import common.BorrowingRecord;
+import common.DateUtils;
 import common.OrderRecord;
 
 import java.sql.DriverManager;
@@ -17,6 +18,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Date;
+import java.time.LocalDate;
 
 public class mysqlConnection {
     
@@ -71,6 +73,10 @@ public class mysqlConnection {
 			stmt.setInt(1, userId);
 			ResultSet rs = stmt.executeQuery();
 			if (rs.next()) {
+				LocalDate frozen_until = DateUtils.toLocalDate(rs.getDate("FreezeUntil"));
+                LocalDate join_date = DateUtils.toLocalDate(rs.getDate("Joined"));
+                LocalDate exp_date = DateUtils.toLocalDate(rs.getDate("Expiration"));
+
 				return new Subscriber(
 					rs.getInt("SubID"), 
 					rs.getString("Name"), 
@@ -78,9 +84,9 @@ public class mysqlConnection {
 					rs.getString("PhoneNumber"), 
 					rs.getString("Email"),
 					rs.getInt("Penalties"),
-					rs.getDate("FreezeUntil"),
-					rs.getDate("Joined"),
-					rs.getDate("Expiration")
+					frozen_until,
+					join_date,
+					exp_date
 				);
 			}
 		} catch (SQLException e) {
@@ -88,6 +94,30 @@ public class mysqlConnection {
 		}
 
 		return null;
+	}
+
+	// add new subscriber to the DB
+	public static int addSubscriber(Connection conn, Subscriber s) {
+		String query = "INSERT INTO subscribers (Name, Status, PhoneNumber, Email, Penalties, FreezeUntil, Joined, Expiration) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setString(1, s.getSub_name());
+			stmt.setString(2, s.getSub_status());
+			stmt.setString(3, s.getSub_phone_num());
+			stmt.setString(4, s.getSub_email());
+			stmt.setInt(5, s.getSub_penalties());
+			stmt.setDate(6, DateUtils.toSqlDate(s.getSub_freeze()));
+			stmt.setDate(7, DateUtils.toSqlDate(s.getSub_joined()));
+			stmt.setDate(8, DateUtils.toSqlDate(s.getSub_expiration()));
+			stmt.executeUpdate();
+			ResultSet rs = stmt.getGeneratedKeys();
+			if (rs.next()) {
+				int subId = rs.getInt(1);
+				return subId;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 	
 	// show to user all the subscribers in the DB
@@ -99,6 +129,10 @@ public class mysqlConnection {
 			 ResultSet rs = st.executeQuery(query)) {
 			
 			while (rs.next()) {
+				LocalDate frozen_until = DateUtils.toLocalDate(rs.getDate("FreezeUntil"));
+                LocalDate join_date = DateUtils.toLocalDate(rs.getDate("Joined"));
+                LocalDate exp_date = DateUtils.toLocalDate(rs.getDate("Expiration"));
+
 				Subscriber s = new Subscriber(
 					rs.getInt("SubID"), 
 					rs.getString("Name"), 
@@ -106,9 +140,9 @@ public class mysqlConnection {
 					rs.getString("PhoneNumber"), 
 					rs.getString("Email"),
 					rs.getInt("Penalties"),
-					rs.getDate("FreezeUntil"),
-					rs.getDate("Joined"),
-					rs.getDate("Expiration")
+					frozen_until,
+					join_date,
+					exp_date
 				);
 				subscribers.add(s);
 			}
@@ -201,9 +235,10 @@ public class mysqlConnection {
 				String phoneNumber = rs.getString("PhoneNumber");
 				String email = rs.getString("Email");
 				int penalties = rs.getInt("Penalties");
-				Date frozen_until = rs.getDate("FreezeUntil");
-				Date join_date = rs.getDate("Joined");
-				Date exp_date = rs.getDate("Expiration");
+				LocalDate frozen_until = DateUtils.toLocalDate(rs.getDate("FreezeUntil"));
+                LocalDate join_date = DateUtils.toLocalDate(rs.getDate("Joined"));
+                LocalDate exp_date = DateUtils.toLocalDate(rs.getDate("Expiration"));
+
 				return new Subscriber(sub_id, sub_name, status, phoneNumber, email, 
 										penalties, frozen_until, join_date, exp_date);
 			}
@@ -261,9 +296,9 @@ public class mysqlConnection {
                     while (borrowingRecordRs.next()) {
                         int borrowId = borrowingRecordRs.getInt("BorrowID");
                         int subId = borrowingRecordRs.getInt("SubID");
-                        Date borrowDate = borrowingRecordRs.getDate("BorrowDate");
-                        Date expectedReturnDate = borrowingRecordRs.getDate("ExpectedReturnDate");
-                        Date actualReturnDate = borrowingRecordRs.getDate("ActualReturnDate");
+                        LocalDate borrowDate = DateUtils.toLocalDate(borrowingRecordRs.getDate("BorrowDate"));
+                        LocalDate expectedReturnDate = DateUtils.toLocalDate(borrowingRecordRs.getDate("ExpectedReturnDate"));
+                        LocalDate actualReturnDate = DateUtils.toLocalDate(borrowingRecordRs.getDate("ActualReturnDate"));
                         String borrowStatus = borrowingRecordRs.getString("Status");
 
                         // Create a BorrowingRecord object and add it to the results list
@@ -321,25 +356,30 @@ public class mysqlConnection {
 		return null;
 	}
 
-	public static boolean addBorrowingRecord(Connection conn, int subscriberId, int bookCopyId, Date borrowDate, Date expectedReturnDate) {
-		String query = "INSERT INTO borrowrecords (SubID, CopyID, BorrowDate, ReturnDate, Status) VALUES (?, ?, ?, ?, ?)";
+	public static boolean addBorrowingRecord(Connection conn, BorrowingRecord br) {
+		String query = "INSERT INTO borrowrecords (SubID, CopyID, BorrowDate, ExpectedReturnDate, Status) VALUES (?, ?, ?, ?, ?)";
 		try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-			stmt.setInt(1, subscriberId);
-			stmt.setInt(2, bookCopyId);
-			stmt.setDate(3, borrowDate);
-			stmt.setDate(4, expectedReturnDate);
-			stmt.setString(5, "Borrowed");
+			stmt.setInt(1, br.getSubId());
+			stmt.setInt(2, br.getCopyId());
+			stmt.setDate(3, DateUtils.toSqlDate(br.getBorrowDate()));
+			stmt.setDate(4, DateUtils.toSqlDate(br.getExpectedReturnDate()));
+			stmt.setString(5, br.getStatus());
 			stmt.executeUpdate();
 			ResultSet rs = stmt.getGeneratedKeys();
 			if (rs.next()) {
 				int borrowId = rs.getInt(1);
-				return true;
+				//return true;
 			}
+			try (Statement st = conn.createStatement()) {
+				String updateCopyStatus = "UPDATE bookcopies SET Status = 'Borrowed' WHERE CopyID = " + br.getCopyId();
+				st.executeUpdate(updateCopyStatus);
+			}
+			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
 		}
-		return false;
+		// return false;
 	}
 
 }

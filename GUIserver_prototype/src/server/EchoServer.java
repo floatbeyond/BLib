@@ -6,6 +6,7 @@ package server;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import common.MessageUtils;
 import common.ServerMessage;
 import gui.ClientConnectedController;
 import ocsf.server.*;
@@ -65,14 +66,16 @@ public class EchoServer extends AbstractServer
         String type = serverMessage.getType();
         Object data = serverMessage.getData();
 
-        System.out.println("Received message, Case: " + type + " from user: " + user);
+        System.out.println("Received message, Case: " + type + " | from user: " + user);
         try {
           switch (type) {
             case "login" : {
               Logic.userLogin(user, (int) data, client);
               break;
-            }
-            case "updateSubscriber": {
+            } case "newSubscriber": {
+              Logic.newSubscriber(user, data, client);
+              break;
+            } case "updateSubscriber": {
               Logic.updateSubscriberDetails(user, client);
               break;
             } case "showSubscribersTable": {
@@ -86,11 +89,15 @@ public class EchoServer extends AbstractServer
               String[] parts = searchCriteria.split(":", 2);
               String searchType = parts[0];
               String searchText = parts[1];
-              // print search type and text
               Logic.sendSearchedBooks(user, searchType, searchText, client);
               break;
             } case "scanBookCopy":{
               Logic.scan(user, type, Integer.parseInt(data.toString()), client);
+              break;
+            } case "newBorrow": {
+              // print test
+              System.out.println("New borrow");
+              Logic.newBorrow(user, data, client);
               break;
             } case "connect": {
               Logic.connect(user, client);

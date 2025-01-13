@@ -30,29 +30,25 @@ public class LoginWindowController {
 
     public String userType;
 
-    private String getId() {
-        return idField.getText();
-    }
+    private String getId() { return idField.getText(); }
 
     @FXML
     public void initialize() {
         setupLogin();
         // Set the controller in SharedController
         SharedController.setLoginWindowController(this);
+        SharedController.setSubscriber(null);
+        SharedController.setLibrarian(null);
+        SharedController.setBookCopy(null);
     }
 
     private void setupLogin() {
         loginButton.setOnAction(e -> handleLoginAction(e));
         idField.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
-                handleLoginAction(null);
+                handleLoginAction(new ActionEvent(e.getSource(), e.getTarget()));
             }
         });
-
-        SharedController.setSubscriber(null);
-        SharedController.setLibrarian(null);
-        SharedController.setBookCopy(null);
-        
     }
 
     public void handleLoginAction(ActionEvent event) {
@@ -72,35 +68,33 @@ public class LoginWindowController {
                         displayMessage("User not found");
                     } else {
                         System.out.println("User found");
-                        if (ClientUI.cc.getConnectionStatusFlag() == 1) {
-                            ((Node) event.getSource()).getScene().getWindow().hide();
-                            // Load and display MainFrame GUI
-                            String fxmlPath = String.format("/gui/fxml/%sMainFrame.fxml", userType);
-                            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-                            Pane root = loader.load();
-                            Stage stage = new Stage();
-                            Scene scene = new Scene(root);
-                            stage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
-                                try {
-                                    // print message to console
-                                    System.out.println("clientui.chat: " + ClientUI.chat);
-                                    if (ClientUI.chat != null) {
-                                        ClientUI.chat.quit();
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                        ((Node) event.getSource()).getScene().getWindow().hide();
+                        // Load and display MainFrame GUI
+                        String fxmlPath = String.format("/gui/fxml/%sMainFrame.fxml", userType);
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+                        Pane root = loader.load();
+                        Stage stage = new Stage();
+                        Scene scene = new Scene(root);
+                        stage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
+                            try {
+                                // print message to console
+                                System.out.println("clientui.chat: " + ClientUI.chat);
+                                if (ClientUI.chat != null) {
+                                    ClientUI.chat.quit();
                                 }
-                            });
-                            stage.setScene(scene);
-                            String windowTitle = userType + " Main Frame";
-                            stage.setTitle(windowTitle);
-                            stage.setResizable(false);
-                            stage.show();
-                        } else {
-                            displayMessage("Connection failed");
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        });
+                        stage.setScene(scene);
+                        String windowTitle = userType + " Main Frame";
+                        stage.setTitle(windowTitle);
+                        stage.setResizable(false);
+                        stage.show();
                         }
                     }
-                }
+            } else {
+                displayMessage("Connection failed");
             }
         } catch (Exception e) {
             e.printStackTrace();

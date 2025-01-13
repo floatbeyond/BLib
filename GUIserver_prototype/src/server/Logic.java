@@ -3,10 +3,10 @@ package server;
 import java.sql.Connection;
 import java.sql.Date;
 import java.util.ArrayList;
-import java.sql.Date;
 import java.util.List;
 
 import common.BorrowingRecord;
+import common.MessageUtils;
 import common.Subscriber;
 import common.BookCopy;
 import common.BorrowingRecord;
@@ -31,9 +31,20 @@ public class Logic {
 
     // Subscriber
 
+    public static void newSubscriber(String user, Object newSubscriber, ConnectionToClient client) {
+        if (newSubscriber instanceof Subscriber) {
+            s = (Subscriber) newSubscriber;
+            int generatedId = mysqlConnection.addSubscriber(conn, s);
+            MessageUtils.sendResponseToClient(user, "NewSubscriber", generatedId, client);
+        } else {
+            MessageUtils.sendResponseToClient(user, "Error", "Not a subscriber", client);
+            return;
+        }
+    }
+
     public static void specificSubscriber(String user, int subscriberId, ConnectionToClient client) {
         if ((s = mysqlConnection.findSubscriber(conn, subscriberId)) != null) {
-            MessageUtils.sendResponseToClient(user, "Subscriber", s, client);
+            MessageUtils.sendResponseToClient(user, "foundSubscriber", s, client);
         } else {
             MessageUtils.sendResponseToClient(user, "Error", "Subscriber ID Not Found", client);
         }
@@ -87,13 +98,15 @@ public class Logic {
         MessageUtils.sendResponseToClient(user, "BookList", results, client);
     }
 
-    public static void addBorrow(String user, ConnectionToClient client) {
-        int bookCopyId = br.getCopyId();
-        int subscriberId = br.getSubId();
-        Date borrowDate = br.getBorrowDate();
-        Date expectedReturnDate = br.getExpectedReturnDate();
-        boolean success = mysqlConnection.addBorrowingRecord(conn, subscriberId, bookCopyId, borrowDate, expectedReturnDate);
-        MessageUtils.sendResponseToClient(user, "BorrowStatus", success ? "Borrow added successfully." : "ERROR: Couldn't add borrow.", client);
+    public static void newBorrow(String user, Object newborrow, ConnectionToClient client) {
+        if (newborrow instanceof BorrowingRecord) {
+            br = (BorrowingRecord) newborrow;
+            boolean success = mysqlConnection.addBorrowingRecord(conn, br);
+            MessageUtils.sendResponseToClient(user, "BorrowStatus", success ? "Borrow added successfully." : "ERROR: Couldn't add borrow.", client);
+        } else {
+            MessageUtils.sendResponseToClient(user, "Error", "Invalid borrow record", client);
+            return;
+        }        
     }
 
     // Scan
