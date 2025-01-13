@@ -5,6 +5,7 @@ package server;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.sql.Date;
 
 import common.MessageUtils;
 import common.ServerMessage;
@@ -128,11 +129,12 @@ public class EchoServer extends AbstractServer
               String message = (String) data;
               String[] updateParts = message.split(" ");
                     int copyId = Integer.parseInt(updateParts[1]);
-                    LocalDate actualReturnDate = Date.valueOf(updateParts[2]); // Parse the date
+                    Date actualReturnDate = Date.valueOf(updateParts[2]); // Parse the date
+                    
                     int subId = Integer.parseInt(updateParts[3]);
     
                     // Call the logic to update the actual return date
-                    Logic.updateActualReturnDate(copyId,subId, actualReturnDate, client);
+                    Logic.updateActualReturnDate(user, copyId,subId, actualReturnDate, client);
               break;
             }
             default: {

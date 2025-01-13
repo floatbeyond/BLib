@@ -1,15 +1,11 @@
 package gui;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 import client.ClientUI;
 import client.SharedController;
-<<<<<<< HEAD
-import common.Subscriber;
-=======
->>>>>>> 025af54 (changed)
 import common.BorrowingRecord;
+import common.MessageUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -30,31 +26,24 @@ public class ReturnBookController {
     @FXML private DatePicker actualReturnDate;
     @FXML private ChoiceBox<String> btnreturnorfreeze;
     @FXML private Label messageLabel;
-<<<<<<< HEAD
     private String bookID;
-=======
     private String copyID;
     private BorrowingRecord foundReturnRecord;
->>>>>>> 025af54 (changed)
 
     private String getID() { //get id from textfield
 		return txtid.getText();
 	}
 
-<<<<<<< HEAD
     public void setBookID(String bookID) { //set bookID from ReturnBookIdController
         this.bookID = bookID;
     }
 
-    public void FindSubscriber(ActionEvent event) throws Exception { //handle when librarian clicks find subscriber button
-=======
     public void setcopyID(String copyID) { //set bookID from ReturnBookIdController
         this.copyID = copyID;
     }
     //handle when librarian clicks find subscriber button
     //show librarian return date and if return date has passed, freeze subscriber
     public void FindSubscriber(ActionEvent event) throws Exception { 
->>>>>>> 025af54 (changed)
 		try {
             ClientUI.cc.accept("connect");
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
@@ -67,22 +56,13 @@ public class ReturnBookController {
                     displayMessage("ID must be numbers");
                 } else if (id.length() > 9) {
                     displayMessage("ID number too long");
-<<<<<<< HEAD
                 } else if (bookID == null) {
-=======
-                } else if (copyID == null) {
->>>>>>> 025af54 (changed)
                     displayMessage("Please scan book first");
                 }
                 else {
                     System.out.println("Calling ClientUI.cc.accept");
-<<<<<<< HEAD
-                    ClientUI.cc.accept("returnSubscriber " + id + " " + bookID);
+                    MessageUtils.sendMessage(ClientUI.cc, "librarian", "returnSubscriber", id + " " + bookID);
                     BorrowingRecord foundReturnRecord= SharedController.getBorrowingRecord();
-=======
-                    ClientUI.cc.accept("returnSubscriber " + id + " " + copyID);
-                    foundReturnRecord= SharedController.getBorrowingRecord();
->>>>>>> 025af54 (changed)
                     if(foundReturnRecord == null) {
                         System.out.println("Return Record Not Found");
                         displayMessage("Return Record Not Found");
@@ -90,7 +70,7 @@ public class ReturnBookController {
                     else {
                         StringBuilder messageBuilder = new StringBuilder();
                        // Display the return date in the label
-                        Date returnDate = foundReturnRecord.getExpectedReturnDate();
+                        LocalDate returnDate = foundReturnRecord.getExpectedReturnDate();
                         if (returnDate != null) {
                             messageBuilder.append("Return Date Until: ").append(returnDate.toString()).append("\n");
                         } else {
@@ -98,8 +78,8 @@ public class ReturnBookController {
                         }
     
                         // Check if the return date has passed
-                        Date currentDate = new Date();
-                        if (returnDate != null && returnDate.before(currentDate)) {
+                        LocalDate currentDate = LocalDate.now();
+                        if (returnDate != null && returnDate.isBefore(currentDate)) {
                             messageBuilder.append("Return date passed, Please freeze subscriber");
                             
                         }
@@ -116,14 +96,9 @@ public class ReturnBookController {
 	        e.printStackTrace();
 	    }
 	}
-<<<<<<< HEAD
-    
-    public void scanBook(ActionEvent event) throws Exception  { //scan book button
-=======
 
     //scan book button and save bookID
     public void scanBook(ActionEvent event) throws Exception  { 
->>>>>>> 025af54 (changed)
         try {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ReturnBookId.fxml"));
         Parent root = fxmlLoader.load();
@@ -139,22 +114,14 @@ public class ReturnBookController {
         stage.showAndWait();
         
         // After the window is closed, you can use the bookID
-<<<<<<< HEAD
-        System.out.println("Collected Book ID: " + bookID);
-=======
         System.out.println("Collected copy ID: " + copyID);
->>>>>>> 025af54 (changed)
     } catch (Exception e) {
         e.printStackTrace();
     }
     }
 
-<<<<<<< HEAD
-      public void handleReturnDateSubmit(ActionEvent event) { //handle when librarian clicks submit return date button
-=======
     //handle when librarian clicks submit return date button with actual return date
       public void handleReturnDateSubmit(ActionEvent event) { 
->>>>>>> 025af54 (changed)
         try {
             ClientUI.cc.accept("connect");
             if (ClientUI.cc.getConnectionStatusFlag() == 1){
@@ -191,11 +158,7 @@ public class ReturnBookController {
         e.printStackTrace();
         }
     }
-<<<<<<< HEAD
-
-=======
     //handle when librarian clicks on return or freeze button
->>>>>>> 025af54 (changed)
     public void handleReturnOrFreeze(ActionEvent event) {
         String choice = btnreturnorfreeze.getValue();
         String id = getID();
@@ -209,29 +172,18 @@ public class ReturnBookController {
             returnBook(id);
         }
     }
-<<<<<<< HEAD
 
     private void freezeSubscriber(String subscriberId) {
         // Implement the logic to freeze the subscriber
         // For example, you can send a command to the server to freeze the subscriber
-        ClientUI.cc.accept("freezeSubscriber " + subscriberId);
+        MessageUtils.sendMessage(ClientUI.cc, "librarian", "freezeSubscriber", subscriberId);
         System.out.println("Subscriber " + subscriberId + " has been frozen.");
     }
 
     private void returnBook(String subscriberId) {
         // Implement the logic to return the book
         // For example, you can send a command to the server to return the book
-        ClientUI.cc.accept("returnBook " + subscriberId);
-=======
-    //freeze subscriber
-    private void freezeSubscriber(String subscriberId) {
-        ClientUI.cc.accept("freezeSubscriber " + subscriberId);
-        System.out.println("Subscriber " + subscriberId + " has been frozen.");
-    }
-    //return book from subscriber
-    private void returnBook(String subscriberId) {
-        ClientUI.cc.accept("returnBook " + copyID);
->>>>>>> 025af54 (changed)
+        MessageUtils.sendMessage(ClientUI.cc, "librarian", "returnBook", subscriberId);
         System.out.println("Book for subscriber " + subscriberId + " has been returned.");
     }
 

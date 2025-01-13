@@ -325,11 +325,11 @@ public class mysqlConnection {
 				int BorrowId = rs.getInt("BorrowID");
 				int CopyID = rs.getInt("CopyID");
 				int SubID= rs.getInt("SubID");
-				Date BorrowDate = rs.getDate("BorrowDate");
-				Date expectedReturnDateDate = rs.getDate("ExpectedReturnDate"); 
-				Date actualReturnDate = rs.getDate("ActualReturnDate"); 
+				LocalDate borrowDate = DateUtils.toLocalDate(rs.getDate("BorrowDate"));
+				LocalDate expectedReturnDate = DateUtils.toLocalDate(rs.getDate("ExpectedReturnDate"));
+				LocalDate actualReturnDate = DateUtils.toLocalDate(rs.getDate("ActualReturnDate"));
 				String status = rs.getString("Status");
-				return new BorrowingRecord(BorrowId, CopyID, SubID, BorrowDate, expectedReturnDateDate, actualReturnDate, status);
+				return new BorrowingRecord(BorrowId, CopyID, SubID, borrowDate, expectedReturnDate, actualReturnDate, status);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
