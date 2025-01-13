@@ -6,13 +6,8 @@ import common.Book;
 import common.BookCopy;
 import common.BorrowingRecord;
 import common.MessageUtils;
-<<<<<<< HEAD
-import javafx.animation.PauseTransition;
-import javafx.application.Platform;
-=======
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
->>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -35,17 +30,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-<<<<<<< HEAD
-import javafx.beans.property.SimpleStringProperty;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
-import javafx.event.ActionEvent;
-=======
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.event.ActionEvent;
 import javafx.util.Callback;
->>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
 
 import java.io.IOException;
 import java.net.URL;
@@ -73,22 +61,10 @@ public class LandingWindowController implements Initializable {
 
     @FXML private Label messageLabel;
 
-<<<<<<< HEAD
-    private Map<Integer, Stage> openDialogs = new HashMap<>();
-
-    private String getSearch() {
-        return searchField.getText();
-    }
-
-    private String getMenu() {
-        return menuButton.getText();
-    }
-=======
     private Map<Integer, Stage> openDialogs = new HashMap<>(); // Track open dialogs
 
     private String getSearch() { return searchField.getText(); }
     private String getMenu() { return menuButton.getText(); }
->>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -142,11 +118,6 @@ public class LandingWindowController implements Initializable {
         authorColumn.setCellValueFactory(new PropertyValueFactory<>("author"));
         genreColumn.setCellValueFactory(new PropertyValueFactory<>("genre"));
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
-<<<<<<< HEAD
-
-        copiesColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getCopyCount()));
-
-=======
         copiesColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getCopyCount()));
 
         // Apply custom cell factory to wrap text and adjust cell height
@@ -156,7 +127,6 @@ public class LandingWindowController implements Initializable {
         applyWrappingCellFactory(descriptionColumn);
         applyWrappingCellFactory(copiesColumn);
 
->>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
         actionColumn.setCellFactory(param -> new TableCell<Book, Void>() {
             private final Button copiesButton = new Button("Show Copies");
             {
@@ -178,8 +148,6 @@ public class LandingWindowController implements Initializable {
         });
     }
 
-<<<<<<< HEAD
-=======
     private void applyWrappingCellFactory(TableColumn<Book, String> column) {
         column.setCellFactory(new Callback<TableColumn<Book, String>, TableCell<Book, String>>() {
             @Override
@@ -209,7 +177,6 @@ public class LandingWindowController implements Initializable {
         });
     }
 
->>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
     private void showCopiesDialog(Book book) {
         if (openDialogs.containsKey(book.getBookId())) {
             // Bring the existing dialog to the front

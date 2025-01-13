@@ -6,10 +6,7 @@ import common.Book;
 import common.BookCopy;
 import common.BorrowingRecord;
 import common.MessageUtils;
-<<<<<<< HEAD
-=======
 import common.Subscriber;
->>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -35,10 +32,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-<<<<<<< HEAD
-=======
 import javafx.util.Callback;
->>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 
@@ -69,18 +63,11 @@ public class SubscriberMainFrameController implements Initializable {
     @FXML private TableColumn<Book, String> copiesColumn;
     @FXML private TableColumn<Book, Void> actionColumn;
 
-<<<<<<< HEAD
-    private Map<Integer, Stage> openDialogs = new HashMap<>(); // Track open dialogs
-
-    @FXML private Label messageLabel;
-
-=======
     @FXML private Label messageLabel;
 
     private Map<Integer, Stage> openDialogs = new HashMap<>(); // Track open dialogs
     private Subscriber s;
 
->>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
     private String getSearch() { return searchField.getText(); }
 
     private String getMenu() { return menuButton.getText(); }
@@ -91,11 +78,7 @@ public class SubscriberMainFrameController implements Initializable {
         setupColumns();
         setupSearch();
 
-<<<<<<< HEAD
-        SharedController.getSubscriber();
-=======
         s = SharedController.getSubscriber();
->>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
         // Set the controller in SharedController
         SharedController.setSubscriberMainFrameController(this);
     }
@@ -141,11 +124,6 @@ public class SubscriberMainFrameController implements Initializable {
         authorColumn.setCellValueFactory(new PropertyValueFactory<>("author"));
         genreColumn.setCellValueFactory(new PropertyValueFactory<>("genre"));
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
-<<<<<<< HEAD
-
-        copiesColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getCopyCount()));
-
-=======
         copiesColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getCopyCount()));
 
         // Apply custom cell factory to wrap text and adjust cell height
@@ -156,7 +134,6 @@ public class SubscriberMainFrameController implements Initializable {
         applyWrappingCellFactory(copiesColumn);
         
 
->>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
         actionColumn.setCellFactory(param -> new TableCell<Book, Void>() {
             private final Button copiesButton = new Button("Show Copies");
             {
@@ -178,8 +155,6 @@ public class SubscriberMainFrameController implements Initializable {
         });
     }
 
-<<<<<<< HEAD
-=======
      private void applyWrappingCellFactory(TableColumn<Book, String> column) {
         column.setCellFactory(new Callback<TableColumn<Book, String>, TableCell<Book, String>>() {
             @Override
@@ -209,7 +184,6 @@ public class SubscriberMainFrameController implements Initializable {
         });
     }
 
->>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
     private void showCopiesDialog(Book book) {
         if (openDialogs.containsKey(book.getBookId())) {
             // Bring the existing dialog to the front

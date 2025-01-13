@@ -10,10 +10,7 @@ import gui.controllers.SubscriberFormController;
 import gui.controllers.SubscriberMainFrameController;
 import gui.controllers.SubscribersTableController;
 import gui.controllers.ScanWindowController;
-<<<<<<< HEAD
 import gui.PersonalDetailsController;
-=======
->>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
 import gui.controllers.BorrowFormController;
 
 public class SharedController {
@@ -28,10 +25,7 @@ public class SharedController {
     public static BorrowFormController bfc;
     public static ScanWindowController swc;
     private static BookCopy bc;
-<<<<<<< HEAD
     private static PersonalDetailsController pdc;
-=======
->>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
 
     // Setters and getters
  
@@ -46,7 +40,6 @@ public class SharedController {
 
     public static void setSubscribersTableController(SubscribersTableController controller) { stc = controller; }
     public static SubscribersTableController getSubscribersTableController() { return stc; }
-<<<<<<< HEAD
 
     public static void setClientPortController(ClientPortController controller) { cpc = controller; }
     public static ClientPortController getClientPortController() { return cpc; }
@@ -71,30 +64,6 @@ public class SharedController {
 
     public static void setSubscriberMainFrameController(SubscriberMainFrameController controller) { smfc = controller; }
     public static SubscriberMainFrameController getSubscriberMainFrameController() { return smfc; }
-=======
-
-    public static void setClientPortController(ClientPortController controller) { cpc = controller; }
-    public static ClientPortController getClientPortController() { return cpc; }
-
-    public static void setSubscriberFormController(SubscriberFormController controller) { sfc = controller; }
-    public static SubscriberFormController getSubscriberFormController() { return sfc; }
-
-    public static void setLandingWindowController(LandingWindowController controller) { lwc = controller; }
-    public static LandingWindowController getLandingWindowController() { return lwc; }
-
-    public static void setLoginWindowController(LoginWindowController controller) { logwc = controller; }
-    public static LoginWindowController getLoginWindowController() { return logwc; }
-
-    public static void setSubscriberMainFrameController(SubscriberMainFrameController controller) { smfc = controller; }
-    public static SubscriberMainFrameController getSubscriberMainFrameController() { return smfc; }
-
-    public static void setBorrowFormController(BorrowFormController controller) { bfc = controller; }
-    public static BorrowFormController getBorrowFormController() { return bfc; }
-
-    public static void setScanWindowController(ScanWindowController controller) { swc = controller; }
-    public static ScanWindowController getScanWindowController() { return swc; }
-
->>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
 
 }
 

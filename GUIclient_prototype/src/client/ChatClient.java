@@ -74,11 +74,7 @@ public class ChatClient extends AbstractClient
           String type = serverMessage.getType();
           Object data = serverMessage.getData();
           // print server type
-<<<<<<< HEAD
-          System.out.println("Received message type: " + type + " to user: " + user);
-=======
           System.out.println("Received message type: " + type + " | to user: " + user);
->>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
           awaitResponse = false;
           switch (type) {
               case "NewSubscriber":
@@ -100,12 +96,9 @@ public class ChatClient extends AbstractClient
               case "BookCopy":
                   Logic.parseBookCopy(user, (BookCopy) data);
                   break;
-<<<<<<< HEAD
-=======
               case "BorrowStatus":
                   Logic.newBorrowStatus((String) data);
                   break;
->>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
               case "LoginStatus":
                   // add logic
                   Logic.parseLogin(data);
@@ -141,21 +134,12 @@ public class ChatClient extends AbstractClient
    */
   public void handleMessageFromClientUI(Object message)  
   {
-<<<<<<< HEAD
-    System.out.println("ChatClient: Sending to server: " + message);
-
-    if (message instanceof ServerMessage) {
-      ServerMessage serverMessage = (ServerMessage) message;
-      String type = serverMessage.getType();
-      // Object data = serverMessage.getData(); -- not needed atm
-=======
     if (message instanceof ServerMessage) {
       ServerMessage serverMessage = (ServerMessage) message;
       String type = serverMessage.getType();
       Object data = serverMessage.getData();
       System.out.println("ChatClient: Sending message, Case: " + type + " | data: " + data);
       
->>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
 	    try {
         openConnection();
         connectionStatusFlag = 1; // Set flag to 1 for success

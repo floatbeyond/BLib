@@ -74,13 +74,10 @@ public class mysqlConnection {
 			stmt.setInt(1, userId);
 			ResultSet rs = stmt.executeQuery();
 			if (rs.next()) {
-<<<<<<< HEAD
-=======
 				LocalDate frozen_until = DateUtils.toLocalDate(rs.getDate("FreezeUntil"));
                 LocalDate join_date = DateUtils.toLocalDate(rs.getDate("Joined"));
                 LocalDate exp_date = DateUtils.toLocalDate(rs.getDate("Expiration"));
 
->>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
 				return new Subscriber(
 					rs.getInt("SubID"), 
 					rs.getString("Name"), 
@@ -88,15 +85,9 @@ public class mysqlConnection {
 					rs.getString("PhoneNumber"), 
 					rs.getString("Email"),
 					rs.getInt("Penalties"),
-<<<<<<< HEAD
-					rs.getDate("FreezeUntil"),
-					rs.getDate("Joined"),
-					rs.getDate("Expiration")
-=======
 					frozen_until,
 					join_date,
 					exp_date
->>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
 				);
 			}
 		} catch (SQLException e) {
@@ -105,8 +96,6 @@ public class mysqlConnection {
 
 		return null;
 	}
-<<<<<<< HEAD
-=======
 
 	// add new subscriber to the DB
 	public static int addSubscriber(Connection conn, Subscriber s) {
@@ -131,7 +120,6 @@ public class mysqlConnection {
 		}
 		return 0;
 	}
->>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
 	
 	// show to user all the subscribers in the DB
 	public static ArrayList<Subscriber> getSubscribers(Connection conn) {
@@ -264,15 +252,9 @@ public class mysqlConnection {
                     while (borrowingRecordRs.next()) {
                         int borrowId = borrowingRecordRs.getInt("BorrowID");
                         int subId = borrowingRecordRs.getInt("SubID");
-<<<<<<< HEAD
-                        Date borrowDate = borrowingRecordRs.getDate("BorrowDate");
-                        Date expectedReturnDate = borrowingRecordRs.getDate("ExpectedReturnDate");
-                        Date actualReturnDate = borrowingRecordRs.getDate("ActualReturnDate");
-=======
                         LocalDate borrowDate = DateUtils.toLocalDate(borrowingRecordRs.getDate("BorrowDate"));
                         LocalDate expectedReturnDate = DateUtils.toLocalDate(borrowingRecordRs.getDate("ExpectedReturnDate"));
                         LocalDate actualReturnDate = DateUtils.toLocalDate(borrowingRecordRs.getDate("ActualReturnDate"));
->>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
                         String borrowStatus = borrowingRecordRs.getString("Status");
 
                         // Create a BorrowingRecord object and add it to the results list
@@ -308,13 +290,8 @@ public class mysqlConnection {
 		return null;
 	}
 
-<<<<<<< HEAD
-	public static boolean addBorrowingRecord(Connection conn, int subscriberId, int bookCopyId, Date borrowDate, Date expectedReturnDate) {
-		String query = "INSERT INTO borrowrecords (SubID, CopyID, BorrowDate, ReturnDate, Status) VALUES (?, ?, ?, ?, ?)";
-=======
 	public static boolean addBorrowingRecord(Connection conn, BorrowingRecord br) {
 		String query = "INSERT INTO borrowrecords (SubID, CopyID, BorrowDate, ExpectedReturnDate, Status) VALUES (?, ?, ?, ?, ?)";
->>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
 		try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 			stmt.setInt(1, br.getSubId());
 			stmt.setInt(2, br.getCopyId());
@@ -325,7 +302,6 @@ public class mysqlConnection {
 			ResultSet rs = stmt.getGeneratedKeys();
 			if (rs.next()) {
 				int borrowId = rs.getInt(1);
-<<<<<<< HEAD
 				return true;
 			}
 		} catch (SQLException e) {
@@ -351,9 +327,6 @@ public class mysqlConnection {
 					rs.getDate("Timestamp")
 				);
 				dataLogs.add(log);
-=======
-				//return true;
->>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
 			}
 			try (Statement st = conn.createStatement()) {
 				String updateCopyStatus = "UPDATE bookcopies SET Status = 'Borrowed' WHERE CopyID = " + br.getCopyId();
@@ -364,12 +337,8 @@ public class mysqlConnection {
 			e.printStackTrace();
 			return false;
 		}
-<<<<<<< HEAD
 		
 		return dataLogs;
-=======
-		// return false;
->>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
 	}
 
 	public static int getBooksInOrderCount(Connection conn, int subscriberId) {
