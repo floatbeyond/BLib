@@ -6,6 +6,7 @@ import common.Book;
 import common.BookCopy;
 import common.BorrowingRecord;
 import common.MessageUtils;
+import common.Subscriber;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -31,6 +32,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Callback;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 
@@ -61,9 +63,10 @@ public class SubscriberMainFrameController implements Initializable {
     @FXML private TableColumn<Book, String> copiesColumn;
     @FXML private TableColumn<Book, Void> actionColumn;
 
-    private Map<Integer, Stage> openDialogs = new HashMap<>(); // Track open dialogs
-
     @FXML private Label messageLabel;
+
+    private Map<Integer, Stage> openDialogs = new HashMap<>(); // Track open dialogs
+    private Subscriber s;
 
     private String getSearch() { return searchField.getText(); }
 
@@ -75,7 +78,7 @@ public class SubscriberMainFrameController implements Initializable {
         setupColumns();
         setupSearch();
 
-        SharedController.getSubscriber();
+        s = SharedController.getSubscriber();
         // Set the controller in SharedController
         SharedController.setSubscriberMainFrameController(this);
     }
@@ -121,8 +124,15 @@ public class SubscriberMainFrameController implements Initializable {
         authorColumn.setCellValueFactory(new PropertyValueFactory<>("author"));
         genreColumn.setCellValueFactory(new PropertyValueFactory<>("genre"));
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
-
         copiesColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getCopyCount()));
+
+        // Apply custom cell factory to wrap text and adjust cell height
+        applyWrappingCellFactory(bookNameColumn);
+        applyWrappingCellFactory(authorColumn);
+        applyWrappingCellFactory(genreColumn);
+        applyWrappingCellFactory(descriptionColumn);
+        applyWrappingCellFactory(copiesColumn);
+        
 
         actionColumn.setCellFactory(param -> new TableCell<Book, Void>() {
             private final Button copiesButton = new Button("Show Copies");
@@ -141,6 +151,35 @@ public class SubscriberMainFrameController implements Initializable {
                 } else {
                     setGraphic(copiesButton);
                 }
+            }
+        });
+    }
+
+     private void applyWrappingCellFactory(TableColumn<Book, String> column) {
+        column.setCellFactory(new Callback<TableColumn<Book, String>, TableCell<Book, String>>() {
+            @Override
+            public TableCell<Book, String> call(TableColumn<Book, String> param) {
+                return new TableCell<Book, String>() {
+                    private final Text text;
+
+                    {
+                        text = new Text();
+                        text.wrappingWidthProperty().bind(param.widthProperty());
+                        text.setStyle("-fx-padding: 5px;");
+                    }
+
+                    @Override
+                    protected void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty || item == null) {
+                            setGraphic(null);
+                        } else {
+                            text.setText(item);
+                            setGraphic(text);
+                            setPrefHeight(text.getLayoutBounds().getHeight() + 10); // Adjust height as needed
+                        }
+                    }
+                };
             }
         });
     }

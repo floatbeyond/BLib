@@ -1,19 +1,19 @@
 package common;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.time.LocalDate;
 
 public class BorrowingRecord implements Serializable {
     private static final long serialVersionUID = 1L;
     private int borrowId;
     private int copyId; // Foreign key referencing BookCopies
     private int subId; // Foreign key referencing Subscribers
-    private Date borrowDate;
-    private Date expectedReturnDate;
-    private Date actualReturnDate;
+    private LocalDate borrowDate;
+    private LocalDate expectedReturnDate;
+    private LocalDate actualReturnDate;
     private String status;
 
-    public BorrowingRecord(int borrowId, int copyId, int subId, Date borrowDate, Date expectedReturnDate, Date actualReturnDate, String status) {
+    public BorrowingRecord(int borrowId, int copyId, int subId, LocalDate borrowDate, LocalDate expectedReturnDate, LocalDate actualReturnDate, String status) {
         this.borrowId = borrowId;
         this.copyId = copyId;
         this.subId = subId;
@@ -21,10 +21,6 @@ public class BorrowingRecord implements Serializable {
         this.expectedReturnDate = expectedReturnDate;
         this.actualReturnDate = actualReturnDate;
         this.status = status;
-    }
-
-    public int getBorrowId() {
-        return borrowId;
     }
 
     public int getCopyId() {
@@ -35,15 +31,15 @@ public class BorrowingRecord implements Serializable {
         return subId;
     }
 
-    public Date getBorrowDate() {
+    public LocalDate getBorrowDate() {
         return borrowDate;
     }
 
-    public Date getExpectedReturnDate() {
+    public LocalDate getExpectedReturnDate() {
         return expectedReturnDate;
     }
 
-    public Date getActualReturnDate() {
+    public LocalDate getActualReturnDate() {
         return actualReturnDate;
     }
 

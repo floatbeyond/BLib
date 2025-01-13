@@ -1,7 +1,8 @@
 package common; 
 
 import java.io.Serializable;
-import java.sql.Date;
+
+import java.time.LocalDate;
 
 public class Subscriber implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -11,12 +12,12 @@ public class Subscriber implements Serializable {
     private String sub_phone_num;
     private String sub_email;
     private int sub_penalties;
-    private Date sub_freeze;
-    private Date sub_joined;
-    private Date sub_expiration;
+    private LocalDate sub_freeze;
+    private LocalDate sub_joined;
+    private LocalDate sub_expiration;
 
     public Subscriber(int sub_id, String sub_name, String sub_status, String sub_phone_num, String sub_email, 
-            int sub_penalties, Date sub_freeze, Date sub_joined, Date sub_expiration) {       
+            int sub_penalties, LocalDate sub_freeze, LocalDate sub_joined, LocalDate sub_expiration) {       
         this.sub_id = sub_id;
         this.sub_name = sub_name;
         this.sub_status = sub_status;
@@ -52,15 +53,15 @@ public class Subscriber implements Serializable {
         return sub_penalties;
     }
 
-    public Date getSub_freeze() {
+    public LocalDate getSub_freeze() {
         return sub_freeze;
     }
 
-    public Date getSub_joined() {
+    public LocalDate getSub_joined() {
         return sub_joined;
     }
 
-    public Date getSub_expiration() {
+    public LocalDate getSub_expiration() {
         return sub_expiration;
     }
 

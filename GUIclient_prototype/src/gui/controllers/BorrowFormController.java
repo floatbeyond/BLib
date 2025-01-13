@@ -11,12 +11,16 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
+
+import java.time.LocalDate;
 
 import client.ClientUI;
 import client.SharedController;
 import common.MessageUtils;
 import common.Subscriber;
 import common.BookCopy;
+import common.BorrowingRecord;
 
     
 public class BorrowFormController {
@@ -27,7 +31,7 @@ public class BorrowFormController {
 
     @FXML private TextField txtID;
     @FXML private TextField txtCopyId;
-    @FXML private TextField txtReturnDate;
+    @FXML private DatePicker dpReturnDate;
 
     @FXML private Label lblReturnDate;
     @FXML private int subscriberID;
@@ -41,8 +45,12 @@ public class BorrowFormController {
     private void initialize() {
         txtID.setEditable(false);
         txtCopyId.setEditable(false);
-        txtReturnDate.setEditable(true);
+        dpReturnDate.setEditable(false);
     }
+
+    private String getSubId() { return txtID.getText(); }
+    private String getCopyId() { return txtCopyId.getText(); }
+    private LocalDate getReturnDate() { return dpReturnDate.getValue(); }
 
     @FXML
     private void showScanWindow(ActionEvent event) throws Exception {
@@ -71,8 +79,12 @@ public class BorrowFormController {
     @FXML
     private void handleBorrowAction(ActionEvent event) throws Exception {
         try {
+            LocalDate returnDate = getReturnDate();
+            String subId = getSubId();
+            String copyId = getCopyId();
+            LocalDate currentDate = LocalDate.now();
             // Input validation
-            if (txtID.getText().isEmpty() || txtCopyId.getText().isEmpty()) {
+            if (subId.isEmpty() || copyId.isEmpty()) {
                 displayMessage("Please scan first");
                 return;
             }
@@ -83,36 +95,60 @@ public class BorrowFormController {
                     displayMessage("Subscriber is frozen");
                     return;
                 } else if (bc.getStatus().equals("Borrowed")) {
-                    displayMessage("Book is already borrowed");
+                    displayMessage("Book is already borrowed, scan another");
+                    return;
+                } else if (returnDate == null || returnDate.isBefore(currentDate.plusDays(1)) || returnDate.isAfter(currentDate.plusDays(14))) {
+                    displayMessage("Please select a valid return date");
                     return;
                 } else {
-                    MessageUtils.sendMessage(ClientUI.cc, "librarian", "borrow", null);
-                    displayMessage("Book borrowed successfully");
+                    // print return date
+                    System.out.println("Return date: " + returnDate);
+                    BorrowingRecord newBR = new BorrowingRecord(0, Integer.parseInt(copyId), Integer.parseInt(subId), 
+                                                            currentDate, returnDate, null, "Borrowed");
+                    MessageUtils.sendMessage(ClientUI.cc, "librarian", "newBorrow", newBR);
                 }
             } else {
                 displayMessage("No server connection");
                 return;
             }
         } catch (Exception e) {
-            displayMessage("An error occurred: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
     public void loadBookCopy(BookCopy bookCopy) {
         txtCopyId.setText(String.valueOf(bookCopy.getCopyId()));
+        bc = bookCopy;
+        SharedController.setBookCopy(null);
         // print
         System.out.println("Book status: " + bookCopy.getStatus());
         if (bookCopy.getStatus().equals("Borrowed")) {
             // print book status
             System.out.println("Book status: " + bookCopy.getStatus());
-            displayMessage("Book is already borrowed");
+            displayMessage("Book is already borrowed, scan another");
+        } else {
+            displayMessage("Book found");
         }
         txtCopyId.setEditable(false);
     }
 
     public void loadSubscriber(Subscriber subscriber) {
         txtID.setText(String.valueOf(subscriber.getSub_id()));
+        s = subscriber;
+        SharedController.setSubscriber(null);
+        if (subscriber.getSub_status().equals("Frozen")) {
+            displayMessage("Subscriber is frozen");
+        } else {
+            displayMessage("Subscriber found");
+        }
         txtID.setEditable(false);
+    }
+
+    public void successfulBorrow(String msg) {
+        displayMessage(msg);
+        txtCopyId.clear();
+        txtID.clear();
+        dpReturnDate.setValue(null);
     }
 
     public void goBackBtn(ActionEvent event) throws Exception {

@@ -2,7 +2,6 @@ package server;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.sql.Date;
 import java.util.List;
 
 import common.BorrowingRecord;
@@ -61,13 +60,15 @@ public class Logic {
         MessageUtils.sendResponseToClient(user, "BookList", results, client);
     }
 
-    public static void addBorrow(String user, ConnectionToClient client) {
-        int bookCopyId = br.getCopyId();
-        int subscriberId = br.getSubId();
-        Date borrowDate = br.getBorrowDate();
-        Date expectedReturnDate = br.getExpectedReturnDate();
-        boolean success = mysqlConnection.addBorrowingRecord(conn, subscriberId, bookCopyId, borrowDate, expectedReturnDate);
-        MessageUtils.sendResponseToClient(user, "BorrowStatus", success ? "Borrow added successfully." : "ERROR: Couldn't add borrow.", client);
+    public static void newBorrow(String user, Object newborrow, ConnectionToClient client) {
+        if (newborrow instanceof BorrowingRecord) {
+            br = (BorrowingRecord) newborrow;
+            boolean success = mysqlConnection.addBorrowingRecord(conn, br);
+            MessageUtils.sendResponseToClient(user, "BorrowStatus", success ? "Borrow added successfully." : "ERROR: Couldn't add borrow.", client);
+        } else {
+            MessageUtils.sendResponseToClient(user, "Error", "Invalid borrow record", client);
+            return;
+        }        
     }
 
     // Scan

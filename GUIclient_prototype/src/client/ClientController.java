@@ -66,9 +66,8 @@ public class ClientController implements ChatIF
 
 public void accept(Object message) {
     ServerMessage serverMessage = (ServerMessage) message;
-    System.out.println("ClientController: Sending message: " + message.toString());
     client.handleMessageFromClientUI(serverMessage);
-    System.out.println("ClientController: Message sent");
+    System.out.println("ClientController: Message sent to ChatClient");
 }
 
 public int getConnectionStatusFlag() {

@@ -68,7 +68,7 @@ public class Logic {
     }
 
     public static void updateSubscriberStatus(String status) {
-        SharedController.sfc.displayMessage(status);
+        // SharedController.sfc.successfulBorrow(status);
     }
 
   
@@ -110,6 +110,15 @@ public class Logic {
                 SharedController.lwc.noBooksFound();
             }
         });
+    }
+
+    // Borrow
+
+    public static void newBorrowStatus(String status) {
+        Platform.runLater(() -> {
+            SharedController.bfc.successfulBorrow(status);
+        });
+        
     }
 
 
