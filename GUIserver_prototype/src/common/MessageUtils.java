@@ -1,8 +1,7 @@
-package server;
+package common;
 
 import java.io.IOException;
 import ocsf.server.ConnectionToClient;
-import common.ServerMessage;
 
 public class MessageUtils {
     public static void sendResponseToClient(String user, String messageType, Object data, ConnectionToClient client) {

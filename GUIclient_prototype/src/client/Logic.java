@@ -47,6 +47,11 @@ public class Logic {
 
     // Subscriber
 
+    public static void newSubscriber(int subscriberId) {
+        // Send subscriberId to new subscriber window to display
+        System.out.println("New Subscriber: " + subscriberId);
+    }
+
     public static void parseSubscriber(Subscriber receivedSubscriber) {
         SharedController.setSubscriber(receivedSubscriber);
         System.out.println("Received Subscriber: " + receivedSubscriber);

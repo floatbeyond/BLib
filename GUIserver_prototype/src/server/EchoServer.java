@@ -6,6 +6,7 @@ package server;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import common.MessageUtils;
 import common.ServerMessage;
 import gui.ClientConnectedController;
 import ocsf.server.*;
@@ -68,6 +69,9 @@ public class EchoServer extends AbstractServer
           switch (type) {
             case "login" : {
               Logic.userLogin(user, (int) data, client);
+              break;
+            } case "newSubscriber": {
+              Logic.newSubscriber(user, data, client);
               break;
             } case "updateSubscriber": {
               Logic.updateSubscriberDetails(user, client);

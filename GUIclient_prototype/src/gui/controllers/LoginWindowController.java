@@ -51,15 +51,6 @@ public class LoginWindowController {
         });
     }
 
-    // private void setupSearch() {
-    //     searchButton.setOnAction(e -> handleSearchAction(e));
-    //     searchField.setOnKeyPressed(e -> {
-    //         if (e.getCode() == KeyCode.ENTER) {
-    //             handleSearchAction(null);
-    //         }
-    //     });
-    // }
-
     public void handleLoginAction(ActionEvent event) {
         String idText = getId();
         // Implement your search logic here

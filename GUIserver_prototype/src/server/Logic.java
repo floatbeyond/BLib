@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import common.BorrowingRecord;
+import common.MessageUtils;
 import common.Subscriber;
 import common.BookCopy;
 import ocsf.server.ConnectionToClient;
@@ -28,9 +29,20 @@ public class Logic {
 
     // Subscriber
 
+    public static void newSubscriber(String user, Object newSubscriber, ConnectionToClient client) {
+        if (newSubscriber instanceof Subscriber) {
+            s = (Subscriber) newSubscriber;
+            int generatedId = mysqlConnection.addSubscriber(conn, s);
+            MessageUtils.sendResponseToClient(user, "NewSubscriber", generatedId, client);
+        } else {
+            MessageUtils.sendResponseToClient(user, "Error", "Not a subscriber", client);
+            return;
+        }
+    }
+
     public static void specificSubscriber(String user, int subscriberId, ConnectionToClient client) {
         if ((s = mysqlConnection.findSubscriber(conn, subscriberId)) != null) {
-            MessageUtils.sendResponseToClient(user, "Subscriber", s, client);
+            MessageUtils.sendResponseToClient(user, "foundSubscriber", s, client);
         } else {
             MessageUtils.sendResponseToClient(user, "Error", "Subscriber ID Not Found", client);
         }

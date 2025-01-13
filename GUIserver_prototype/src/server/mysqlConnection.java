@@ -9,6 +9,7 @@ import common.Librarian;
 import common.Book;
 import common.BookCopy;
 import common.BorrowingRecord;
+import common.DateUtils;
 import common.OrderRecord;
 
 import java.sql.DriverManager;
@@ -72,6 +73,10 @@ public class mysqlConnection {
 			stmt.setInt(1, userId);
 			ResultSet rs = stmt.executeQuery();
 			if (rs.next()) {
+				LocalDate frozen_until = DateUtils.toLocalDate(rs.getDate("FreezeUntil"));
+                LocalDate join_date = DateUtils.toLocalDate(rs.getDate("Joined"));
+                LocalDate exp_date = DateUtils.toLocalDate(rs.getDate("Expiration"));
+
 				return new Subscriber(
 					rs.getInt("SubID"), 
 					rs.getString("Name"), 
@@ -79,9 +84,9 @@ public class mysqlConnection {
 					rs.getString("PhoneNumber"), 
 					rs.getString("Email"),
 					rs.getInt("Penalties"),
-					rs.getDate("FreezeUntil").toLocalDate(),
-					rs.getDate("Joined").toLocalDate(),
-					rs.getDate("Expiration").toLocalDate()
+					frozen_until,
+					join_date,
+					exp_date
 				);
 			}
 		} catch (SQLException e) {
@@ -89,6 +94,30 @@ public class mysqlConnection {
 		}
 
 		return null;
+	}
+
+	// add new subscriber to the DB
+	public static int addSubscriber(Connection conn, Subscriber s) {
+		String query = "INSERT INTO subscribers (Name, Status, PhoneNumber, Email, Penalties, FreezeUntil, Joined, Expiration) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setString(1, s.getSub_name());
+			stmt.setString(2, s.getSub_status());
+			stmt.setString(3, s.getSub_phone_num());
+			stmt.setString(4, s.getSub_email());
+			stmt.setInt(5, s.getSub_penalties());
+			stmt.setDate(6, Date.valueOf(s.getSub_freeze()));
+			stmt.setDate(7, Date.valueOf(s.getSub_joined()));
+			stmt.setDate(8, Date.valueOf(s.getSub_expiration()));
+			stmt.executeUpdate();
+			ResultSet rs = stmt.getGeneratedKeys();
+			if (rs.next()) {
+				int subId = rs.getInt(1);
+				return subId;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 	
 	// show to user all the subscribers in the DB
@@ -100,20 +129,10 @@ public class mysqlConnection {
 			 ResultSet rs = st.executeQuery(query)) {
 			
 			while (rs.next()) {
-				LocalDate frozen_until = null;
-                if (rs.getDate("FreezeUntil") != null) {
-                    frozen_until = rs.getDate("FreezeUntil").toLocalDate();
-                }
+				LocalDate frozen_until = DateUtils.toLocalDate(rs.getDate("FreezeUntil"));
+                LocalDate join_date = DateUtils.toLocalDate(rs.getDate("Joined"));
+                LocalDate exp_date = DateUtils.toLocalDate(rs.getDate("Expiration"));
 
-				LocalDate join_date = null;
-                if (rs.getDate("Joined") != null) {
-                    join_date = rs.getDate("Joined").toLocalDate();
-                }
-
-                LocalDate exp_date = null;
-                if (rs.getDate("Expiration") != null) {
-                    exp_date = rs.getDate("Expiration").toLocalDate();
-                }
 				Subscriber s = new Subscriber(
 					rs.getInt("SubID"), 
 					rs.getString("Name"), 
@@ -171,21 +190,10 @@ public class mysqlConnection {
 				String phoneNumber = rs.getString("PhoneNumber");
 				String email = rs.getString("Email");
 				int penalties = rs.getInt("Penalties");
+				LocalDate frozen_until = DateUtils.toLocalDate(rs.getDate("FreezeUntil"));
+                LocalDate join_date = DateUtils.toLocalDate(rs.getDate("Joined"));
+                LocalDate exp_date = DateUtils.toLocalDate(rs.getDate("Expiration"));
 
-				LocalDate frozen_until = null;
-                if (rs.getDate("FreezeUntil") != null) {
-                    frozen_until = rs.getDate("FreezeUntil").toLocalDate();
-                }
-
-				LocalDate join_date = null;
-                if (rs.getDate("Joined") != null) {
-                    join_date = rs.getDate("Joined").toLocalDate();
-                }
-
-                LocalDate exp_date = null;
-                if (rs.getDate("Expiration") != null) {
-                    exp_date = rs.getDate("Expiration").toLocalDate();
-                }
 				return new Subscriber(sub_id, sub_name, status, phoneNumber, email, 
 										penalties, frozen_until, join_date, exp_date);
 			}

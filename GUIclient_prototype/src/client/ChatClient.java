@@ -77,7 +77,10 @@ public class ChatClient extends AbstractClient
           System.out.println("Received message type: " + type + " | to user: " + user);
           awaitResponse = false;
           switch (type) {
-              case "Subscriber":
+              case "NewSubscriber":
+                  Logic.newSubscriber((int) data);
+                  break;
+              case "foundSubscriber":
                   if (data instanceof Subscriber) {
                     Logic.parseSubscriber((Subscriber) data);
                   }
