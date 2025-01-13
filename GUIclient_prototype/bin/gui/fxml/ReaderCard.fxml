@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="searchHome" prefHeight="486.0" prefWidth="374.0" styleClass="anchor-pane" stylesheets="@../css/ReaderCard.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ReaderCardController">
+   <children>
+      <Button fx:id="btnBack" layoutX="4.0" layoutY="457.0" mnemonicParsing="false" onAction="#goBackBtn" styleClass="button" text="Back" />
+      <Label id="lblID" fx:id="lblID" layoutX="17.0" layoutY="109.0" styleClass="label" text="SubscriberID" />
+      <Label id="lblName" fx:id="lblName" layoutX="18.0" layoutY="141.0" styleClass="label" text="Name:" />
+      <Label id="lblStatus" fx:id="lblStatus" layoutX="17.0" layoutY="181.0" styleClass="label" text="Status:" />
+          <Label id="lblEmail" fx:id="lblEmail" layoutX="18.0" layoutY="259.0" styleClass="label" text="Email" />
+      <Label id="lblPhoneNumber" fx:id="lblPhoneNumber" layoutX="12.0" layoutY="223.0" styleClass="label" text="Phone Number:" />
+      <Label id="lblPenalties" fx:id="lblPenalties" layoutX="21.0" layoutY="300.0" styleClass="label" text="Penalties:" />
+      <Label id="lblFreeze" fx:id="lblFreeze" layoutX="21.0" layoutY="338.0" styleClass="label" text="Freeze:" />
+      <Label id="lblJoinDate" fx:id="lblJoinDate" layoutX="21.0" layoutY="384.0" styleClass="label" text="Join Date:" />
+      <Label id="lblExpDate" fx:id="lblExpDate" layoutX="15.0" layoutY="428.0" styleClass="label" text="exp Date:" />
+      <Label id="lblReaderCard" fx:id="lblReaderCard" layoutX="122.0" layoutY="45.0" prefHeight="17.0" prefWidth="122.0" styleClass="label" text="Reader Card" />
+      <Button fx:id="scanButton" layoutX="281.0" layoutY="14.0" mnemonicParsing="false" onAction="#showScanWindow" prefHeight="40.0" prefWidth="49.0" styleClass="button" text="Scan" />
+      <TextField id="lblName" fx:id="txtname" layoutX="112.0" layoutY="137.0" prefHeight="17.0" prefWidth="193.0" styleClass="text-field" />
+      <TextField id="lblStatus" fx:id="txtStatus" layoutX="112.0" layoutY="177.0" prefHeight="17.0" prefWidth="193.0" styleClass="text-field" />
+      <TextField id="lblPhoneNumber" fx:id="txtPhoneNumber" layoutX="112.0" layoutY="219.0" prefHeight="17.0" prefWidth="193.0" styleClass="text-field" />
+      <TextField id="lblEmail" fx:id="txtEmail" layoutX="112.0" layoutY="255.0" prefHeight="17.0" prefWidth="193.0" styleClass="text-field" />
+      <TextField id="lblPenalties" fx:id="txtPenalties" layoutX="112.0" layoutY="296.0" prefHeight="17.0" prefWidth="193.0" styleClass="text-field" />
+      <TextField id="lblFreeze" fx:id="txtFreeze" layoutX="112.0" layoutY="334.0" prefHeight="17.0" prefWidth="193.0" styleClass="text-field" />
+      <TextField id="lblID" fx:id="txtSubscriberID" layoutX="112.0" layoutY="93.0" prefHeight="17.0" prefWidth="193.0" styleClass="text-field" />
+      <TextField id="lblJoinDate" fx:id="txtJoinDate" layoutX="112.0" layoutY="380.0" prefHeight="17.0" prefWidth="193.0" styleClass="text-field" />
+      <TextField id="lblExpDate" fx:id="txtExpDate" layoutX="112.0" layoutY="424.0" prefHeight="17.0" prefWidth="193.0" styleClass="text-field" />
+
+  
+   </children>
+</AnchorPane>

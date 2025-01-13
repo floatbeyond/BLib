@@ -6,18 +6,23 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="898.0" prefWidth="1291.0" stylesheets="@../css/SubscribersTableForm.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.SubscribersTableController">
+<AnchorPane prefHeight="492.0" prefWidth="652.0" stylesheets="@../css/SubscribersTableForm.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.SubscribersTableController">
    <children>
-      <TableView fx:id="subscriberTable" layoutX="28.0" layoutY="46.0" prefHeight="536.0" prefWidth="783.0" AnchorPane.bottomAnchor="57.0" AnchorPane.leftAnchor="28.0" AnchorPane.rightAnchor="26.0" AnchorPane.topAnchor="46.0">
+      <TableView fx:id="subscriberTable" layoutX="28.0" layoutY="46.0" prefHeight="390.0" prefWidth="595.0" AnchorPane.bottomAnchor="56.0" AnchorPane.leftAnchor="28.0" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="46.0">
         <columns>
-          <TableColumn fx:id="colID" prefWidth="108.0" resizable="true" sortable="true" text="ID" />
-          <TableColumn fx:id="colName" prefWidth="159.0" resizable="true" sortable="true" text="Name" />
-          <TableColumn fx:id="colStatus" prefWidth="161.0" resizable="true" sortable="true" text="Status" />
-          <TableColumn fx:id="colPhone" prefWidth="116.0" resizable="true" sortable="true" text="Phone" />
-          <TableColumn fx:id="colEmail" prefWidth="254.0" resizable="true" sortable="true" text="Email" />
+          <TableColumn fx:id="colID" prefWidth="67.33327865600586" resizable="true" sortable="true" text="ID" />
+          <TableColumn fx:id="colName" prefWidth="57.33325958251953" resizable="true" sortable="true" text="Name" />
+          <TableColumn fx:id="colStatus" prefWidth="66.6666259765625" resizable="true" sortable="true" text="Status" />
+          <TableColumn fx:id="colPhone" maxWidth="-1.0" prefWidth="354.66676330566406" resizable="true" sortable="true" text="Phone" />
+          <TableColumn fx:id="colEmail" prefWidth="63.33332824707031" resizable="true" sortable="true" text="Email" />
+          
+          <TableColumn fx:id="colPenalties" maxWidth="74.66668701171875" prefWidth="74.0" resizable="true" sortable="true" text="Penalties" />
+          <TableColumn fx:id="colfrozenUntil" resizable="true" sortable="true" text="frozenUntil" />
+          <TableColumn fx:id="coljoinDate" maxWidth="99.33331298828125" prefWidth="78.66668701171875" resizable="true" sortable="true" text="joinDate" />
+          <TableColumn fx:id="colexpDate" maxWidth="90.0" prefWidth="84.66668701171875" resizable="true" sortable="true" text="expDate" />
         </columns>
       </TableView>
       <Label fx:id="copiedLabel" layoutX="267.0" layoutY="12.0" prefHeight="37.0" prefWidth="85.0" text="Copied!" visible="false" />
-      <Button fx:id="btnBack" layoutX="14.0" layoutY="850.0" mnemonicParsing="false" onAction="#goBackBtn" prefHeight="20.0" prefWidth="60.0" text="Back" />
+      <Button fx:id="btnBack" layoutX="28.0" layoutY="444.0" mnemonicParsing="false" onAction="#goBackBtn" prefHeight="20.0" prefWidth="60.0" text="Back" />
    </children>
 </AnchorPane>

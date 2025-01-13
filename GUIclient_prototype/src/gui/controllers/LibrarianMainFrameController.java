@@ -33,6 +33,10 @@ public class LibrarianMainFrameController {
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gui/fxml/SubscribersTableForm.fxml"));
                 Parent root = fxmlLoader.load();
+                SubscribersTableController controller = fxmlLoader.getController();
+                if  (controller != null) {
+                    SharedController.setSubscribersTableController(controller);
+                }
                 Stage stage = new Stage();
                 stage.setTitle("Show Subscribers");
                 Scene scene = new Scene(root);

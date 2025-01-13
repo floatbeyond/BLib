@@ -1,6 +1,7 @@
 package gui.controllers;
 
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 import client.ClientUI;
@@ -39,9 +40,16 @@ public class SubscribersTableController implements Initializable {
     @FXML private TableView<Subscriber> subscriberTable;
     @FXML private TableColumn<Subscriber, Integer> colID;
     @FXML private TableColumn<Subscriber, String> colName;
-    @FXML private TableColumn<Subscriber, Integer> colStatus;
+    @FXML private TableColumn<Subscriber, String> colStatus;
     @FXML private TableColumn<Subscriber, String> colPhone;
     @FXML private TableColumn<Subscriber, String> colEmail;
+
+    @FXML private TableColumn<Subscriber, Integer> colPenalties;
+    @FXML private TableColumn<Subscriber, LocalDate> colfrozenUntil;
+    @FXML private TableColumn<Subscriber, LocalDate> coljoinDate;
+    @FXML private TableColumn<Subscriber, LocalDate> colexpDate;
+
+
 
 	@FXML private Label copiedLabel;
 
@@ -59,7 +67,14 @@ public class SubscribersTableController implements Initializable {
 		assert colPhone != null : "fx:id=\"colPhone\" was not injected";
 		assert colEmail != null : "fx:id=\"colEmail\" was not injected";
         assert copiedLabel != null : "fx:id=\"copiedLabel\" was not injected";
+        
+        assert colPenalties != null : "fx:id=\"colPenalties\" was not injected";
+		assert colfrozenUntil != null : "fx:id=\"colfrozenUntil\" was not injected";
+		assert coljoinDate != null : "fx:id=\"coljoinDate\" was not injected";
+        assert colexpDate != null : "fx:id=\"colexpDate\" was not injected";
 
+
+  
 		// Initialize columns
 		setupColumns();
 
@@ -85,7 +100,7 @@ public class SubscribersTableController implements Initializable {
 		// Load initial data
 		Platform.runLater(() -> {
 			System.out.println("Loading initial data...");
-			ClientUI.cc.accept("showSubscribersTable");
+			MessageUtils.sendMessage(ClientUI.cc, "user", "showSubscribersTable", null);
 		});
 	}
 
@@ -102,12 +117,23 @@ public class SubscribersTableController implements Initializable {
         colPhone.setCellValueFactory(new PropertyValueFactory<>("sub_phone_num"));
         colEmail.setCellValueFactory(new PropertyValueFactory<>("sub_email"));
 
+        colPenalties.setCellValueFactory(new PropertyValueFactory<>("sub_penalties"));
+        colfrozenUntil.setCellValueFactory(new PropertyValueFactory<>("sub_freeze"));
+        coljoinDate.setCellValueFactory(new PropertyValueFactory<>("sub_joined"));
+        colexpDate.setCellValueFactory(new PropertyValueFactory<>("sub_expiration"));
+
+             
         // Set up non-editable cell factories
         colID.setCellFactory(column -> createNonEditableCell());
         colName.setCellFactory(column -> createNonEditableCell());
         colStatus.setCellFactory(column -> createNonEditableCell());
         colPhone.setCellFactory(column -> createNonEditableCell());
         colEmail.setCellFactory(column -> createNonEditableCell());
+        colPenalties.setCellFactory(column -> createNonEditableCell());
+        colfrozenUntil.setCellFactory(column -> createNonEditableCell());
+        coljoinDate.setCellFactory(column -> createNonEditableCell());
+        colexpDate.setCellFactory(column -> createNonEditableCell());
+
 	}
 
 	private <T> TableCell<Subscriber, T> createNonEditableCell() {
@@ -162,7 +188,7 @@ public class SubscribersTableController implements Initializable {
 
     public void goBackBtn(ActionEvent event) throws Exception {
         System.out.println("goBackBtn clicked");
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/MainFrame.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/LibrarianMainFrame.fxml"));
 		Pane root = loader.load();
 		
 		Stage primaryStage = new Stage();
