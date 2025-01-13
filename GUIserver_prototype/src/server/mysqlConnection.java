@@ -105,9 +105,9 @@ public class mysqlConnection {
 			stmt.setString(3, s.getSub_phone_num());
 			stmt.setString(4, s.getSub_email());
 			stmt.setInt(5, s.getSub_penalties());
-			stmt.setDate(6, Date.valueOf(s.getSub_freeze()));
-			stmt.setDate(7, Date.valueOf(s.getSub_joined()));
-			stmt.setDate(8, Date.valueOf(s.getSub_expiration()));
+			stmt.setDate(6, DateUtils.toSqlDate(s.getSub_freeze()));
+			stmt.setDate(7, DateUtils.toSqlDate(s.getSub_joined()));
+			stmt.setDate(8, DateUtils.toSqlDate(s.getSub_expiration()));
 			stmt.executeUpdate();
 			ResultSet rs = stmt.getGeneratedKeys();
 			if (rs.next()) {
@@ -251,9 +251,9 @@ public class mysqlConnection {
                     while (borrowingRecordRs.next()) {
                         int borrowId = borrowingRecordRs.getInt("BorrowID");
                         int subId = borrowingRecordRs.getInt("SubID");
-                        LocalDate borrowDate = borrowingRecordRs.getDate("BorrowDate").toLocalDate();
-                        LocalDate expectedReturnDate = borrowingRecordRs.getDate("ExpectedReturnDate").toLocalDate();
-                        LocalDate actualReturnDate = borrowingRecordRs.getDate("ActualReturnDate").toLocalDate();
+                        LocalDate borrowDate = DateUtils.toLocalDate(borrowingRecordRs.getDate("BorrowDate"));
+                        LocalDate expectedReturnDate = DateUtils.toLocalDate(borrowingRecordRs.getDate("ExpectedReturnDate"));
+                        LocalDate actualReturnDate = DateUtils.toLocalDate(borrowingRecordRs.getDate("ActualReturnDate"));
                         String borrowStatus = borrowingRecordRs.getString("Status");
 
                         // Create a BorrowingRecord object and add it to the results list
@@ -294,8 +294,8 @@ public class mysqlConnection {
 		try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 			stmt.setInt(1, br.getSubId());
 			stmt.setInt(2, br.getCopyId());
-			stmt.setDate(3, Date.valueOf(br.getBorrowDate()));
-			stmt.setDate(4, Date.valueOf(br.getExpectedReturnDate()));
+			stmt.setDate(3, DateUtils.toSqlDate(br.getBorrowDate()));
+			stmt.setDate(4, DateUtils.toSqlDate(br.getExpectedReturnDate()));
 			stmt.setString(5, br.getStatus());
 			stmt.executeUpdate();
 			ResultSet rs = stmt.getGeneratedKeys();
