@@ -302,6 +302,13 @@ public class mysqlConnection {
 			ResultSet rs = stmt.getGeneratedKeys();
 			if (rs.next()) {
 				int borrowId = rs.getInt(1);
+				try (Statement st = conn.createStatement()) {
+					String updateCopyStatus = "UPDATE bookcopies SET Status = 'Borrowed' WHERE CopyID = " + br.getCopyId();
+					st.executeUpdate(updateCopyStatus);
+				} catch (SQLException e) {
+					e.printStackTrace();
+					return false;
+				}
 				return true;
 			}
 		} catch (SQLException e) {
@@ -327,17 +334,7 @@ public class mysqlConnection {
 					rs.getDate("Timestamp")
 				);
 				dataLogs.add(log);
-			}
-			try (Statement st = conn.createStatement()) {
-				String updateCopyStatus = "UPDATE bookcopies SET Status = 'Borrowed' WHERE CopyID = " + br.getCopyId();
-				st.executeUpdate(updateCopyStatus);
-			}
-			return true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
-		
+			}		
 		return dataLogs;
 	}
 
