@@ -291,11 +291,7 @@ public class mysqlConnection {
 					rs.getString("Action"),
 					rs.getDate("Timestamp")
 				);
-<<<<<<< HEAD
-				dataLogs.add(s);
-=======
 				dataLogs.add(log);
->>>>>>> 79059ca (PersonalDetails+DataLogs)
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -303,8 +299,6 @@ public class mysqlConnection {
 		
 		return dataLogs;
 	}
-<<<<<<< HEAD
-=======
 
 	public static int getBooksInOrderCount(Connection conn, int subscriberId) {
         String query = "SELECT COUNT(*) FROM orderrecord WHERE status = 'In Order' AND subscriber_id = ?";
@@ -333,8 +327,6 @@ public class mysqlConnection {
         }
         return 0;
     }
->>>>>>> 79059ca (PersonalDetails+DataLogs)
-	
 
 }
 

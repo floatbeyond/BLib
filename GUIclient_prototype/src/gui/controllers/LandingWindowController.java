@@ -30,6 +30,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.event.ActionEvent;
@@ -59,6 +60,8 @@ public class LandingWindowController implements Initializable {
     @FXML private TableColumn<Book, Void> actionColumn;
 
     @FXML private Label messageLabel;
+
+    private Map<Integer, Stage> openDialogs = new HashMap<>();
 
     private String getSearch() {
         return searchField.getText();

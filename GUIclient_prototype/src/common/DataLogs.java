@@ -1,23 +1,16 @@
 package common;
 
-import java.util.Date;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-
->>>>>>> 79059ca (PersonalDetails+DataLogs)
-=======
->>>>>>> 4c9f9e2 (personal details +data logs filter)
 import java.io.Serializable;
+import java.time.LocalDate;
 
 public class DataLogs implements Serializable {
     private static final long serialVersionUID = 1L;
     private int log_id;
     private int sub_id;
     private String log_action; 
-    private Date timestamp;
+    private LocalDate timestamp;
 
-    public DataLogs(int log_id, int sub_id, String log_action, Date timestamp) {
+    public DataLogs(int log_id, int sub_id, String log_action, LocalDate timestamp) {
         this.log_id = log_id;
         this.sub_id = sub_id;
         this.log_action = log_action;
@@ -36,7 +29,7 @@ public class DataLogs implements Serializable {
         return log_action;
     }   
 
-    public Date getTimestamp() {
+    public LocalDate getTimestamp() {
         return timestamp;
     }
 

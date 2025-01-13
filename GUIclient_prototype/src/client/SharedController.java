@@ -20,25 +20,12 @@ public class SharedController {
     public static ClientPortController cpc;
     public static SubscriberFormController sfc;
     public static LandingWindowController lwc;
-<<<<<<< HEAD
     public static LoginWindowController logwc;
-<<<<<<< HEAD
-=======
-    public static SubMainFrameController smfc;
->>>>>>> 2270b72 (submainframecontrolller java and fxml)
-=======
     public static SubscriberMainFrameController smfc;
-<<<<<<< HEAD
->>>>>>> 6b00fd9 (Connected login to subscriber main frame)
-=======
     public static BorrowFormController bfc;
     public static ScanWindowController swc;
     private static BookCopy bc;
-<<<<<<< HEAD
->>>>>>> 1667a39 (Connected login page to librarian main frame)
-=======
     private static PersonalDetailsController pdc;
->>>>>>> 79059ca (PersonalDetails+DataLogs)
 
     // Setters and getters
  
@@ -66,31 +53,6 @@ public class SharedController {
     public static void setLoginWindowController(LoginWindowController controller) { logwc = controller; }
     public static LoginWindowController getLoginWindowController() { return logwc; }
 
-<<<<<<< HEAD
-    public static SubscriberFormController getSubscriberFormController() {
-      return sfc;
-    }
-
-    public static void setLandingWindowController(LandingWindowController controller) {
-      lwc = controller;
-    }
-
-    public static LandingWindowController getLandingWindowController() {
-      return lwc;
-    }
-
-    public static void setSubMainFrameController(SubMainFrameController controller) {
-      smfc = controller;
-    }
-    public static SubMainFrameController getSubMainFrameController() {
-      return smfc;
-     
-    }
-=======
-    public static void setSubscriberMainFrameController(SubscriberMainFrameController controller) { smfc = controller; }
-    public static SubscriberMainFrameController getSubscriberMainFrameController() { return smfc; }
->>>>>>> 6b00fd9 (Connected login to subscriber main frame)
-
     public static void setBorrowFormController(BorrowFormController controller) { bfc = controller; }
     public static BorrowFormController getBorrowFormController() { return bfc; }
 
@@ -100,6 +62,8 @@ public class SharedController {
     public static void setPersonalDetailsController(PersonalDetailsController controller) { pdc = controller; }
     public static PersonalDetailsController getPersonalDetailsController() { return pdc; }
 
+    public static void setSubscriberMainFrameController(SubscriberMainFrameController controller) { smfc = controller; }
+    public static SubscriberMainFrameController getSubscriberMainFrameController() { return smfc; }
 
 }
 
