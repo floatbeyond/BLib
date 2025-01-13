@@ -15,15 +15,17 @@ import javafx.scene.control.DatePicker;
 
 import java.time.LocalDate;
 
+import client.ChatClient;
 import client.ClientUI;
 import client.SharedController;
 import common.MessageUtils;
+import common.ServerMessage;
 import common.Subscriber;
 import common.BookCopy;
 import common.BorrowingRecord;
 
 public class ReaderCardController {
-
+    private Subscriber s;
     @FXML
     private TextField txtSubscriberID;
     @FXML
@@ -43,12 +45,17 @@ public class ReaderCardController {
     @FXML
     private TextField txtExpDate;
 
+    
+    private String getSubId() { return txtSubscriberID.getText(); }
+    
     @FXML
     private void fetchSubscriberData() {
-        String subscriberID = txtSubscriberID.getText();
-        // Assuming you have a method to get subscriber data by ID
-        Subscriber sub= getSub_id(subscriberID);
-        
+        String subId = getSubId();        // Assuming you have a method to get subscriber data by ID
+        ServerMessage response = MessageUtils.sendMessage(ClientUI.cc, "Librarian", "Subscriber", subId);
+        Subscriber sub = null;
+        if (response.getType().equals("Subscriber") && response.getData() instanceof Subscriber) {
+            sub = (Subscriber) response.getData();
+}       
         if (sub != null) {
             txtname.setText(sub.getSub_name());
             txtStatus.setText(sub.getSub_status());
