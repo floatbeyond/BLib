@@ -19,16 +19,7 @@
       <Label id="lblReturnDate" layoutX="23.0" layoutY="220.0" styleClass="label" text="Return Date:" />
       <Label fx:id="messageLabel" alignment="CENTER" layoutX="34.0" layoutY="255.0" prefHeight="40.0" prefWidth="275.0" styleClass="label" />
       <Label id="lblBorrowBook" layoutX="125.0" layoutY="55.0" prefHeight="17.0" prefWidth="122.0" styleClass="label" text="Borrow Book" />
-<<<<<<< HEAD
-      <ImageView fitHeight="30.0" fitWidth="33.0" layoutX="260.0" layoutY="207.0">
-         <image>
-            <Image url="@../images/dateIcon.jpg" />
-         </image>
-      </ImageView>
-      <Button fx:id="scanButton" layoutX="281.0" layoutY="14.0" mnemonicParsing="false" onAction="#showScanWindow" prefHeight="40.0" prefWidth="49.0" styleClass="button" text="Scan" />
-=======
       <Button fx:id="scanButton" layoutX="281.0" layoutY="14.0" mnemonicParsing="false" onAction="#showScanWindow" prefHeight="40.0" prefWidth="49.0" styleClass="button" text="Scan" />
       <DatePicker fx:id="dpReturnDate" layoutX="114.0" layoutY="214.0" prefHeight="32.0" prefWidth="193.0" />
->>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
    </children>
 </AnchorPane>

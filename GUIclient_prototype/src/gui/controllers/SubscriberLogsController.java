@@ -1,4 +1,4 @@
-package gui;
+package gui.controllers;
 
 import common.DataLogs;
 import javafx.fxml.FXML;
@@ -58,7 +58,7 @@ public class SubscriberLogsController {
         if (selectedMonth != null) {
             List<DataLogs> filteredLogs = allDataLogs.stream()
                 .filter(log -> {
-                    LocalDate logDate = log.getTimestamp().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    LocalDate logDate = log.getTimestamp();
                     return logDate.getMonth() == selectedMonth;
                 })
                 .collect(Collectors.toList());

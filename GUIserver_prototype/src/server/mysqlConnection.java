@@ -318,6 +318,38 @@ public class mysqlConnection {
 		return false;
 	}
 
+	public static boolean addOrderRecord(Connection conn, OrderRecord order) {
+        String query = "INSERT INTO orders (order_id, subscriber_id, book_id, order_date) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setInt(1, order.getOrderId());
+			stmt.setInt(2, order.getSubId());
+			stmt.setInt(3, order.getBookId());
+			stmt.setDate(4, Date.valueOf(order.getOrderDate()));
+			stmt.setString(5, order.getStatus());
+			stmt.setDate(6, Date.valueOf(order.getNotificationStamp()));
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+	public static boolean isOrderExists(Connection conn, int subscriberId, int bookId) {
+		String query = "SELECT COUNT(*) FROM orderrecord WHERE subscriber_id = ? AND book_id = ?";
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setInt(1, subscriberId);
+			stmt.setInt(2, bookId);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				return rs.getInt(1) > 0;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 	// show to user all the logs in the DB
 	public static ArrayList<DataLogs> getDataLogs(Connection conn) {
 		ArrayList<DataLogs> dataLogs = new ArrayList<>();
@@ -334,8 +366,11 @@ public class mysqlConnection {
 					rs.getDate("Timestamp")
 				);
 				dataLogs.add(log);
-			}		
-		return dataLogs;
+			}
+	} catch (SQLException e) {
+		e.printStackTrace();
+	}
+	return dataLogs;
 	}
 
 	public static int getBooksInOrderCount(Connection conn, int subscriberId) {

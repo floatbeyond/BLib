@@ -12,7 +12,7 @@ import javafx.application.Platform;
 // import gui.LandingWindowController;
 // import gui.SubscriberFormController;
 import common.Subscriber;
-import gui.PersonalDetailsController;
+import gui.controllers.PersonalDetailsController;
 import common.BookCopy;
 import common.Librarian;
 

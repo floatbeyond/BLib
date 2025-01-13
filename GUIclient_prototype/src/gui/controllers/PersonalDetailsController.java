@@ -1,4 +1,4 @@
-package gui;
+package gui.controllers;
 
 import client.ClientUI;
 import common.MessageUtils;
@@ -130,8 +130,7 @@ public class PersonalDetailsController {
 				}
 
 				if (!phoneNumber.equals(s.getSub_phone_num()) || !email.equals(s.getSub_email())) {
-					s = new Subscriber(id, name, s.getSub_status(), phoneNumber, email, s.getSub_penalties(), s.getSub_freeze(), joinDate, exDate);//לא תואם לקונסטרקטור של מנוי צריך להחליט איזה ממבר יש למנוי
-
+					s = new Subscriber(id, name, s.getSub_status(), phoneNumber, email, s.getSub_penalties(), s.getSub_freeze(), s.getSub_joined(), s.getSub_expiration());
 					ClientUI.cc.accept("change "+ s.toString());
 					System.out.println("ID: "+ id);
 					displayMessage("Subscriber updated!");

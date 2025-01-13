@@ -109,7 +109,11 @@ public class EchoServer extends AbstractServer
             } case "sendBooksInBorrowCount":
               //Logic.getBooksInBorrowCount(user,(int) data, client);
               break;
-            default: {
+            case "newOrder": {
+              System.out.println("New order");
+              Logic.newOrder(user, data, client);
+              break;
+            }default: {
               MessageUtils.sendResponseToClient(user, "Error", "Invalid command", client);
               break;
             }

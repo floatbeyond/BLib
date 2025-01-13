@@ -34,15 +34,9 @@
       <TableView fx:id="bookTable" layoutX="13.0" layoutY="167.0" prefHeight="452.0" prefWidth="1065.0" visible="false">
         <columns>
             <TableColumn fx:id="bookNameColumn" editable="false" prefWidth="180.0" resizable="false" text="Title" />
-<<<<<<< HEAD
-            <TableColumn fx:id="authorColumn" editable="false" prefWidth="120.0" resizable="false" text="Author" />
-            <TableColumn fx:id="genreColumn" editable="false" prefWidth="100.0" resizable="false" text="Genre" />
-            <TableColumn fx:id="descriptionColumn" editable="false" prefWidth="370.0" resizable="false" text="Description" />
-=======
             <TableColumn fx:id="authorColumn" editable="false" prefWidth="130.0" resizable="false" text="Author" />
             <TableColumn fx:id="genreColumn" editable="false" prefWidth="100.0" resizable="false" text="Genre" />
             <TableColumn fx:id="descriptionColumn" editable="false" prefWidth="360.0" resizable="false" text="Description" />
->>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
             <TableColumn fx:id="copiesColumn" editable="false" prefWidth="180.0" resizable="false" text="Copies" />
             <TableColumn fx:id="actionColumn" editable="false" prefWidth="110.0" resizable="false" text="Actions" />
          </columns>

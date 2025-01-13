@@ -6,11 +6,11 @@ import common.BookCopy;
 import gui.controllers.ClientPortController;
 import gui.controllers.LandingWindowController;
 import gui.controllers.LoginWindowController;
+import gui.controllers.PersonalDetailsController;
 import gui.controllers.SubscriberFormController;
 import gui.controllers.SubscriberMainFrameController;
 import gui.controllers.SubscribersTableController;
 import gui.controllers.ScanWindowController;
-import gui.PersonalDetailsController;
 import gui.controllers.BorrowFormController;
 
 public class SharedController {

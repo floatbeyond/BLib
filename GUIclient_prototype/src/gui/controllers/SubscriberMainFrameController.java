@@ -15,6 +15,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
@@ -35,6 +36,7 @@ import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
+
 
 import java.io.IOException;
 import java.net.URL;
@@ -66,7 +68,6 @@ public class SubscriberMainFrameController implements Initializable {
     @FXML private Label messageLabel;
 
     private Map<Integer, Stage> openDialogs = new HashMap<>(); // Track open dialogs
-    private Subscriber s;
 
     private String getSearch() { return searchField.getText(); }
 
@@ -78,9 +79,26 @@ public class SubscriberMainFrameController implements Initializable {
         setupColumns();
         setupSearch();
 
-        s = SharedController.getSubscriber();
-        // Set the controller in SharedController
         SharedController.setSubscriberMainFrameController(this);
+    }
+
+    private void showOrderSuccessMessage() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Order Success");
+        alert.setHeaderText(null);
+        alert.setContentText("The book has been successfully ordered!");
+        alert.showAndWait();
+    }
+
+    private void orderBook(Book book) {
+        // Implement the logic to order the book
+        System.out.println("Ordering book: " + book.getTitle());
+
+        // Send a request to the server to order the book
+        MessageUtils.sendMessage(ClientUI.cc, "user", "newOrder", book);
+
+        // Show success message to the user
+        showOrderSuccessMessage();
     }
 
     private void setupButtonWidth() {
@@ -135,24 +153,42 @@ public class SubscriberMainFrameController implements Initializable {
         
 
         actionColumn.setCellFactory(param -> new TableCell<Book, Void>() {
-            private final Button copiesButton = new Button("Show Copies");
-            {
-                copiesButton.setOnAction(event -> {
-                    Book book = getTableView().getItems().get(getIndex());
-                    showCopiesDialog(book);
-                });
-            }
+        private final Button copiesButton = new Button("Show Copies");
+        private final Button orderButton = new Button("Order");
 
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
+        {
+            copiesButton.setOnAction(event -> {
+                Book book = getTableView().getItems().get(getIndex());
+                showCopiesDialog(book);
+            });
+
+            orderButton.setOnAction(event -> {
+                Book book = getTableView().getItems().get(getIndex());
+                orderBook(book);
+            });
+        }
+
+        @Override
+        protected void updateItem(Void item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty) {
+                setGraphic(null);
+            }else {
+                Book book = getTableView().getItems().get(getIndex());
+                try {
+                    int copyCount = book.getAvailableCopies().size();
+                    if (copyCount == 0) {
+                        setGraphic(orderButton);
+                    } else {
+                        setGraphic(copiesButton);
+                    }
+                } catch (NumberFormatException e) {
+                    System.err.println("Invalid copy count: " + book.getCopyCount());
                     setGraphic(null);
-                } else {
-                    setGraphic(copiesButton);
                 }
             }
-        });
+        }
+    });
     }
 
      private void applyWrappingCellFactory(TableColumn<Book, String> column) {

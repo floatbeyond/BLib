@@ -7,6 +7,7 @@ import java.util.List;
 import common.BorrowingRecord;
 import common.DataLogs;
 import common.MessageUtils;
+import common.OrderRecord;
 import common.Subscriber;
 import common.BookCopy;
 import ocsf.server.ConnectionToClient;
@@ -89,13 +90,28 @@ public class Logic {
         }        
     }
 
+    public static void newOrder(String user, Object newOrder, ConnectionToClient client) {
+        if (newOrder instanceof OrderRecord) {
+            OrderRecord order = (OrderRecord) newOrder;
+            boolean orderExists = mysqlConnection.isOrderExists(conn, order.getSubId(), order.getBookId());
+            if (orderExists) {
+                MessageUtils.sendResponseToClient(user, "OrderStatus", "ERROR: Order already exists for this book.", client);
+            } else {
+                boolean success = mysqlConnection.addOrderRecord(conn, order);
+                MessageUtils.sendResponseToClient(user, "OrderStatus", success ? "Order added successfully." : "ERROR: Couldn't add order.", client);
+            }
+        } else {
+            MessageUtils.sendResponseToClient(user, "Error", "Invalid order record", client);
+            return;
+        }
+    }
     // Scan
 
     public static void scan(String user, String msg, int unparsedId, ConnectionToClient client) {
         if ((bc = mysqlConnection.findBookCopy(conn, unparsedId)) != null) {
             MessageUtils.sendResponseToClient(user, "BookCopy", bc, client);
         } else if ((s = mysqlConnection.findSubscriber(conn, unparsedId)) != null) {
-            MessageUtils.sendResponseToClient(user, "Subscriber", s, client);
+            MessageUtils.sendResponseToClient(user, "foundSubscriber", s, client);
         } else {
             MessageUtils.sendResponseToClient(user, "Error", "Scan failed", client);
         }
