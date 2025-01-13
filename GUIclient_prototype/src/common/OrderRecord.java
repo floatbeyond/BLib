@@ -1,18 +1,18 @@
 package common;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.time.LocalDate;
 
 public class OrderRecord implements Serializable {
     private static final long serialVersionUID = 1L;
     private int orderId;
     private int bookId; // Foreign key referencing Book
     private int subId; // Foreign key referencing Subscribers
-    private Date orderDate;
+    private LocalDate orderDate;
     private String status;
-    private Date notificationStamp;
+    private LocalDate notificationStamp;
 
-    public OrderRecord(int orderId, int bookId, int subId, Date orderDate, String status, Date notificationStamp) {
+    public OrderRecord(int orderId, int bookId, int subId, LocalDate orderDate, String status, LocalDate notificationStamp) {
         this.orderId = orderId;
         this.bookId = bookId;
         this.subId = subId;
@@ -33,7 +33,7 @@ public class OrderRecord implements Serializable {
         return subId;
     }
 
-    public Date getOrderDate() {
+    public LocalDate getOrderDate() {
         return orderDate;
     }
 
@@ -41,7 +41,7 @@ public class OrderRecord implements Serializable {
         return status;
     }
 
-    public Date getNotificationStamp() {
+    public LocalDate getNotificationStamp() {
         return notificationStamp;
     }
 

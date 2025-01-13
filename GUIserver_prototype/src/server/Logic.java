@@ -2,12 +2,20 @@ package server;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+<<<<<<< HEAD
 import java.sql.Date;
 import java.util.List;
 
 import common.BorrowingRecord;
 import common.Subscriber;
 import common.DataLogs; 
+=======
+import java.util.List;
+
+import common.BorrowingRecord;
+import common.MessageUtils;
+import common.Subscriber;
+>>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
 import common.BookCopy;
 import ocsf.server.ConnectionToClient;
 import gui.ClientConnectedController;
@@ -30,6 +38,7 @@ public class Logic {
 
     // Subscriber
 
+<<<<<<< HEAD
     public static void specificSubscriber(String user, int subscriberId, ConnectionToClient client) {
         if ((s = mysqlConnection.findSubscriber(conn, subscriberId)) != null) {
             MessageUtils.sendResponseToClient(user, "Subscriber", s, client);
@@ -38,6 +47,27 @@ public class Logic {
         }
     }
 
+=======
+    public static void newSubscriber(String user, Object newSubscriber, ConnectionToClient client) {
+        if (newSubscriber instanceof Subscriber) {
+            s = (Subscriber) newSubscriber;
+            int generatedId = mysqlConnection.addSubscriber(conn, s);
+            MessageUtils.sendResponseToClient(user, "NewSubscriber", generatedId, client);
+        } else {
+            MessageUtils.sendResponseToClient(user, "Error", "Not a subscriber", client);
+            return;
+        }
+    }
+
+    public static void specificSubscriber(String user, int subscriberId, ConnectionToClient client) {
+        if ((s = mysqlConnection.findSubscriber(conn, subscriberId)) != null) {
+            MessageUtils.sendResponseToClient(user, "foundSubscriber", s, client);
+        } else {
+            MessageUtils.sendResponseToClient(user, "Error", "Subscriber ID Not Found", client);
+        }
+    }
+
+>>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
     public static void updateSubscriberDetails(String user, ConnectionToClient client) {
         int subscriberId = s.getSub_id();
         String phoneNumber = s.getSub_phone_num();
@@ -50,11 +80,14 @@ public class Logic {
     public static void showSubscribersTable(String user, ConnectionToClient client) {
         ArrayList<Subscriber> table = mysqlConnection.getSubscribers(conn);
         MessageUtils.sendResponseToClient(user, "SubscriberList", table, client);
+<<<<<<< HEAD
     }
     
      public static void showDataLogs(String user, ConnectionToClient client) {
         ArrayList<DataLogs> dataLogs = mysqlConnection.getDataLogs(conn);
         MessageUtils.sendResponseToClient(user, "DataLogsList", dataLogs, client);
+=======
+>>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
     }
 
 
@@ -67,6 +100,7 @@ public class Logic {
         MessageUtils.sendResponseToClient(user, "BookList", results, client);
     }
 
+<<<<<<< HEAD
     public static void addBorrow(String user, ConnectionToClient client) {
         int bookCopyId = br.getCopyId();
         int subscriberId = br.getSubId();
@@ -74,6 +108,17 @@ public class Logic {
         Date expectedReturnDate = br.getExpectedReturnDate();
         boolean success = mysqlConnection.addBorrowingRecord(conn, subscriberId, bookCopyId, borrowDate, expectedReturnDate);
         MessageUtils.sendResponseToClient(user, "BorrowStatus", success ? "Borrow added successfully." : "ERROR: Couldn't add borrow.", client);
+=======
+    public static void newBorrow(String user, Object newborrow, ConnectionToClient client) {
+        if (newborrow instanceof BorrowingRecord) {
+            br = (BorrowingRecord) newborrow;
+            boolean success = mysqlConnection.addBorrowingRecord(conn, br);
+            MessageUtils.sendResponseToClient(user, "BorrowStatus", success ? "Borrow added successfully." : "ERROR: Couldn't add borrow.", client);
+        } else {
+            MessageUtils.sendResponseToClient(user, "Error", "Invalid borrow record", client);
+            return;
+        }        
+>>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
     }
 
     // Scan
@@ -89,6 +134,21 @@ public class Logic {
     }
 
 
+<<<<<<< HEAD
+=======
+
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
     // Client connection
 
     public static void connect(String user, ConnectionToClient client) {

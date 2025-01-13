@@ -6,6 +6,10 @@ package server;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+<<<<<<< HEAD
+=======
+import common.MessageUtils;
+>>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
 import common.ServerMessage;
 import gui.ClientConnectedController;
 import ocsf.server.*;
@@ -63,14 +67,25 @@ public class EchoServer extends AbstractServer
         String type = serverMessage.getType();
         Object data = serverMessage.getData();
 
+<<<<<<< HEAD
         System.out.println("Received message, Case: " + type + " from user: " + user);
+=======
+        System.out.println("Received message, Case: " + type + " | from user: " + user);
+>>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
         try {
           switch (type) {
             case "login" : {
               Logic.userLogin(user, (int) data, client);
               break;
+<<<<<<< HEAD
             }
             case "updateSubscriber": {
+=======
+            } case "newSubscriber": {
+              Logic.newSubscriber(user, data, client);
+              break;
+            } case "updateSubscriber": {
+>>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
               Logic.updateSubscriberDetails(user, client);
               break;
             } case "showSubscribersTable": {
@@ -84,18 +99,30 @@ public class EchoServer extends AbstractServer
               String[] parts = searchCriteria.split(":", 2);
               String searchType = parts[0];
               String searchText = parts[1];
+<<<<<<< HEAD
               // print search type and text
+=======
+>>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
               Logic.sendSearchedBooks(user, searchType, searchText, client);
               break;
             } case "scanBookCopy":{
               Logic.scan(user, type, Integer.parseInt(data.toString()), client);
               break;
+<<<<<<< HEAD
+=======
+            } case "newBorrow": {
+              // print test
+              System.out.println("New borrow");
+              Logic.newBorrow(user, data, client);
+              break;
+>>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
             } case "connect": {
               Logic.connect(user, client);
               break;
             } case "disconnect": {
               Logic.disconnect(user, client);
               break;
+<<<<<<< HEAD
             }case "sendBooksInOrderCount": {
               Logic.getBooksInOrderCount(user,(int) data, client);
               break;
@@ -103,6 +130,9 @@ public class EchoServer extends AbstractServer
               Logic.getBooksInBorrowCount(user,(int) data, client);
               break;
             default: {
+=======
+            } default: {
+>>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
               MessageUtils.sendResponseToClient(user, "Error", "Invalid command", client);
               break;
             }

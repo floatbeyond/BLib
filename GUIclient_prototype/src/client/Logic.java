@@ -12,7 +12,10 @@ import javafx.application.Platform;
 // import gui.LandingWindowController;
 // import gui.SubscriberFormController;
 import common.Subscriber;
+<<<<<<< HEAD
 import gui.PersonalDetailsController;
+=======
+>>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
 import common.BookCopy;
 import common.Librarian;
 
@@ -47,6 +50,14 @@ public class Logic {
     }
 
     // Subscriber
+<<<<<<< HEAD
+=======
+
+    public static void newSubscriber(int subscriberId) {
+        // Send subscriberId to new subscriber window to display
+        System.out.println("New Subscriber: " + subscriberId);
+    }
+>>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
 
     public static void parseSubscriber(Subscriber receivedSubscriber) {
         SharedController.setSubscriber(receivedSubscriber);
@@ -69,6 +80,7 @@ public class Logic {
     }
 
     public static void updateSubscriberStatus(String status) {
+<<<<<<< HEAD
         SharedController.sfc.displayMessage(status);
     }
 
@@ -92,6 +104,9 @@ public class Logic {
         } else {
             System.out.println("PersonalDetailsController is null");
         }
+=======
+        // SharedController.sfc.successfulBorrow(status);
+>>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
     }
 
   
@@ -135,6 +150,20 @@ public class Logic {
         });
     }
 
+<<<<<<< HEAD
+=======
+    // Borrow
+
+    public static void newBorrowStatus(String status) {
+        Platform.runLater(() -> {
+            SharedController.bfc.successfulBorrow(status);
+        });
+        
+    }
+
+
+
+>>>>>>> a68519a24bda2fd6c6f267c713be6df0ee79f84b
 
     // Prints
 

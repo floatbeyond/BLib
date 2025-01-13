@@ -85,7 +85,7 @@ public class SubscribersTableController implements Initializable {
 		// Load initial data
 		Platform.runLater(() -> {
 			System.out.println("Loading initial data...");
-			ClientUI.cc.accept("showSubscribersTable");
+			MessageUtils.sendMessage(ClientUI.cc, "librarian", "showSubscribersTable", null);
 		});
 	}
 
