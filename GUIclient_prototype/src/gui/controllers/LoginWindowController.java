@@ -35,6 +35,7 @@ public class LoginWindowController {
     @FXML
     public void initialize() {
         setupLogin();
+        userType = "NotFound";
         // Set the controller in SharedController
         SharedController.setLoginWindowController(this);
         SharedController.setSubscriber(null);
@@ -70,6 +71,9 @@ public class LoginWindowController {
                         System.out.println("User found");
                         ((Node) event.getSource()).getScene().getWindow().hide();
                         // Load and display MainFrame GUI
+                        if (userType != "Subscriber") {
+                            MessageUtils.sendMessage(ClientUI.cc, "subscriber", "sendSubscriber", idText);
+                        }
                         String fxmlPath = String.format("/gui/fxml/%sMainFrame.fxml", userType);
                         FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
                         Pane root = loader.load();

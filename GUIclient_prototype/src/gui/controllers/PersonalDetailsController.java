@@ -1,7 +1,6 @@
 package gui.controllers;
 
 import client.ClientUI;
-import client.SharedController;
 import common.MessageUtils;
 import common.Subscriber;
 import javafx.event.ActionEvent;
@@ -15,59 +14,68 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import client.SharedController;
 
-
-public class SubscriberFormController {
-	private Subscriber s;
-	
-	@FXML private Button btnBack = null;
-	@FXML private Button btnSave = null;
+public class PersonalDetailsController {
+    private Subscriber s;
+    @FXML private Button btnBack = null;
+	@FXML private Button btnUpdate = null;
 
 	@FXML private Label messageLabel;
 	@FXML private Label lblID;
 	@FXML private Label lblName;
-	@FXML private Label lblStatus;
 	@FXML private Label lblPNumber;
 	@FXML private Label lblEmail;
-	
+    @FXML private Label lblJoinDate;
+    @FXML private Label lblExDate;
+    @FXML private Label lblNumBookBorrowed;
+    @FXML private Label lblNumBookOrdered;
+
+
 	@FXML private TextField txtID;
 	@FXML private TextField txtName;
-	@FXML private TextField txtStatus;
 	@FXML private TextField txtPNumber;
 	@FXML private TextField txtEmail;
-	
-	// ObservableList<String> list;
+    @FXML private TextField txtJoinDate;
+    @FXML private TextField txtExDate;
+    @FXML private TextField txtNumBookBorrowed;
+    @FXML private TextField txtNumBookOrdered;
 
-	@FXML
-	public void initialize() {
-		SharedController.setSubscriberFormController(this);
-	}
+
 	
 	public void loadSubscriber(Subscriber subscriber) {
-		
 		this.s = subscriber;
 		this.txtID.setText(String.valueOf(s.getSub_id()));
 		this.txtID.setEditable(false);
 		this.txtName.setText(s.getSub_name());
-		this.txtName.setEditable(false);
-		this.txtStatus.setText(s.getSub_status());	
-		this.txtStatus.setEditable(false);
 		this.txtPNumber.setText(s.getSub_phone_num());
 		this.txtEmail.setText(s.getSub_email());
-	}
+        this.txtJoinDate.setText(s.getSub_joined().toString());
+		this.txtExDate.setText(s.getSub_expiration().toString());
+		this.txtNumBookBorrowed.setText(String.valueOf(s.getCurrentlyBorrowed()));
+		this.txtNumBookOrdered.setText(String.valueOf(s.getCurrentlyOrdered()));
 
-	public void goBackBtn(ActionEvent event) throws Exception {
+		// Set Uneditable
+		this.txtID.setEditable(false);
+		this.txtName.setEditable(false);
+		this.txtJoinDate.setEditable(false);
+		this.txtExDate.setEditable(false);
+		this.txtNumBookBorrowed.setEditable(false);
+		this.txtNumBookOrdered.setEditable(false);
+    }
+
+    public void goBackBtn(ActionEvent event) throws Exception {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/SubscriberMainFrame.fxml"));
 		Pane root = loader.load();
 		
 		Stage primaryStage = new Stage();
 		Scene scene = new Scene(root);			
-		primaryStage.setTitle("Library Tool");
+		primaryStage.setTitle("Subscriber Main Frame");
 		primaryStage.setScene(scene);
 		primaryStage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
             try {
                 if (ClientUI.chat != null) {
-                    ClientUI.cc.accept("disconnect");
+                    MessageUtils.sendMessage(ClientUI.cc, "subscriber", "disconncet", null);
                     ClientUI.chat.quit();
                 }
             } catch (Exception e) {
@@ -80,15 +88,13 @@ public class SubscriberFormController {
 		primaryStage.show();
 		
     }
-	
-	public void getSaveBtn(ActionEvent event) throws Exception {
+    
+    public void getSaveBtn(ActionEvent event) throws Exception {
 		try {
-			// ClientUI.cc.accept("connect");
 			MessageUtils.sendMessage(ClientUI.cc, "subscriber", "connect", null);
 			if (ClientUI.cc.getConnectionStatusFlag() == 1) {
+				s = SharedController.getSubscriber();
 				int id = Integer.valueOf(txtID.getText());
-				String name = txtName.getText();
-				String status = txtStatus.getText();
 				String phoneNumber = txtPNumber.getText();
 				String email = txtEmail.getText();
 
@@ -103,14 +109,12 @@ public class SubscriberFormController {
 				}
 
 				if (!phoneNumber.equals(s.getSub_phone_num()) || !email.equals(s.getSub_email())) {
-					// s = new Subscriber(id, name, status, phoneNumber, email, s.getSub_penalties(), s.getSub_freeze(), s.getSub_joined(), s.getSub_expiration());
-					// ClientUI.cc.accept("updateSubscriber " + s);
-					MessageUtils.sendMessage(ClientUI.cc, "subscriber", "updateSubscriber", s);
-					System.out.println("ID: "+ id);
-					// displayMessage("Subscriber updated!");
+					MessageUtils.sendMessage(ClientUI.cc, "subscriber", "updateSubscriber", id + ":" + phoneNumber + ":" + email);
 				} else {
 					displayMessage("No changes made!");
 				}
+
+
 			} else {
 				displayMessage("No server connection");
 				return;
@@ -119,9 +123,10 @@ public class SubscriberFormController {
 			displayMessage("Please check your input values!");
 		}
 	}
-
-	private boolean isValidPhoneNumber(String phoneNumber) {
+    
+    private boolean isValidPhoneNumber(String phoneNumber) {
         String pattern = "^05\\d-\\d{7}$";
+		// MessageUtils.sendMessage(ClientUI.cc, "subscriber", "checkUniquePhoneNumber", phoneNumber);
         return phoneNumber.matches(pattern);
     }
 
@@ -130,7 +135,12 @@ public class SubscriberFormController {
 		return email.matches(pattern);
 	}
 
+	public void updateSubscriberStatus(String status) {
+		displayMessage(status);
+	}
+
     public void displayMessage(String message) {
         messageLabel.setText(message);
     }
+
 }

@@ -11,6 +11,7 @@ import common.BookCopy;
 import common.BorrowingRecord;
 import common.DateUtils;
 import common.OrderRecord;
+import common.DataLogs;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -86,7 +87,9 @@ public class mysqlConnection {
 					rs.getInt("Penalties"),
 					frozen_until,
 					join_date,
-					exp_date
+					exp_date,
+					rs.getInt("CurrentlyBorrowedBooks"),
+					rs.getInt("CurrentlyOrderedBooks")
 				);
 			}
 		} catch (SQLException e) {
@@ -142,7 +145,9 @@ public class mysqlConnection {
 					rs.getInt("Penalties"),
 					frozen_until,
 					join_date,
-					exp_date
+					exp_date,
+					rs.getInt("CurrentlyBorrowedBooks"),
+					rs.getInt("CurrentlyOrderedBooks")
 				);
 				subscribers.add(s);
 			}
@@ -158,18 +163,30 @@ public class mysqlConnection {
      * update a specific phone number and email of a subscriber
      * get - id(PK)
 	 */
-	public static boolean updateSubscriber(Connection con, int subscriberId, String phoneNumber, String email) {
+	public static Object updateSubscriber(Connection conn, int subscriberId, String phoneNumber, String email) {
+		Subscriber s = findSubscriber(conn, subscriberId);
 	    String query = "UPDATE subscribers SET PhoneNumber = ?, Email = ? WHERE SubID = ?";
-	    try (PreparedStatement ps = con.prepareStatement(query)) {
+	    try (PreparedStatement ps = conn.prepareStatement(query)) {
 	        ps.setString(1, phoneNumber);
 	        ps.setString(2, email);
 	        ps.setInt(3, subscriberId);
 	        ps.executeUpdate();
-	        return true;
+			return new Subscriber(subscriberId, s.getSub_name(), s.getSub_status(), phoneNumber, email, s.getSub_penalties(), 
+						s.getSub_freeze(), s.getSub_joined(), s.getSub_expiration(), s.getCurrentlyBorrowed(), s.getCurrentlyOrdered());
 	    } catch (SQLException e) {
-	        e.printStackTrace();
-	        return false;
+			if (e.getErrorCode() == 1062) {
+				String errorMessage = e.getMessage();
+				if (errorMessage.contains("PhoneNumber")) {
+					return "Phone number already exists";
+				} else if (errorMessage.contains("Email")) {
+					return "Email already exists";
+				}
+			} else {
+				e.printStackTrace();
+	        	return "ERROR:Update failed";
+			}
 	    }
+		return "ERROR:Update failed";
 	}
 	
 
@@ -193,9 +210,11 @@ public class mysqlConnection {
 				LocalDate frozen_until = DateUtils.toLocalDate(rs.getDate("FreezeUntil"));
                 LocalDate join_date = DateUtils.toLocalDate(rs.getDate("Joined"));
                 LocalDate exp_date = DateUtils.toLocalDate(rs.getDate("Expiration"));
+				int currentlyBorrowed = rs.getInt("CurrentlyBorrowedBooks");
+				int currentlyOrdered = rs.getInt("CurrentlyOrderedBooks");
 
-				return new Subscriber(sub_id, sub_name, status, phoneNumber, email, 
-										penalties, frozen_until, join_date, exp_date);
+				return new Subscriber(sub_id, sub_name, status, phoneNumber, email, penalties, 
+							frozen_until, join_date, exp_date, currentlyBorrowed, currentlyOrdered);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -224,9 +243,10 @@ public class mysqlConnection {
 				String author = bookRs.getString("Author");
 				String genre = bookRs.getString("Genre");
 				String description = bookRs.getString("Description");
+				int numOfCopies = bookRs.getInt("NumOfCopies");
 
 				// Create a Book object and add it to the results list
-				Book book = new Book(bookId, title, author, genre, description);
+				Book book = new Book(bookId, title, author, genre, description, numOfCopies);
 				results.add(book);
 
 				// Set the BookID for the book copy query
@@ -301,19 +321,106 @@ public class mysqlConnection {
 			ResultSet rs = stmt.getGeneratedKeys();
 			if (rs.next()) {
 				int borrowId = rs.getInt(1);
-				//return true;
+				try (Statement st = conn.createStatement()) {
+					String updateCopyStatus = "UPDATE bookcopies SET Status = 'Borrowed' WHERE CopyID = " + br.getCopyId();
+					st.executeUpdate(updateCopyStatus);
+				} catch (SQLException e) {
+					e.printStackTrace();
+					return false;
+				}
+				return true;
 			}
-			try (Statement st = conn.createStatement()) {
-				String updateCopyStatus = "UPDATE bookcopies SET Status = 'Borrowed' WHERE CopyID = " + br.getCopyId();
-				st.executeUpdate(updateCopyStatus);
-			}
-			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
 		}
-		// return false;
+		return false;
 	}
+
+	public static boolean addOrderRecord(Connection conn, OrderRecord order) {
+        String query = "INSERT INTO orders (order_id, subscriber_id, book_id, order_date) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setInt(1, order.getOrderId());
+			stmt.setInt(2, order.getSubId());
+			stmt.setInt(3, order.getBookId());
+			stmt.setDate(4, Date.valueOf(order.getOrderDate()));
+			stmt.setString(5, order.getStatus());
+			stmt.setDate(6, Date.valueOf(order.getNotificationStamp()));
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+	public static boolean isOrderExists(Connection conn, int subscriberId, int bookId) {
+		String query = "SELECT COUNT(*) FROM orderrecord WHERE subscriber_id = ? AND book_id = ?";
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setInt(1, subscriberId);
+			stmt.setInt(2, bookId);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				return rs.getInt(1) > 0;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	// show to user all the logs in the DB
+	public static ArrayList<DataLogs> getDataLogs(Connection conn, int subscriberId) {
+		ArrayList<DataLogs> dataLogs = new ArrayList<>();
+		String query = "SELECT * FROM datalogs WHERE SubID = ?";
+		
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setInt(1, subscriberId);
+			ResultSet rs = stmt.executeQuery();
+			
+			while (rs.next()) {
+				LocalDate timestamp = DateUtils.toLocalDate(rs.getDate("Timestamp"));
+				DataLogs log = new DataLogs(
+					rs.getInt("LogID"),
+					rs.getInt("SubID"),
+					rs.getString("Action"),
+					timestamp
+				);
+				dataLogs.add(log);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return dataLogs;
+	}
+
+	// public static int getBooksInOrderCount(Connection conn, int subscriberId) {
+    //     String query = "SELECT COUNT(*) FROM orderrecord WHERE status = 'In Order' AND subscriber_id = ?";
+    //     try (PreparedStatement stmt = conn.prepareStatement(query)) {
+    //         stmt.setInt(1, subscriberId);
+    //         ResultSet rs = stmt.executeQuery();
+    //         if (rs.next()) {
+    //             return rs.getInt(1);
+    //         }
+    //     } catch (SQLException e) {
+    //         e.printStackTrace();
+    //     }
+    //     return 0;
+    // }
+
+    // public static int getBooksInBorrowCount(Connection conn, int subscriberId) {
+    //     String query = "SELECT COUNT(*) FROM borrowingrecord WHERE status = 'Borrowed' AND subscriber_id = ?";
+    //     try (PreparedStatement stmt = conn.prepareStatement(query)) {
+    //         stmt.setInt(1, subscriberId);
+    //         ResultSet rs = stmt.executeQuery();
+    //         if (rs.next()) {
+    //             return rs.getInt(1);
+    //         }
+    //     } catch (SQLException e) {
+    //         e.printStackTrace();
+    //     }
+    //     return 0;
+    // }
 
 }
 

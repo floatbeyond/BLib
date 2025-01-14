@@ -16,7 +16,7 @@ import java.util.ArrayList;
 @SuppressWarnings("unchecked")
 
 /**
- * This class overrides some of the methods defined in the abstract
+ * This class overrides some of the methods defined in the abstrac
  * superclass in order to give more functionality to the client.
  *
  * @author Dr Timothy C. Lethbridge
@@ -88,6 +88,9 @@ public class ChatClient extends AbstractClient
               case "SubscriberList":
                   Logic.parseSubscriberList((ArrayList<Subscriber>) data);
                   break;
+              case "DataLogsList":
+                  Logic.parseDataLogsList((ArrayList<Object>) data);
+                  break;
               case "BookList":
                   // print book list
                   System.out.println("ChatClient: Received book list");
@@ -104,7 +107,7 @@ public class ChatClient extends AbstractClient
                   Logic.parseLogin(data);
                   break;
               case "UpdateStatus":
-                  Logic.updateSubscriberStatus((String) data);
+                  Logic.updateSubscriberStatus( data);
                   break;
               case "Print":
                   Logic.print((String) data);

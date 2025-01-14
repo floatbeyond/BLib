@@ -6,15 +6,18 @@ import common.BookCopy;
 import gui.controllers.ClientPortController;
 import gui.controllers.LandingWindowController;
 import gui.controllers.LoginWindowController;
+import gui.controllers.PersonalDetailsController;
 import gui.controllers.SubscriberFormController;
 import gui.controllers.SubscriberMainFrameController;
 import gui.controllers.SubscribersTableController;
 import gui.controllers.ScanWindowController;
 import gui.controllers.BorrowFormController;
+import gui.controllers.SubscriberLogsController;
 
 public class SharedController {
     private static Subscriber subscriber;
     private static Librarian librarian;
+    private static BookCopy bc;
     public static SubscribersTableController stc;
     public static ClientPortController cpc;
     public static SubscriberFormController sfc;
@@ -23,7 +26,8 @@ public class SharedController {
     public static SubscriberMainFrameController smfc;
     public static BorrowFormController bfc;
     public static ScanWindowController swc;
-    private static BookCopy bc;
+    public static PersonalDetailsController pdc;
+    public static SubscriberLogsController slc;
 
     // Setters and getters
  
@@ -51,15 +55,20 @@ public class SharedController {
     public static void setLoginWindowController(LoginWindowController controller) { logwc = controller; }
     public static LoginWindowController getLoginWindowController() { return logwc; }
 
-    public static void setSubscriberMainFrameController(SubscriberMainFrameController controller) { smfc = controller; }
-    public static SubscriberMainFrameController getSubscriberMainFrameController() { return smfc; }
-
     public static void setBorrowFormController(BorrowFormController controller) { bfc = controller; }
     public static BorrowFormController getBorrowFormController() { return bfc; }
 
     public static void setScanWindowController(ScanWindowController controller) { swc = controller; }
     public static ScanWindowController getScanWindowController() { return swc; }
+    
+    public static void setPersonalDetailsController(PersonalDetailsController controller) { pdc = controller; }
+    public static PersonalDetailsController getPersonalDetailsController() { return pdc; }
 
+    public static void setSubscriberLogsController(SubscriberLogsController controller) { slc = controller; }
+    public static SubscriberLogsController getSubscriberLogsController() { return slc; }
+
+    public static void setSubscriberMainFrameController(SubscriberMainFrameController controller) { smfc = controller; }
+    public static SubscriberMainFrameController getSubscriberMainFrameController() { return smfc; }
 
 }
 

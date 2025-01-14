@@ -15,6 +15,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
@@ -35,6 +36,7 @@ import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
+
 
 import java.io.IOException;
 import java.net.URL;
@@ -69,7 +71,6 @@ public class SubscriberMainFrameController implements Initializable {
     private Subscriber s;
 
     private String getSearch() { return searchField.getText(); }
-
     private String getMenu() { return menuButton.getText(); }
 
     @Override
@@ -78,9 +79,26 @@ public class SubscriberMainFrameController implements Initializable {
         setupColumns();
         setupSearch();
 
-        s = SharedController.getSubscriber();
-        // Set the controller in SharedController
         SharedController.setSubscriberMainFrameController(this);
+    }
+
+    private void showOrderSuccessMessage() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Order Success");
+        alert.setHeaderText(null);
+        alert.setContentText("The book has been successfully ordered!");
+        alert.showAndWait();
+    }
+
+    private void orderBook(Book book) {
+        // Implement the logic to order the book
+        System.out.println("Ordering book: " + book.getTitle());
+
+        // Send a request to the server to order the book
+        MessageUtils.sendMessage(ClientUI.cc, "user", "newOrder", book);
+
+        // Show success message to the user
+        showOrderSuccessMessage();
     }
 
     private void setupButtonWidth() {
@@ -135,24 +153,42 @@ public class SubscriberMainFrameController implements Initializable {
         
 
         actionColumn.setCellFactory(param -> new TableCell<Book, Void>() {
-            private final Button copiesButton = new Button("Show Copies");
-            {
-                copiesButton.setOnAction(event -> {
-                    Book book = getTableView().getItems().get(getIndex());
-                    showCopiesDialog(book);
-                });
-            }
+        private final Button copiesButton = new Button("Show Copies");
+        private final Button orderButton = new Button("Order");
 
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
+        {
+            copiesButton.setOnAction(event -> {
+                Book book = getTableView().getItems().get(getIndex());
+                showCopiesDialog(book);
+            });
+
+            orderButton.setOnAction(event -> {
+                Book book = getTableView().getItems().get(getIndex());
+                orderBook(book);
+            });
+        }
+
+        @Override
+        protected void updateItem(Void item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty) {
+                setGraphic(null);
+            }else {
+                Book book = getTableView().getItems().get(getIndex());
+                try {
+                    int copyCount = book.getAvailableCopies().size();
+                    if (copyCount == 0) {
+                        setGraphic(orderButton);
+                    } else {
+                        setGraphic(copiesButton);
+                    }
+                } catch (NumberFormatException e) {
+                    System.err.println("Invalid copy count: " + book.getCopyCount());
                     setGraphic(null);
-                } else {
-                    setGraphic(copiesButton);
                 }
             }
-        });
+        }
+    });
     }
 
      private void applyWrappingCellFactory(TableColumn<Book, String> column) {
@@ -331,9 +367,12 @@ public class SubscriberMainFrameController implements Initializable {
         try {
             MessageUtils.sendMessage(ClientUI.cc, "subscriber", "connect", null);
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
+                int sub_id = SharedController.getSubscriber().getSub_id();
+                MessageUtils.sendMessage(ClientUI.cc, "subscriber", "userLogs", sub_id);
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/SubscriberLogs.fxml"));
                 Pane root = loader.load();
                 
+                SharedController.setSubscriberLogsController(loader.getController());
                 Stage primaryStage = new Stage();
                 Scene scene = new Scene(root);			
                 primaryStage.setTitle("Subscriber Logs");
@@ -368,6 +407,7 @@ public class SubscriberMainFrameController implements Initializable {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/PersonalDetails.fxml"));
                 Pane root = loader.load();
                 
+                SharedController.setPersonalDetailsController(loader.getController());
                 Stage primaryStage = new Stage();
                 Scene scene = new Scene(root);			
                 primaryStage.setTitle("Personal Details");
@@ -375,7 +415,7 @@ public class SubscriberMainFrameController implements Initializable {
                 primaryStage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
                     try {
                         if (ClientUI.chat != null) {
-                            ClientUI.cc.accept("disconnect");
+                            MessageUtils.sendMessage(ClientUI.cc, "user",  "disconnect" , null);
                             ClientUI.chat.quit();
                         }
                     } catch (Exception e) {
@@ -385,6 +425,8 @@ public class SubscriberMainFrameController implements Initializable {
                 
                 ((Node)event.getSource()).getScene().getWindow().hide();
                 primaryStage.setResizable(false);
+                s = SharedController.getSubscriber();
+                SharedController.pdc.loadSubscriber(s);
                 primaryStage.show();
             } else {
                 displayMessage("No server connection");

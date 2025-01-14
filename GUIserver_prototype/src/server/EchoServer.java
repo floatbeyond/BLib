@@ -74,7 +74,7 @@ public class EchoServer extends AbstractServer
               Logic.newSubscriber(user, data, client);
               break;
             } case "updateSubscriber": {
-              Logic.updateSubscriberDetails(user, client);
+              Logic.updateSubscriberDetails(user, data, client);
               break;
             } case "showSubscribersTable": {
               Logic.showSubscribersTable(user, client);
@@ -82,12 +82,11 @@ public class EchoServer extends AbstractServer
             } case "sendSubscriber": {
               Logic.specificSubscriber(user, Integer.parseInt(data.toString()), client);
               break;
+            } case "userLogs": {
+              Logic.sendDataLogs(user, Integer.parseInt(data.toString()), client);
+              break;
             } case "sendSearchedBooks": {
-              String searchCriteria = (String) data;
-              String[] parts = searchCriteria.split(":", 2);
-              String searchType = parts[0];
-              String searchText = parts[1];
-              Logic.sendSearchedBooks(user, searchType, searchText, client);
+              Logic.sendSearchedBooks(user, data, client);
               break;
             } case "scanBookCopy":{
               Logic.scan(user, type, Integer.parseInt(data.toString()), client);
@@ -103,7 +102,17 @@ public class EchoServer extends AbstractServer
             } case "disconnect": {
               Logic.disconnect(user, client);
               break;
-            } default: {
+            }case "sendBooksInOrderCount": {
+              //Logic.getBooksInOrderCount(user,(int) data, client);
+              break;
+            } case "sendBooksInBorrowCount":
+              //Logic.getBooksInBorrowCount(user,(int) data, client);
+              break;
+            case "newOrder": {
+              System.out.println("New order");
+              Logic.newOrder(user, data, client);
+              break;
+            }default: {
               MessageUtils.sendResponseToClient(user, "Error", "Invalid command", client);
               break;
             }
