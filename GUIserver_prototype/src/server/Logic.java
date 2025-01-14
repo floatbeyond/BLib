@@ -89,7 +89,7 @@ public class Logic {
         if ((bc = mysqlConnection.findBookCopy(conn, unparsedId)) != null) {
             MessageUtils.sendResponseToClient(user, "BookCopy", bc, client);
         } else if ((s = mysqlConnection.findSubscriber(conn, unparsedId)) != null) {
-            MessageUtils.sendResponseToClient(user, "Subscriber", s, client);
+            MessageUtils.sendResponseToClient(user, "foundSubscriber", s, client);
         } else {
             MessageUtils.sendResponseToClient(user, "Error", "Scan failed", client);
         }

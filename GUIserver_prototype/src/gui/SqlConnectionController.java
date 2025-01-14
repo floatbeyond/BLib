@@ -51,7 +51,7 @@ public class SqlConnectionController {
             displayMessage("Invalid SQL IP/Port");
         } else if (!user.matches("[a-zA-Z0-9]+")) {
             displayMessage("Invalid username");    
-        } else if (!pw.matches("[a-zA-Z0-9]+")) {
+        } else if (!pw.matches("[a-zA-Z0-9!@#$%^&*()_+\\\\[\\\\]{}|;:',.<>?/]+")) {
             displayMessage("Invalid password");
         } else {
             Connection connection = mysqlConnection.connectToDB(ip, user, pw);
