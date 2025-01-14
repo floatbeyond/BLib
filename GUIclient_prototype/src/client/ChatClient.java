@@ -88,6 +88,9 @@ public class ChatClient extends AbstractClient
               case "SubscriberList":
                   Logic.parseSubscriberList((ArrayList<Subscriber>) data);
                   break;
+              case "DataLogsList":
+                  Logic.parseDataLogsList((ArrayList<Object>) data);
+                  break;
               case "BookList":
                   // print book list
                   System.out.println("ChatClient: Received book list");
@@ -104,19 +107,13 @@ public class ChatClient extends AbstractClient
                   Logic.parseLogin(data);
                   break;
               case "UpdateStatus":
-                  Logic.updateSubscriberStatus((String) data);
+                  Logic.updateSubscriberStatus( data);
                   break;
               case "Print":
                   Logic.print((String) data);
                   break;
               case "Error":
                   Logic.printError((String) data);
-                  break;
-              case "BooksInOrderCount":
-                  Logic.BooksInOrderCountResponse((Integer) data);
-                  break;
-              case "BooksInBorrowCount":
-                  Logic.BooksInBorrowCountResponse((Integer) data);
                   break;
               default:
                   System.out.println("Unknown message type: " + type);

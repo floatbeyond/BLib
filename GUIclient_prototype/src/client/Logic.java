@@ -12,9 +12,10 @@ import javafx.application.Platform;
 // import gui.LandingWindowController;
 // import gui.SubscriberFormController;
 import common.Subscriber;
-import gui.controllers.PersonalDetailsController;
+// import gui.controllers.PersonalDetailsController;
 import common.BookCopy;
 import common.Librarian;
+import common.DataLogs;
 
 public class Logic {
     // public static SubscribersTableController stc = SharedController.getSubscribersTableController();
@@ -73,31 +74,56 @@ public class Logic {
         }
     }
 
-    public static void updateSubscriberStatus(String status) {
-        SharedController.sfc.displayMessage(status);
+    public static void updateSubscriberStatus(Object data) {
+        Platform.runLater(() -> {
+            if (data instanceof String) {
+                SharedController.pdc.updateSubscriberStatus((String) data);
+            } else {
+                SharedController.setSubscriber((Subscriber) data);
+                SharedController.pdc.updateSubscriberStatus("Subscriber details updated");
+            }
+        });
+    }
+
+    public static void parseDataLogsList(ArrayList<Object> list) {
+        // print test
+        System.out.println("parseDataLogsList method called");
+        Platform.runLater(() -> {
+            if (!list.isEmpty() && list.stream().allMatch(item -> item instanceof Object)) {
+                System.out.println("Loading logs");
+                // Handle the data logs list
+                if (SharedController.slc != null) {
+                    System.out.println("subscribersTableController is initialized");
+                    SharedController.slc.showDataLogs(list);
+                    // SharedController.stc.parseDataLogsList(dataLogs);
+                } else {
+                    System.out.println("subscribersTableController is null");
+                }
+            }
+        });
     }
 
     // Method to handle the response for books in order count
-    public static void BooksInOrderCountResponse(int count) {
-        PersonalDetailsController controller = SharedController.getPersonalDetailsController();
-        if (controller != null) {
-            controller.handleBooksInOrderCountResponse(count);
-            System.out.println("Books in order count: " + count);
-        } else {
-            System.out.println("PersonalDetailsController is null");
-        }
-    }
+    // public static void BooksInOrderCountResponse(int count) {
+    //     PersonalDetailsController controller = SharedController.getPersonalDetailsController();
+    //     if (controller != null) {
+    //         controller.handleBooksInOrderCountResponse(count);
+    //         System.out.println("Books in order count: " + count);
+    //     } else {
+    //         System.out.println("PersonalDetailsController is null");
+    //     }
+    // }
 
-    // Method to handle the response for books in borrow count
-    public static void BooksInBorrowCountResponse(int count) {
-        PersonalDetailsController controller = SharedController.getPersonalDetailsController();
-        if (controller != null) {
-            controller.handleBooksInBorrowCountResponse(count);
-            System.out.println("Books in borrow count: " + count);
-        } else {
-            System.out.println("PersonalDetailsController is null");
-        }
-    }
+    // // Method to handle the response for books in borrow count
+    // public static void BooksInBorrowCountResponse(int count) {
+    //     PersonalDetailsController controller = SharedController.getPersonalDetailsController();
+    //     if (controller != null) {
+    //         controller.handleBooksInBorrowCountResponse(count);
+    //         System.out.println("Books in borrow count: " + count);
+    //     } else {
+    //         System.out.println("PersonalDetailsController is null");
+    //     }
+    // }
 
   
     // Book

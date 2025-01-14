@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.SubscriberLogsController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.SubscriberLogsController">
    <children>
-      <Button layoutX="31.0" layoutY="340.0" mnemonicParsing="false" text="Button" />
-      <ListView layoutX="83.0" layoutY="128.0" prefHeight="200.0" prefWidth="406.0" />
-      <DatePicker layoutX="378.0" layoutY="56.0" />
+      <Button fx:id="backButton" layoutX="31.0" layoutY="340.0" mnemonicParsing="false" text="Back" onAction="#goBackBtn" />
+      <ListView fx:id="listViewLogs" layoutX="83.0" layoutY="128.0" prefHeight="200.0" prefWidth="406.0" />
+      <ComboBox fx:id="monthComboBox" layoutX="404.0" layoutY="48.0" prefWidth="150.0" />
    </children>
 </AnchorPane>

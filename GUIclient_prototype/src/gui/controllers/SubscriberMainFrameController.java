@@ -68,9 +68,9 @@ public class SubscriberMainFrameController implements Initializable {
     @FXML private Label messageLabel;
 
     private Map<Integer, Stage> openDialogs = new HashMap<>(); // Track open dialogs
+    private Subscriber s;
 
     private String getSearch() { return searchField.getText(); }
-
     private String getMenu() { return menuButton.getText(); }
 
     @Override
@@ -367,9 +367,12 @@ public class SubscriberMainFrameController implements Initializable {
         try {
             MessageUtils.sendMessage(ClientUI.cc, "subscriber", "connect", null);
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
+                int sub_id = SharedController.getSubscriber().getSub_id();
+                MessageUtils.sendMessage(ClientUI.cc, "subscriber", "userLogs", sub_id);
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/SubscriberLogs.fxml"));
                 Pane root = loader.load();
                 
+                SharedController.setSubscriberLogsController(loader.getController());
                 Stage primaryStage = new Stage();
                 Scene scene = new Scene(root);			
                 primaryStage.setTitle("Subscriber Logs");
@@ -404,6 +407,7 @@ public class SubscriberMainFrameController implements Initializable {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/PersonalDetails.fxml"));
                 Pane root = loader.load();
                 
+                SharedController.setPersonalDetailsController(loader.getController());
                 Stage primaryStage = new Stage();
                 Scene scene = new Scene(root);			
                 primaryStage.setTitle("Personal Details");
@@ -411,7 +415,7 @@ public class SubscriberMainFrameController implements Initializable {
                 primaryStage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
                     try {
                         if (ClientUI.chat != null) {
-                            ClientUI.cc.accept("disconnect");
+                            MessageUtils.sendMessage(ClientUI.cc, "user",  "disconnect" , null);
                             ClientUI.chat.quit();
                         }
                     } catch (Exception e) {
@@ -421,6 +425,8 @@ public class SubscriberMainFrameController implements Initializable {
                 
                 ((Node)event.getSource()).getScene().getWindow().hide();
                 primaryStage.setResizable(false);
+                s = SharedController.getSubscriber();
+                SharedController.pdc.loadSubscriber(s);
                 primaryStage.show();
             } else {
                 displayMessage("No server connection");

@@ -14,8 +14,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import java.sql.Date;
-import java.text.SimpleDateFormat;
+import client.SharedController;
 
 public class PersonalDetailsController {
     private Subscriber s;
@@ -42,58 +41,41 @@ public class PersonalDetailsController {
     @FXML private TextField txtNumBookBorrowed;
     @FXML private TextField txtNumBookOrdered;
 
-    // ObservableList<String> list;
+
 	
 	public void loadSubscriber(Subscriber subscriber) {
-		
 		this.s = subscriber;
 		this.txtID.setText(String.valueOf(s.getSub_id()));
 		this.txtID.setEditable(false);
 		this.txtName.setText(s.getSub_name());
-		this.txtName.setEditable(false);
 		this.txtPNumber.setText(s.getSub_phone_num());
 		this.txtEmail.setText(s.getSub_email());
         this.txtJoinDate.setText(s.getSub_joined().toString());
 		this.txtExDate.setText(s.getSub_expiration().toString());
+		this.txtNumBookBorrowed.setText(String.valueOf(s.getCurrentlyBorrowed()));
+		this.txtNumBookOrdered.setText(String.valueOf(s.getCurrentlyOrdered()));
 
-		// Convert Date to String
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		this.txtJoinDate.setText(dateFormat.format(s.getSub_joined()));
-		this.txtExDate.setText(dateFormat.format(s.getSub_expiration()));
-
-
-		MessageUtils.sendMessage(ClientUI.cc, "subscriber","sendBooksInOrderCount", s.getSub_id());
-		MessageUtils.sendMessage(ClientUI.cc, "subscriber","sendBooksInBorrowCount", s.getSub_id());
+		// Set Uneditable
+		this.txtID.setEditable(false);
+		this.txtName.setEditable(false);
+		this.txtJoinDate.setEditable(false);
+		this.txtExDate.setEditable(false);
+		this.txtNumBookBorrowed.setEditable(false);
+		this.txtNumBookOrdered.setEditable(false);
     }
-
-    // Method to handle the response from the server for books in order count
-    public void handleBooksInOrderCountResponse(int count) {
-        this.txtNumBookOrdered.setText(String.valueOf(count));
-    }
-	
-
-    // Method to handle the response from the server for borrowing count
-    public void handleBooksInBorrowCountResponse(int count) {
-        this.txtNumBookBorrowed.setText(String.valueOf(count));
-        this.txtJoinDate.setText(s.getSub_joined().toString());
-		this.txtExDate.setText(s.getSub_expiration().toString());
-	}
-
-
 
     public void goBackBtn(ActionEvent event) throws Exception {
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/SubscriberMainFrame.fxml"));
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/SubscriberMainFrame.fxml"));
 		Pane root = loader.load();
 		
 		Stage primaryStage = new Stage();
 		Scene scene = new Scene(root);			
-		scene.getStylesheets().add(getClass().getResource("/gui/SubscriberMainFrame.css").toExternalForm());
-		primaryStage.setTitle("Library Tool");
+		primaryStage.setTitle("Subscriber Main Frame");
 		primaryStage.setScene(scene);
 		primaryStage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
             try {
                 if (ClientUI.chat != null) {
-                    ClientUI.cc.accept("disconnect");
+                    MessageUtils.sendMessage(ClientUI.cc, "subscriber", "disconncet", null);
                     ClientUI.chat.quit();
                 }
             } catch (Exception e) {
@@ -109,15 +91,12 @@ public class PersonalDetailsController {
     
     public void getSaveBtn(ActionEvent event) throws Exception {
 		try {
-			ClientUI.cc.accept("Connect");
+			MessageUtils.sendMessage(ClientUI.cc, "subscriber", "connect", null);
 			if (ClientUI.cc.getConnectionStatusFlag() == 1) {
+				s = SharedController.getSubscriber();
 				int id = Integer.valueOf(txtID.getText());
-				String name = txtName.getText();
 				String phoneNumber = txtPNumber.getText();
 				String email = txtEmail.getText();
-                Date joinDate = Date.valueOf(txtJoinDate.getText());
-                Date exDate = Date.valueOf(txtExDate.getText());
-
 
 				if (!isValidPhoneNumber(phoneNumber)) {
 					displayMessage("Invalid phone number");
@@ -130,13 +109,12 @@ public class PersonalDetailsController {
 				}
 
 				if (!phoneNumber.equals(s.getSub_phone_num()) || !email.equals(s.getSub_email())) {
-					s = new Subscriber(id, name, s.getSub_status(), phoneNumber, email, s.getSub_penalties(), s.getSub_freeze(), s.getSub_joined(), s.getSub_expiration());
-					ClientUI.cc.accept("change "+ s.toString());
-					System.out.println("ID: "+ id);
-					displayMessage("Subscriber updated!");
+					MessageUtils.sendMessage(ClientUI.cc, "subscriber", "updateSubscriber", id + ":" + phoneNumber + ":" + email);
 				} else {
 					displayMessage("No changes made!");
 				}
+
+
 			} else {
 				displayMessage("No server connection");
 				return;
@@ -148,12 +126,17 @@ public class PersonalDetailsController {
     
     private boolean isValidPhoneNumber(String phoneNumber) {
         String pattern = "^05\\d-\\d{7}$";
+		// MessageUtils.sendMessage(ClientUI.cc, "subscriber", "checkUniquePhoneNumber", phoneNumber);
         return phoneNumber.matches(pattern);
     }
 
 	private boolean isValidEmail(String email) {
 		String pattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
 		return email.matches(pattern);
+	}
+
+	public void updateSubscriberStatus(String status) {
+		displayMessage(status);
 	}
 
     public void displayMessage(String message) {

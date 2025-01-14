@@ -1,6 +1,7 @@
 package gui.controllers;
 
 import common.DataLogs;
+import common.MessageUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -39,14 +40,15 @@ public class SubscriberLogsController {
     @FXML private ListView<String> listViewLogs;
     @FXML private ComboBox<Month> monthComboBox;
     @FXML private Button filterButton;
+    @FXML private Button backButton; 
 
     private List<DataLogs> allDataLogs;
 
     // Method to populate the ListView with data logs
-    public void showDataLogs(List<DataLogs> dataLogs) {
-        this.allDataLogs = dataLogs; // Store all logs
+    public void showDataLogs(List<Object> dataLogs) {
+        // this.allDataLogs = dataLogs; // Store all logs
         ObservableList<String> items = FXCollections.observableArrayList();
-        for (DataLogs log : dataLogs) {
+        for (Object log : dataLogs) {
             items.add(log.toString());
         }
         listViewLogs.setItems(items);
@@ -56,7 +58,7 @@ public class SubscriberLogsController {
     public void filterLogsByMonth() {
         Month selectedMonth = monthComboBox.getValue();
         if (selectedMonth != null) {
-            List<DataLogs> filteredLogs = allDataLogs.stream()
+            List<Object> filteredLogs = allDataLogs.stream()
                 .filter(log -> {
                     LocalDate logDate = log.getTimestamp();
                     return logDate.getMonth() == selectedMonth;
@@ -68,26 +70,26 @@ public class SubscriberLogsController {
 
      public void goBackBtn(ActionEvent event) throws Exception {
         System.out.println("goBackBtn clicked");
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/MainFrame.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/SubscriberMainFrame.fxml"));
 		Pane root = loader.load();
 		
-		Stage primaryStage = new Stage();
-		Scene scene = new Scene(root);			
-		scene.getStylesheets().add(getClass().getResource("/gui/MainFrame.css").toExternalForm());
-		primaryStage.setTitle("Library Tool");
-		primaryStage.setScene(scene);
+        Stage primaryStage = new Stage();
+        Scene scene = new Scene(root);			
+        primaryStage.setTitle("Subscriber Main Frame");
+        primaryStage.setScene(scene);
         primaryStage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
             try {
                 if (ClientUI.chat != null) {
-                    ClientUI.cc.accept("disconnect");
+                    MessageUtils.sendMessage(ClientUI.cc, "user",  "disconnect" , null);
                     ClientUI.chat.quit();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
-		((Node)event.getSource()).getScene().getWindow().hide();
-		primaryStage.setResizable(false);
-		primaryStage.show();
+        
+        ((Node)event.getSource()).getScene().getWindow().hide();
+        primaryStage.setResizable(false);
+        primaryStage.show();
     }
 }

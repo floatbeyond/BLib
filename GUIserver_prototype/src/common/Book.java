@@ -9,13 +9,15 @@ public class Book implements Serializable {
     private String author;
     private String genre;
     private String description;
+    private int numOfCopies;
 
-    public Book(int bookId, String title, String author, String genre, String description) {
+    public Book(int bookId, String title, String author, String genre, String description, int numOfCopies) {
         this.bookId = bookId;
         this.title = title;
         this.author = author;
         this.genre = genre;
         this.description = description;
+        this.numOfCopies = numOfCopies;
     }
 
     public int getBookId() {
@@ -38,6 +40,10 @@ public class Book implements Serializable {
         return description;
     }
 
+    public int getNumOfCopies() {
+        return numOfCopies;
+    }
+
     @Override
     public String toString() {
         return "Book{" +
@@ -46,6 +52,7 @@ public class Book implements Serializable {
                 ", author='" + author + '\'' +
                 ", genre='" + genre + '\'' +
                 ", description='" + description + '\'' +
+                ", numOfCopies=" + numOfCopies +
                 '}';
     }
 }

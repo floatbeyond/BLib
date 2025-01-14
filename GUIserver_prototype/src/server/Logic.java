@@ -3,6 +3,7 @@ package server;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.application.Platform;
 
 import common.BorrowingRecord;
 import common.DataLogs;
@@ -50,13 +51,19 @@ public class Logic {
         }
     }
 
-    public static void updateSubscriberDetails(String user, ConnectionToClient client) {
-        int subscriberId = s.getSub_id();
-        String phoneNumber = s.getSub_phone_num();
-        String email = s.getSub_email();
+    public static void updateSubscriberDetails(String user, Object data, ConnectionToClient client) {
+        // int subscriberId = s.getSub_id();
+        // String phoneNumber = s.getSub_phone_num();
+        // String email = s.getSub_email();
+
+        String subscriberDetails = (String) data;
+        String[] parts = subscriberDetails.split(":", 3);
+        int subscriberId = Integer.parseInt(parts[0]);
+        String phoneNumber = parts[1];
+        String email = parts[2];
             
-        boolean success = mysqlConnection.updateSubscriber(conn, subscriberId, phoneNumber, email);
-        MessageUtils.sendResponseToClient(user, "UpdateStatus", success ? "Subscriber updated!" : "ERROR: Couldn't update subscriber", client);
+        Object responseFromDB = mysqlConnection.updateSubscriber(conn, subscriberId, phoneNumber, email);
+        MessageUtils.sendResponseToClient(user, "UpdateStatus", responseFromDB, client);
 	}
 
     public static void showSubscribersTable(String user, ConnectionToClient client) {
@@ -64,15 +71,22 @@ public class Logic {
         MessageUtils.sendResponseToClient(user, "SubscriberList", table, client);
     }
     
-     public static void showDataLogs(String user, ConnectionToClient client) {
-        ArrayList<DataLogs> dataLogs = mysqlConnection.getDataLogs(conn);
-        MessageUtils.sendResponseToClient(user, "DataLogsList", dataLogs, client);
+     public static void sendDataLogs(String user, int sub_id, ConnectionToClient client) {
+        ArrayList<DataLogs> dataLogs = mysqlConnection.getDataLogs(conn, sub_id);
+        Platform.runLater(() -> {
+            MessageUtils.sendResponseToClient(user, "DataLogsList", dataLogs, client);
+        });
+        
     }
 
 
     // Books
 
-    public static void sendSearchedBooks(String user, String searchType, String searchText, ConnectionToClient client) {
+    public static void sendSearchedBooks(String user, Object data, ConnectionToClient client) {
+        String searchCriteria = (String) data;
+        String[] parts = searchCriteria.split(":", 2);
+        String searchType = parts[0];
+        String searchText = parts[1];
         List<Object> results = mysqlConnection.searchBooks(conn, searchType, searchText);
         // can you print the results list
         System.out.println(results);

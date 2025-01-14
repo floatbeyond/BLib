@@ -103,7 +103,7 @@ public class SubscriberFormController {
 				}
 
 				if (!phoneNumber.equals(s.getSub_phone_num()) || !email.equals(s.getSub_email())) {
-					s = new Subscriber(id, name, status, phoneNumber, email, s.getSub_penalties(), s.getSub_freeze(), s.getSub_joined(), s.getSub_expiration());
+					// s = new Subscriber(id, name, status, phoneNumber, email, s.getSub_penalties(), s.getSub_freeze(), s.getSub_joined(), s.getSub_expiration());
 					// ClientUI.cc.accept("updateSubscriber " + s);
 					MessageUtils.sendMessage(ClientUI.cc, "subscriber", "updateSubscriber", s);
 					System.out.println("ID: "+ id);

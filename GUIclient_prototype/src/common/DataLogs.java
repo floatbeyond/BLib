@@ -17,21 +17,10 @@ public class DataLogs implements Serializable {
         this.timestamp = timestamp;
     }
 
-    public int getLog_id() {
-        return log_id;
-    }
-
-    public int getSub_id() {
-        return sub_id;
-    }
-
-    public String getLog_action() {
-        return log_action;
-    }   
-
-    public LocalDate getTimestamp() {
-        return timestamp;
-    }
+    public int getLog_id() { return log_id; }
+    public int getSub_id() { return sub_id; }
+    public String getLog_action() { return log_action; }   
+    public LocalDate getTimestamp() { return timestamp; }
 
     @Override
     public String toString() {

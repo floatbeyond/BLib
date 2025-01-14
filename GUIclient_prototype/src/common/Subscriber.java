@@ -14,9 +14,11 @@ public class Subscriber implements Serializable {
     private LocalDate sub_freeze;
     private LocalDate sub_joined;
     private LocalDate sub_expiration;
+    private int currentlyBorrowed;
+    private int currentlyOrdered;
 
     public Subscriber(int sub_id, String sub_name, String sub_status, String sub_phone_num, String sub_email, 
-            int sub_penalties, LocalDate sub_freeze, LocalDate sub_joined, LocalDate sub_expiration) {       
+            int sub_penalties, LocalDate sub_freeze, LocalDate sub_joined, LocalDate sub_expiration, int currentlyBorrowed, int currentlyOrdered) {       
         this.sub_id = sub_id;
         this.sub_name = sub_name;
         this.sub_status = sub_status;
@@ -26,43 +28,21 @@ public class Subscriber implements Serializable {
         this.sub_freeze = sub_freeze;
         this.sub_joined = sub_joined;
         this.sub_expiration = sub_expiration;
+        this.currentlyBorrowed = currentlyBorrowed;
+        this.currentlyOrdered = currentlyOrdered;
     }
 
-    public int getSub_id() {
-        return sub_id;
-    }
-
-    public String getSub_name() {
-        return sub_name;
-    }
-
-    public String getSub_status() {
-        return sub_status;
-    }
-
-    public String getSub_phone_num() {
-        return sub_phone_num;
-    }
-
-    public String getSub_email() {
-        return sub_email;
-    }
-
-    public int getSub_penalties() {
-        return sub_penalties;
-    }
-
-    public LocalDate getSub_freeze() {
-        return sub_freeze;
-    }
-
-    public LocalDate getSub_joined() {
-        return sub_joined;
-    }
-
-    public LocalDate getSub_expiration() {
-        return sub_expiration;
-    }
+    public int getSub_id() { return sub_id; }
+    public String getSub_name() { return sub_name; }
+    public String getSub_status() { return sub_status; }
+    public String getSub_phone_num() { return sub_phone_num; }
+    public String getSub_email() { return sub_email; }
+    public int getSub_penalties() { return sub_penalties; }
+    public LocalDate getSub_freeze() { return sub_freeze; }
+    public LocalDate getSub_joined() { return sub_joined; }
+    public LocalDate getSub_expiration() { return sub_expiration; }
+    public int getCurrentlyBorrowed() { return currentlyBorrowed; }
+    public int getCurrentlyOrdered() { return currentlyOrdered; }
 
     @Override
     public String toString() {
@@ -72,10 +52,12 @@ public class Subscriber implements Serializable {
                 ", sub_status='" + sub_status + '\'' +
                 ", sub_phone_num='" + sub_phone_num + '\'' +
                 ", sub_email='" + sub_email + '\'' +
-                ", sub_penalties=" + sub_penalties +
-                ", sub_freeze=" + sub_freeze +
-                ", sub_joined=" + sub_joined +
-                ", sub_expiration=" + sub_expiration +
+                ", sub_penalties=" + sub_penalties + '\'' +
+                ", sub_freeze=" + sub_freeze + '\'' +
+                ", sub_joined=" + sub_joined +  '\'' +
+                ", sub_expiration=" + sub_expiration + '\'' +
+                ", currentlyBorrowed=" + currentlyBorrowed + '\'' +
+                ", currentlyOrdered=" + currentlyOrdered +
                 '}';
     }
 }

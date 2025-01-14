@@ -12,10 +12,12 @@ import gui.controllers.SubscriberMainFrameController;
 import gui.controllers.SubscribersTableController;
 import gui.controllers.ScanWindowController;
 import gui.controllers.BorrowFormController;
+import gui.controllers.SubscriberLogsController;
 
 public class SharedController {
     private static Subscriber subscriber;
     private static Librarian librarian;
+    private static BookCopy bc;
     public static SubscribersTableController stc;
     public static ClientPortController cpc;
     public static SubscriberFormController sfc;
@@ -24,8 +26,8 @@ public class SharedController {
     public static SubscriberMainFrameController smfc;
     public static BorrowFormController bfc;
     public static ScanWindowController swc;
-    private static BookCopy bc;
-    private static PersonalDetailsController pdc;
+    public static PersonalDetailsController pdc;
+    public static SubscriberLogsController slc;
 
     // Setters and getters
  
@@ -61,6 +63,9 @@ public class SharedController {
     
     public static void setPersonalDetailsController(PersonalDetailsController controller) { pdc = controller; }
     public static PersonalDetailsController getPersonalDetailsController() { return pdc; }
+
+    public static void setSubscriberLogsController(SubscriberLogsController controller) { slc = controller; }
+    public static SubscriberLogsController getSubscriberLogsController() { return slc; }
 
     public static void setSubscriberMainFrameController(SubscriberMainFrameController controller) { smfc = controller; }
     public static SubscriberMainFrameController getSubscriberMainFrameController() { return smfc; }

@@ -13,14 +13,16 @@ public class Book implements Serializable {
     private String author;
     private String genre;
     private String description;
+    private int numOfCopies;
     private List<BookCopy> copies;
 
-    public Book(int bookId, String title, String author, String genre, String description) {
+    public Book(int bookId, String title, String author, String genre, String description, int numOfCopies) {
         this.bookId = bookId;
         this.title = title;
         this.author = author;
         this.genre = genre;
         this.description = description;
+        this.numOfCopies = numOfCopies;
         this.copies = new ArrayList<>();
     }
 
@@ -30,6 +32,7 @@ public class Book implements Serializable {
     public String getAuthor() { return author; }
     public String getGenre() { return genre; }
     public String getDescription() { return description; }
+    public int getNumOfCopies() { return numOfCopies; }
 
     // Copy management
     public List<BookCopy> getAllCopies() { return copies; }
@@ -68,6 +71,7 @@ public class Book implements Serializable {
                 ", author='" + author + '\'' +
                 ", genre='" + genre + '\'' +
                 ", description='" + description + '\'' +
+                ", numOfCopies=" + numOfCopies +
                 '}';
     }
 }

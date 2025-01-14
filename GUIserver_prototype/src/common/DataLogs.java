@@ -1,7 +1,6 @@
 package common;
 
-import java.util.Date;
-
+import java.time.LocalDate;
 import java.io.Serializable;
 
 public class DataLogs implements Serializable {
@@ -9,30 +8,19 @@ public class DataLogs implements Serializable {
     private int log_id;
     private int sub_id;
     private String log_action; 
-    private Date timestamp;
+    private LocalDate timestamp;
 
-    public DataLogs(int log_id, int sub_id, String log_action, Date timestamp) {
+    public DataLogs(int log_id, int sub_id, String log_action, LocalDate timestamp) {
         this.log_id = log_id;
         this.sub_id = sub_id;
         this.log_action = log_action;
         this.timestamp = timestamp;
     }
 
-    public int getLog_id() {
-        return log_id;
-    }
-
-    public int getSub_id() {
-        return sub_id;
-    }
-
-    public String getLog_action() {
-        return log_action;
-    }   
-
-    public Date getTimestamp() {
-        return timestamp;
-    }
+    public int getLog_id() { return log_id; }
+    public int getSub_id() { return sub_id; }
+    public String getLog_action() { return log_action; }   
+    public LocalDate getTimestamp() { return timestamp; }
 
     @Override
     public String toString() {
