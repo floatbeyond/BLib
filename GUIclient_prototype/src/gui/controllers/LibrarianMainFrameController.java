@@ -132,6 +132,8 @@ public class LibrarianMainFrameController {
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gui/fxml/ReaderCard.fxml"));
                 Parent root = fxmlLoader.load();
+
+                // SharedController.setReaderCardController(fxmlLoader.getController());
                 Stage stage = new Stage();
                 stage.setTitle("Reads Card");
                 Scene scene = new Scene(root);
@@ -164,6 +166,8 @@ public class LibrarianMainFrameController {
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gui/fxml/ReturnBookFrame.fxml"));
                 Parent root = fxmlLoader.load();
+
+                SharedController.setReturnBookController(fxmlLoader.getController());
                 Stage stage = new Stage();
                 stage.setTitle("Return Book");
                 Scene scene = new Scene(root);

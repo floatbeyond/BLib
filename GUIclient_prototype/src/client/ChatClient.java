@@ -77,6 +77,9 @@ public class ChatClient extends AbstractClient
           System.out.println("Received message type: " + type + " | to user: " + user);
           awaitResponse = false;
           switch (type) {
+              case "LoginStatus":
+                  Logic.parseLogin(data);
+                  break;
               case "NewSubscriber":
                   Logic.newSubscriber((int) data);
                   break;
@@ -84,6 +87,9 @@ public class ChatClient extends AbstractClient
                   if (data instanceof Subscriber) {
                     Logic.parseSubscriber((Subscriber) data);
                   }
+                  break;
+              case "UpdateStatus":
+                  Logic.updateSubscriberStatus( data);
                   break;
               case "SubscriberList":
                   Logic.parseSubscriberList((ArrayList<Subscriber>) data);
@@ -102,12 +108,8 @@ public class ChatClient extends AbstractClient
               case "BorrowStatus":
                   Logic.newBorrowStatus((String) data);
                   break;
-              case "LoginStatus":
-                  // add logic
-                  Logic.parseLogin(data);
-                  break;
-              case "UpdateStatus":
-                  Logic.updateSubscriberStatus( data);
+              case "ReturnStatus":
+                  Logic.returnBookStatus((String) data);
                   break;
               case "Print":
                   Logic.print((String) data);

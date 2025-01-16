@@ -337,6 +337,24 @@ public class mysqlConnection {
 		return false;
 	}
 
+	public static boolean returnBook(Connection conn, int subId, int copyId, LocalDate returnDate) {
+		String query = "UPDATE borrowrecords SET ActualReturnDate = ?, Status = 'Returned' WHERE SubID = ? AND CopyID = ? AND (Status = 'Borrowed' OR Status = 'Late')";
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setDate(1, DateUtils.toSqlDate(returnDate));
+			stmt.setInt(2, subId);
+			stmt.setInt(3, copyId);
+			int affectedRows = stmt.executeUpdate();
+			if (affectedRows == 0) {
+				System.out.println("No matching records found to update.");
+				return false;
+			}
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
 	public static boolean addOrderRecord(Connection conn, OrderRecord order) {
         String query = "INSERT INTO orders (order_id, subscriber_id, book_id, order_date) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -393,35 +411,6 @@ public class mysqlConnection {
 		}
 		return dataLogs;
 	}
-
-	// public static int getBooksInOrderCount(Connection conn, int subscriberId) {
-    //     String query = "SELECT COUNT(*) FROM orderrecord WHERE status = 'In Order' AND subscriber_id = ?";
-    //     try (PreparedStatement stmt = conn.prepareStatement(query)) {
-    //         stmt.setInt(1, subscriberId);
-    //         ResultSet rs = stmt.executeQuery();
-    //         if (rs.next()) {
-    //             return rs.getInt(1);
-    //         }
-    //     } catch (SQLException e) {
-    //         e.printStackTrace();
-    //     }
-    //     return 0;
-    // }
-
-    // public static int getBooksInBorrowCount(Connection conn, int subscriberId) {
-    //     String query = "SELECT COUNT(*) FROM borrowingrecord WHERE status = 'Borrowed' AND subscriber_id = ?";
-    //     try (PreparedStatement stmt = conn.prepareStatement(query)) {
-    //         stmt.setInt(1, subscriberId);
-    //         ResultSet rs = stmt.executeQuery();
-    //         if (rs.next()) {
-    //             return rs.getInt(1);
-    //         }
-    //     } catch (SQLException e) {
-    //         e.printStackTrace();
-    //     }
-    //     return 0;
-    // }
-
 }
 
 

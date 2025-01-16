@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
+import java.time.LocalDate;
 
 import common.BorrowingRecord;
 import common.DataLogs;
@@ -104,6 +105,15 @@ public class Logic {
         }        
     }
 
+    public static void returnBook(String user, Object data, ConnectionToClient client) {
+        String[] parts = ((String) data).split(":", 3);
+        int subId = Integer.parseInt(parts[0]);
+        int copyId = Integer.parseInt(parts[1]);
+        LocalDate returnDate = LocalDate.parse(parts[2]);
+        boolean success = mysqlConnection.returnBook(conn, subId, copyId, returnDate);
+        MessageUtils.sendResponseToClient(user, "ReturnStatus", success ? "Book has been returned successfully" : "ERROR: Book does not match subscriber", client);
+    }
+
     public static void newOrder(String user, Object newOrder, ConnectionToClient client) {
         if (newOrder instanceof OrderRecord) {
             OrderRecord order = (OrderRecord) newOrder;
@@ -119,6 +129,7 @@ public class Logic {
             return;
         }
     }
+
     // Scan
 
     public static void scan(String user, String msg, int unparsedId, ConnectionToClient client) {

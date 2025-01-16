@@ -7,21 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
 
-// import gui.SubscribersTableController;
-// import gui.ClientPortController;
-// import gui.LandingWindowController;
-// import gui.SubscriberFormController;
+
 import common.Subscriber;
-// import gui.controllers.PersonalDetailsController;
 import common.BookCopy;
 import common.Librarian;
-import common.DataLogs;
 
 public class Logic {
-    // public static SubscribersTableController stc = SharedController.getSubscribersTableController();
-    // public static ClientPortController cpc = SharedController.getClientPortController();
-    // public static SubscriberFormController sfc = SharedController.getSubscriberFormController();
-    // public static LandingWindowController lwc = SharedController.getLandingWindowController();
 
     // Login
 
@@ -102,29 +93,6 @@ public class Logic {
             }
         });
     }
-
-    // Method to handle the response for books in order count
-    // public static void BooksInOrderCountResponse(int count) {
-    //     PersonalDetailsController controller = SharedController.getPersonalDetailsController();
-    //     if (controller != null) {
-    //         controller.handleBooksInOrderCountResponse(count);
-    //         System.out.println("Books in order count: " + count);
-    //     } else {
-    //         System.out.println("PersonalDetailsController is null");
-    //     }
-    // }
-
-    // // Method to handle the response for books in borrow count
-    // public static void BooksInBorrowCountResponse(int count) {
-    //     PersonalDetailsController controller = SharedController.getPersonalDetailsController();
-    //     if (controller != null) {
-    //         controller.handleBooksInBorrowCountResponse(count);
-    //         System.out.println("Books in borrow count: " + count);
-    //     } else {
-    //         System.out.println("PersonalDetailsController is null");
-    //     }
-    // }
-
   
     // Book
 
@@ -166,8 +134,6 @@ public class Logic {
         });
     }
 
-    // Borrow
-
     public static void newBorrowStatus(String status) {
         Platform.runLater(() -> {
             SharedController.bfc.successfulBorrow(status);
@@ -175,7 +141,11 @@ public class Logic {
         
     }
 
-
+    public static void returnBookStatus(String status) {
+        Platform.runLater(() -> {
+            SharedController.rbc.returnMessage(status);
+        });
+    }
 
 
     // Prints

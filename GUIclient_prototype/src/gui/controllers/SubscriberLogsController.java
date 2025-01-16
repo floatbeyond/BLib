@@ -17,16 +17,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 
-import java.util.ArrayList;
 import java.time.LocalDate;
 import java.time.Month;
-import java.time.ZoneId;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import java.util.List;
-
 import java.util.List;
 import java.util.stream.Collectors;
 

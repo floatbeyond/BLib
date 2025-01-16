@@ -21,6 +21,7 @@ public class ScanWindowController {
     @FXML private Label messageLabel;
 
     private String command;
+    private ItemLoader itemLoader;
 
     public String getScanText() {
         return txtScan.getText();
@@ -39,10 +40,10 @@ public class ScanWindowController {
             Subscriber foundSubscriber = SharedController.getSubscriber();
             BookCopy foundBookCopy = SharedController.getBookCopy();
             if (foundBookCopy != null) {
-                SharedController.getBorrowFormController().loadBookCopy(foundBookCopy);
+                itemLoader.loadBookCopy(foundBookCopy);
                 closeScanWindow(event);
             } else if (foundSubscriber != null) {
-                SharedController.getBorrowFormController().loadSubscriber(foundSubscriber);
+                itemLoader.loadSubscriber(foundSubscriber);
                 closeScanWindow(event);
             } else {
                 displayMessage("Couldnt find a matching item");
@@ -57,6 +58,10 @@ public class ScanWindowController {
 
     public void setCommand(String msg) {
         command = msg;
+    }
+
+    public void setItemLoader(ItemLoader loader) {
+        itemLoader = loader;
     }
 
     public void displayMessage(String message) {

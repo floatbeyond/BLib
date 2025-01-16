@@ -1,55 +1,55 @@
 package gui.controllers;
-    
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.Button;
-import javafx.scene.control.DatePicker;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import client.ClientUI;
 import client.SharedController;
-import common.MessageUtils;
-import common.Subscriber;
 import common.BookCopy;
 import common.BorrowingRecord;
+import common.MessageUtils;
+import common.Subscriber;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
-    
-public class BorrowFormController implements ItemLoader {
+public class ReturnBookController implements ItemLoader {
     private Subscriber s;
     private BookCopy bc;
 
-    @FXML private Button scanButton;
-
+    @FXML private Button btnback;
+    @FXML private Button btnscanbook;
     @FXML private TextField txtID;
     @FXML private TextField txtCopyId;
-    @FXML private DatePicker dpReturnDate;
-
-    @FXML private Label lblReturnDate;
-    @FXML private int subscriberID;
-    @FXML private int copyID;
-
+    @FXML private DatePicker actualReturnDate;
+    
     @FXML private Label messageLabel;
-
     private static Stage scanWindowStage; // Track the ScanWindow stage
 
     @FXML
-    private void initialize() {
+    public void initialize() {
         txtID.setEditable(false);
         txtCopyId.setEditable(false);
-        dpReturnDate.setEditable(false);
+        actualReturnDate.setValue(LocalDate.now());
+        actualReturnDate.setEditable(false);
+        // actualReturnDate.setDisable(true);
     }
 
     private String getSubId() { return txtID.getText(); }
+    private void setID(String sub_id) { txtID.setText(sub_id); }
     private String getCopyId() { return txtCopyId.getText(); }
-    private LocalDate getReturnDate() { return dpReturnDate.getValue(); }
+    private void setCopyID(String copy_id) { txtCopyId.setText(copy_id); }
+    private LocalDate getActualReturnDate() { return actualReturnDate.getValue(); }
 
     @FXML
     private void showScanWindow(ActionEvent event) throws Exception {
@@ -76,55 +76,44 @@ public class BorrowFormController implements ItemLoader {
             e.printStackTrace();
         }
     }
-    
-    @FXML
-    private void handleBorrowAction(ActionEvent event) throws Exception {
+
+    //handle when librarian clicks submit return date button with actual return date
+      public void handleReturnDateSubmit(ActionEvent event) { 
         try {
-            LocalDate returnDate = getReturnDate();
+            LocalDate returnDate = getActualReturnDate();
             String subId = getSubId();
             String copyId = getCopyId();
-            LocalDate currentDate = LocalDate.now();
             // Input validation
             if (subId.isEmpty() || copyId.isEmpty()) {
                 displayMessage("Please scan first");
                 return;
             }
-    
+
             MessageUtils.sendMessage(ClientUI.cc, "librarian", "connect", null);
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
-                if (s.getSub_status().equals("Frozen")) {
-                    displayMessage("Subscriber is frozen");
-                    return;
-                } else if (bc.getStatus().equals("Borrowed")) {
-                    displayMessage("Book is already borrowed, scan another");
-                    return;
-                } else if (returnDate == null || returnDate.isBefore(currentDate.plusDays(1)) || returnDate.isAfter(currentDate.plusDays(14))) {
-                    displayMessage("Please select a valid return date");
-                    return;
+                if (bc.getStatus().equals("Returned")) {
+                    displayMessage("Book has been returned already");
                 } else {
-                    // print return date
-                    System.out.println("Return date: " + returnDate);
-                    BorrowingRecord newBR = new BorrowingRecord(0, Integer.parseInt(copyId), Integer.parseInt(subId), 
-                                                            currentDate, returnDate, null, "Borrowed");
-                    MessageUtils.sendMessage(ClientUI.cc, "librarian", "newBorrow", newBR);
+                    MessageUtils.sendMessage(ClientUI.cc, "librarian", "returnBook", subId + ":" + copyId + ":" + returnDate);
                 }
             } else {
                 displayMessage("No server connection");
-                return;
             }
-        } catch (Exception e) {
+
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
     public void loadBookCopy(BookCopy bookCopy) {
-        txtCopyId.setText(String.valueOf(bookCopy.getCopyId()));
+        setCopyID(String.valueOf(bookCopy.getCopyId()));
         bc = bookCopy;
         SharedController.setBookCopy(null);
         System.out.println("Book status: " + bookCopy.getStatus());
-        if (bookCopy.getStatus().equals("Borrowed")) {
-            displayMessage("Book is already borrowed, scan another");
+        if (bookCopy.getStatus().equals("Returned")) {
+            displayMessage("Book has been returned already");
         } else {
             displayMessage("Book found");
         }
@@ -132,21 +121,26 @@ public class BorrowFormController implements ItemLoader {
 
     @Override
     public void loadSubscriber(Subscriber subscriber) {
-        txtID.setText(String.valueOf(subscriber.getSub_id()));
+        setID(String.valueOf(subscriber.getSub_id()));
         s = subscriber;
         SharedController.setSubscriber(null);
-        if (subscriber.getSub_status().equals("Frozen")) {
-            displayMessage("Subscriber is frozen");
-        } else {
-            displayMessage("Subscriber found");
-        }
+        displayMessage("Subscriber found");
     }
 
-    public void successfulBorrow(String msg) {
+    public void returnMessage(String msg) {
         displayMessage(msg);
-        txtCopyId.clear();
-        txtID.clear();
-        dpReturnDate.setValue(null);
+        if (msg.equals("Book has been returned successfully")) {
+            txtCopyId.clear();
+            txtID.clear();
+            actualReturnDate.setValue(null);
+        } else {
+            displayMessage(msg);
+        }
+
+    }  
+
+    public void displayMessage(String message) { //display message to user in label
+        messageLabel.setText(message);
     }
 
     public void goBackBtn(ActionEvent event) throws Exception {
@@ -177,9 +171,4 @@ public class BorrowFormController implements ItemLoader {
         stage.setResizable(false);
         stage.show();
     }
-
-    public void displayMessage(String message) {
-        messageLabel.setText(message);
-    }
-    
 }

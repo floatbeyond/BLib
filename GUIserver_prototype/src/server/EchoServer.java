@@ -96,21 +96,18 @@ public class EchoServer extends AbstractServer
               System.out.println("New borrow");
               Logic.newBorrow(user, data, client);
               break;
+            } case "returnBook": {
+              Logic.returnBook(user, data, client);
+              break;
+            } case "newOrder": {
+                System.out.println("New order");
+                Logic.newOrder(user, data, client);
+                break;
             } case "connect": {
               Logic.connect(user, client);
               break;
             } case "disconnect": {
               Logic.disconnect(user, client);
-              break;
-            }case "sendBooksInOrderCount": {
-              //Logic.getBooksInOrderCount(user,(int) data, client);
-              break;
-            } case "sendBooksInBorrowCount":
-              //Logic.getBooksInBorrowCount(user,(int) data, client);
-              break;
-            case "newOrder": {
-              System.out.println("New order");
-              Logic.newOrder(user, data, client);
               break;
             }default: {
               MessageUtils.sendResponseToClient(user, "Error", "Invalid command", client);
