@@ -1,12 +1,13 @@
 package gui.controllers;
 
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 import client.ClientUI;
+import client.SharedController;
 import common.MessageUtils;
 import common.Subscriber;
-import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -14,24 +15,16 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.KeyCode;
+import javafx.scene.control.TableRow;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.SelectionMode;
-import javafx.util.Duration;
-
-@SuppressWarnings("rawtypes")
 
 
 public class SubscribersTableController implements Initializable {
@@ -39,9 +32,16 @@ public class SubscribersTableController implements Initializable {
     @FXML private TableView<Subscriber> subscriberTable;
     @FXML private TableColumn<Subscriber, Integer> colID;
     @FXML private TableColumn<Subscriber, String> colName;
-    @FXML private TableColumn<Subscriber, Integer> colStatus;
+    @FXML private TableColumn<Subscriber, String> colStatus;
     @FXML private TableColumn<Subscriber, String> colPhone;
     @FXML private TableColumn<Subscriber, String> colEmail;
+    @FXML private TableColumn<Subscriber, Integer> colPenalties;
+    @FXML private TableColumn<Subscriber, LocalDate> colfrozenUntil;
+    @FXML private TableColumn<Subscriber, LocalDate> coljoinDate;
+    @FXML private TableColumn<Subscriber, LocalDate> colexpDate;
+    @FXML private TableColumn<Subscriber, LocalDate> colBorrows;
+    @FXML private TableColumn<Subscriber, LocalDate> colOrders;
+
 
 	@FXML private Label copiedLabel;
 
@@ -50,37 +50,24 @@ public class SubscribersTableController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		System.out.println("Initializing controller...");
-		
-		// Verify FXML injection
-		assert subscriberTable != null : "fx:id=\"subscriberTable\" was not injected";
-		assert colID != null : "fx:id=\"colID\" was not injected";
-		assert colName != null : "fx:id=\"colName\" was not injected";
-		assert colStatus != null : "fx:id=\"colHistory\" was not injected";
-		assert colPhone != null : "fx:id=\"colPhone\" was not injected";
-		assert colEmail != null : "fx:id=\"colEmail\" was not injected";
-        assert copiedLabel != null : "fx:id=\"copiedLabel\" was not injected";
-
+  
 		// Initialize columns
 		setupColumns();
 
 		// Enable cell selection
-		subscriberTable.getSelectionModel().setCellSelectionEnabled(true);
-		subscriberTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		subscriberTable.setEditable(false);
 	
-		// Copy functionality - Ctrl + C
-		subscriberTable.setOnKeyPressed(event -> {
-			if (event.getCode() == KeyCode.C && event.isControlDown()) {
-				copySelectionToClipboard();
-			}
-		});
-
-		// Copy functionality - Mouse press
-		subscriberTable.setOnMouseClicked(event -> {
-			if (event.getClickCount() == 2) {
-				copySelectionToClipboard();
-			}
-    	});
+        // Handle double-click on a row
+        subscriberTable.setRowFactory(tv -> {
+            TableRow<Subscriber> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
+                    Subscriber rowData = row.getItem();
+                    showReaderCard(rowData);
+                }
+            });
+            return row;
+        });
 		
 		// Load initial data
 		Platform.runLater(() -> {
@@ -89,8 +76,8 @@ public class SubscribersTableController implements Initializable {
 		});
 	}
 
-	private void setupColumns() {
-		if (colID == null || subscriberTable == null) {
+    private void setupColumns() {
+        if (colID == null || subscriberTable == null) {
             System.err.println("ERROR: Table components not properly injected");
             return;
         }
@@ -101,58 +88,13 @@ public class SubscribersTableController implements Initializable {
         colStatus.setCellValueFactory(new PropertyValueFactory<>("sub_status"));
         colPhone.setCellValueFactory(new PropertyValueFactory<>("sub_phone_num"));
         colEmail.setCellValueFactory(new PropertyValueFactory<>("sub_email"));
-
-        // Set up non-editable cell factories
-        colID.setCellFactory(column -> createNonEditableCell());
-        colName.setCellFactory(column -> createNonEditableCell());
-        colStatus.setCellFactory(column -> createNonEditableCell());
-        colPhone.setCellFactory(column -> createNonEditableCell());
-        colEmail.setCellFactory(column -> createNonEditableCell());
-	}
-
-	private <T> TableCell<Subscriber, T> createNonEditableCell() {
-        return new TableCell<Subscriber, T>() {
-            @Override
-            protected void updateItem(T item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(item.toString());
-                }
-                setStyle("-fx-selection-bar: -fx-accent; -fx-selection-bar-non-focused: -fx-accent;");
-            }
-        };
+        colPenalties.setCellValueFactory(new PropertyValueFactory<>("sub_penalties"));
+        colfrozenUntil.setCellValueFactory(new PropertyValueFactory<>("sub_freeze"));
+        coljoinDate.setCellValueFactory(new PropertyValueFactory<>("sub_joined"));
+        colexpDate.setCellValueFactory(new PropertyValueFactory<>("sub_expiration"));
+        colBorrows.setCellValueFactory(new PropertyValueFactory<>("currentlyBorrowed"));
+        colOrders.setCellValueFactory(new PropertyValueFactory<>("currentlyOrdered"));
     }
-
-	private void copySelectionToClipboard() {
-        StringBuilder clipboardString = new StringBuilder();
-        ObservableList<TablePosition> positionList = subscriberTable.getSelectionModel().getSelectedCells();
-
-        int prevRow = -1;
-        for (TablePosition position : positionList) {
-            if (prevRow != -1 && prevRow != position.getRow()) {
-                clipboardString.append('\n');
-            }
-            Object cell = subscriberTable.getColumns().get(position.getColumn())
-                        .getCellData(position.getRow());
-            clipboardString.append(cell == null ? "" : cell.toString()).append('\t');
-            prevRow = position.getRow();
-        }
-
-        final ClipboardContent content = new ClipboardContent();
-        content.putString(clipboardString.toString());
-        Clipboard.getSystemClipboard().setContent(content);
-
-		showCopiedMessage();
-    }
-
-	private void showCopiedMessage() {
-        copiedLabel.setVisible(true);
-        PauseTransition pause = new PauseTransition(Duration.seconds(1));
-        pause.setOnFinished(event -> copiedLabel.setVisible(false));
-        pause.play();
-	}
 
 	public void parseSubscriberList(ObservableList<Subscriber> subscribers) {
 		if (subscribers == null) return;
@@ -160,9 +102,28 @@ public class SubscribersTableController implements Initializable {
 		System.out.println("Loaded " + subscribers.size() + " subscribers");
 	}
 
+    private void showReaderCard(Subscriber subscriber) {
+        try {
+            SharedController.setSubscriber(subscriber);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/ReaderCard.fxml"));
+            Pane root = loader.load();
+
+            ReaderCardController controller = loader.getController();
+            SharedController.setReaderCardController(controller);
+
+            Stage stage = new Stage();
+            Scene scene = new Scene(root);
+            stage.setTitle("Subscriber Details");
+            stage.setScene(scene);
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void goBackBtn(ActionEvent event) throws Exception {
         System.out.println("goBackBtn clicked");
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/MainFrame.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/LibrarianMainFrame.fxml"));
 		Pane root = loader.load();
 		
 		Stage primaryStage = new Stage();

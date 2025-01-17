@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 
 import client.ClientUI;
+import common.Librarian;
 import common.MessageUtils;
 import client.SharedController;
 
@@ -26,6 +27,13 @@ public class LibrarianMainFrameController {
 
     @FXML private Label messageLabel;
 
+    private Librarian librarian;
+
+    @FXML
+    public void initialize() {
+        librarian = SharedController.getLibrarian();
+    }
+
     @FXML
     private void goShowSubscribers(ActionEvent event) {
         try {
@@ -33,6 +41,8 @@ public class LibrarianMainFrameController {
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gui/fxml/SubscribersTableForm.fxml"));
                 Parent root = fxmlLoader.load();
+
+                SharedController.setSubscribersTableController(fxmlLoader.getController());
                 Stage stage = new Stage();
                 stage.setTitle("Show Subscribers");
                 Scene scene = new Scene(root);

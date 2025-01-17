@@ -43,6 +43,7 @@
       </TableView>
       <Label fx:id="messageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="368.0" layoutY="118.0" prefHeight="46.0" prefWidth="376.0" />
       <Button fx:id="btnLogOut" layoutX="40.0" layoutY="638.0" mnemonicParsing="false" onAction="#logoutBtn" prefHeight="38.0" prefWidth="67.0" text="Log Out" />
-      <Button fx:id="btnPersonalDetails" layoutX="941.0" layoutY="638.0" mnemonicParsing="false" onAction="#personalDetailsBtn" prefHeight="38.0" prefWidth="120.0" text="Personal Detalis" />
+      <Button fx:id="btnPersonalDetails" layoutX="624.0" layoutY="638.0" mnemonicParsing="false" onAction="#personalDetailsBtn" prefHeight="38.0" prefWidth="120.0" text="Personal Detalis" />
+      <Button fx:id="btnActiveOrders" layoutX="929.0" layoutY="638.0" mnemonicParsing="false" onAction="#handleActiveOrders" prefHeight="38.0" prefWidth="120.0" text="Active Orders" />
    </children>
 </AnchorPane>

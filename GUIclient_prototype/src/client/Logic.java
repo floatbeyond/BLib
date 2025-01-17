@@ -10,7 +10,10 @@ import javafx.application.Platform;
 
 import common.Subscriber;
 import common.BookCopy;
+import common.BorrowRecordDTO;
 import common.Librarian;
+import common.OrderRecordDTO;
+import common.OrderResponse;
 
 public class Logic {
 
@@ -76,19 +79,79 @@ public class Logic {
         });
     }
 
-    public static void parseDataLogsList(ArrayList<Object> list) {
-        // print test
+    public static void parseDataLogsList(String user, ArrayList<Object> list) {
         System.out.println("parseDataLogsList method called");
         Platform.runLater(() -> {
             if (!list.isEmpty() && list.stream().allMatch(item -> item instanceof Object)) {
                 System.out.println("Loading logs");
                 // Handle the data logs list
-                if (SharedController.slc != null) {
-                    System.out.println("subscribersTableController is initialized");
-                    SharedController.slc.showDataLogs(list);
-                    // SharedController.stc.parseDataLogsList(dataLogs);
+                if (user.equals("subscriber")) {
+                    if (SharedController.slc != null) {
+                        System.out.println("subscribersLogsController is initialized");
+                        SharedController.slc.setAllDataLogs(list);
+                        SharedController.slc.showDataLogs(list);
+                    } else {
+                        System.out.println("subscribersLogsController is null");
+                    }
+                } else if (user.equals("librarian")) {
+                    if (SharedController.rcc != null) {
+                        System.out.println("ReaderCardController is initialized");
+                        SharedController.rcc.setAllDataLogs(list);
+                    } else {
+                        System.out.println("ReaderCardController is null");
+                    }
+                }
+            }
+        });
+    }
+
+    public static void parseUserBorrowsList(String user, List<BorrowRecordDTO> list) {
+        System.out.println("parseUserBorrowsList method called");
+        Platform.runLater(() -> {
+            if (!list.isEmpty() && list.stream().allMatch(item -> item instanceof BorrowRecordDTO)) {
+                System.out.println("Loading borrows");
+                // Handle the user borrows list
+                if (SharedController.rcc != null) {
+                    System.out.println("ReaderCardController is initialized");
+                    SharedController.rcc.setBorrowRecords(list);
                 } else {
-                    System.out.println("subscribersTableController is null");
+                    System.out.println("ReaderCardController is null");
+                }
+            }
+        });
+    }
+
+    public static void extendBorrowStatus(String status) {
+        Platform.runLater(() -> {
+            SharedController.ewc.successfulExtend(status);
+        });
+    }
+
+    public static void parseUserOrdersList(String user, List<OrderRecordDTO> list) {
+        System.out.println("parseUserOrdersList method called");
+        Platform.runLater(() -> {
+            if (!list.isEmpty() && list.stream().allMatch(item -> item instanceof Object)) {
+                System.out.println("Loading orders");
+                // Handle the user orders list
+                if (user.equals("librarian")) {
+                    if (SharedController.rcc != null) {
+                        System.out.println("ReaderCardController is initialized");
+                        SharedController.rcc.setOrderRecords(list);
+                    } else {
+                        System.out.println("ReaderCardController is null");
+                    }
+                } else if (user.equals("subscriber")) {
+                    if (SharedController.smfc != null) {
+                        System.out.println("SubscriberMainFrame is initialized");
+                        SharedController.smfc.setOrderRecords(list);
+                    } else {
+                        System.out.println("SubscriberMainFrame is null");
+                    }
+                }
+            } else {
+                System.out.println("No orders found");
+                if (user.equals("subscriber") && SharedController.smfc != null) {
+                    SharedController.smfc.setOrderRecords(FXCollections.observableArrayList());
                 }
             }
         });
@@ -144,6 +207,21 @@ public class Logic {
     public static void returnBookStatus(String status) {
         Platform.runLater(() -> {
             SharedController.rbc.returnMessage(status);
+        });
+    }
+
+    public static void newOrderStatus(Object status) {
+        OrderResponse response = (OrderResponse) status;
+        // print the book
+        System.out.println("Book: " + response.getBook());
+        Platform.runLater(() -> {
+            SharedController.smfc.handleOrderResponse(response);
+        });
+    }
+
+    public static void cancelOrderStatus(String status) {
+        Platform.runLater(() -> {
+            SharedController.aoc.alertMessage(status);
         });
     }
 

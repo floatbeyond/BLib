@@ -3,17 +3,21 @@ package server;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+
 import javafx.application.Platform;
 import java.time.LocalDate;
 
 import common.BorrowingRecord;
 import common.DataLogs;
 import common.MessageUtils;
-import common.OrderRecord;
 import common.Subscriber;
+import common.Book;
 import common.BookCopy;
+import common.BorrowRecordDTO;
+import common.OrderRecordDTO;
 import ocsf.server.ConnectionToClient;
 import gui.ClientConnectedController;
+import common.OrderResponse;
 
 
 public class Logic {
@@ -72,7 +76,7 @@ public class Logic {
         MessageUtils.sendResponseToClient(user, "SubscriberList", table, client);
     }
     
-     public static void sendDataLogs(String user, int sub_id, ConnectionToClient client) {
+    public static void sendDataLogs(String user, int sub_id, ConnectionToClient client) {
         ArrayList<DataLogs> dataLogs = mysqlConnection.getDataLogs(conn, sub_id);
         Platform.runLater(() -> {
             MessageUtils.sendResponseToClient(user, "DataLogsList", dataLogs, client);
@@ -80,6 +84,19 @@ public class Logic {
         
     }
 
+    public static void sendUserBorrows(String user, Object data, ConnectionToClient client) {
+        int subId = (int) data;
+        List<BorrowRecordDTO> borrows = mysqlConnection.getUserBorrows(conn, subId);
+        MessageUtils.sendResponseToClient(user, "UserBorrowsList", borrows, client);
+    }
+
+    public static void sendUserOrders(String user, Object data, ConnectionToClient client) {
+        int subId = (int) data;
+        List<OrderRecordDTO> orders = mysqlConnection.getUserOrders(conn, user, subId);
+        // print list of orders being sent
+        System.out.println(orders);
+        MessageUtils.sendResponseToClient(user, "UserOrdersList", orders, client);
+    }
 
     // Books
 
@@ -115,19 +132,53 @@ public class Logic {
     }
 
     public static void newOrder(String user, Object newOrder, ConnectionToClient client) {
-        if (newOrder instanceof OrderRecord) {
-            OrderRecord order = (OrderRecord) newOrder;
-            boolean orderExists = mysqlConnection.isOrderExists(conn, order.getSubId(), order.getBookId());
-            if (orderExists) {
-                MessageUtils.sendResponseToClient(user, "OrderStatus", "ERROR: Order already exists for this book.", client);
-            } else {
-                boolean success = mysqlConnection.addOrderRecord(conn, order);
-                MessageUtils.sendResponseToClient(user, "OrderStatus", success ? "Order added successfully." : "ERROR: Couldn't add order.", client);
-            }
-        } else {
-            MessageUtils.sendResponseToClient(user, "Error", "Invalid order record", client);
-            return;
+        String[] parts = ((String) newOrder).split(":", 2);
+        int bookId = Integer.parseInt(parts[0]);
+        int subId = Integer.parseInt(parts[1]);
+        String orderStatus = "Order already exists";
+        Book orderedBook = null;
+
+        boolean orderExists = mysqlConnection.isOrderExists(conn, bookId, subId);
+        if (!orderExists) {
+            boolean areOrdersCapped = mysqlConnection.areOrdersCapped(conn, bookId);
+            if (!areOrdersCapped) {
+                boolean success = mysqlConnection.addOrderRecord(conn, bookId, subId);
+                if (success == true) {
+                    orderStatus = "Order added successfuly";
+                    orderedBook = mysqlConnection.getBookById(conn, bookId);
+                    orderedBook.setOrdered(true);
+                } else orderStatus = "Failed to add order";
+            } else orderStatus = "Orders are at their cap";
         }
+        OrderResponse response = new OrderResponse(orderStatus, orderedBook);
+        MessageUtils.sendResponseToClient(user, "OrderStatus", response, client);
+    }
+
+    public static void cancelOrder(String user, Object order, ConnectionToClient client) {
+        int orderId = (int) order;
+        // print order id
+        System.out.println("Order ID: " + orderId);
+        boolean success = mysqlConnection.cancelOrder(conn, orderId);
+        MessageUtils.sendResponseToClient(user, "CancelStatus", success ? "Order has been cancelled" : "ERROR: Order not found", client);
+
+    }
+
+    public static void checkOrder(String user, Object data, ConnectionToClient client) {
+        String[] parts = ((String) data).split(":", 4);
+        int subId = Integer.parseInt(parts[0]);
+        int borrowId = Integer.parseInt(parts[1]);
+        LocalDate extensionDate = LocalDate.parse(parts[2]);
+        int bookId = mysqlConnection.getBookIdByBorrowId(conn, borrowId);
+        String libName = parts[3];
+        boolean success = false;
+        boolean orderExists = mysqlConnection.isOrderExists(conn, subId, bookId);
+        if (orderExists == false) {
+            success = mysqlConnection.extendBorrow(conn, subId, borrowId, extensionDate);
+            if (success == true) {
+                mysqlConnection.logExtensionByLibrarian(conn, subId, bookId, libName);
+            }
+        }
+        MessageUtils.sendResponseToClient(user, "ExtendStatus" , success ? "Borrowing extended" : "Order exists", client);
     }
 
     // Scan

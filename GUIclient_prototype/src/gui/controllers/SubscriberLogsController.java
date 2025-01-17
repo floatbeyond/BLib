@@ -1,6 +1,7 @@
 package gui.controllers;
 
 import common.DataLogs;
+import common.DateUtils;
 import common.MessageUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,11 +17,16 @@ import javafx.stage.WindowEvent;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-
+import java.time.format.DateTimeFormatter;
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.Year;
 import java.util.List;
 import java.util.stream.Collectors;
+import javafx.scene.control.Label;
+import javafx.util.StringConverter;
+import java.sql.Timestamp;
+
 
 
 import client.ClientUI;
@@ -31,33 +37,85 @@ public class SubscriberLogsController {
 
     @FXML private ListView<String> listViewLogs;
     @FXML private ComboBox<Month> monthComboBox;
-    @FXML private Button filterButton;
+    @FXML private ComboBox<Integer> yearComboBox;
     @FXML private Button backButton; 
+    @FXML private Label currentDate;
 
     private List<DataLogs> allDataLogs;
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    // Method to populate the ListView with data logs
-    public void showDataLogs(List<Object> dataLogs) {
-        // this.allDataLogs = dataLogs; // Store all logs
-        ObservableList<String> items = FXCollections.observableArrayList();
-        for (Object log : dataLogs) {
-            items.add(log.toString());
+
+    @FXML
+    private void initialize() {
+        // Populate the ComboBox with months
+        ObservableList<Month> months = FXCollections.observableArrayList(Month.values());
+        // Set custom StringConverter to display month names in a user-friendly format
+        monthComboBox.setConverter(new StringConverter<Month>() {
+            @Override
+            public String toString(Month month) {
+                // Capitalize the first letter and make the rest lowercase
+                return month.toString().substring(0, 1) + month.toString().substring(1).toLowerCase();
+            }
+
+            @Override
+            public Month fromString(String string) {
+                // Convert the string back to a Month enum value
+                return Month.valueOf(string.toUpperCase());
+            }
+        });
+
+        monthComboBox.setItems(months);
+
+        // Populate the ComboBox with years (for example, from 2000 to the current year)
+        int currentYear = Year.now().getValue();
+        ObservableList<Integer> years = FXCollections.observableArrayList();
+        for (int year = 2023; year <= currentYear; year++) {
+            years.add(year);
         }
-        listViewLogs.setItems(items);
+        yearComboBox.setItems(years);
+
+        // Set current date label
+        currentDate.setText("Current date: " + LocalDate.now().format(DATE_FORMATTER));
     }
-     // Method to filter logs by selected month
+    // Method to set all data logs
+    public void setAllDataLogs(List<Object> logs) {
+        this.allDataLogs = logs.stream()
+            .map(log -> (DataLogs) log)
+            .collect(Collectors.toList());
+    }
+    // Method to filter logs by selected month
     @FXML
     public void filterLogsByMonth() {
         Month selectedMonth = monthComboBox.getValue();
-        if (selectedMonth != null) {
+        Integer selectedYear = yearComboBox.getValue();
+        if (selectedMonth != null && selectedYear != null) {
             List<Object> filteredLogs = allDataLogs.stream()
                 .filter(log -> {
-                    LocalDate logDate = log.getTimestamp();
-                    return logDate.getMonth() == selectedMonth;
+                    Timestamp logDate = log.getTimestamp();
+                    return logDate.toLocalDateTime().getMonth() == selectedMonth && logDate.toLocalDateTime().getYear() == selectedYear;
                 })
                 .collect(Collectors.toList());
             showDataLogs(filteredLogs);
         }
+    }
+
+    public void showDataLogs(List<Object> logs) {
+        ObservableList<String> items = FXCollections.observableArrayList();
+        int logNumber = 1;
+        for (Object log : logs) {
+            items.add(formatLog(log, logNumber));
+            logNumber++;
+        }
+        listViewLogs.setItems(items);
+    }
+
+    private String formatLog(Object log, int logNumber) {
+        DataLogs dataLog = (DataLogs) log;
+
+        // Reformat the timestamp to a user-friendly format
+        String formattedDate = DateUtils.formatTimestamp(dataLog.getTimestamp(), "dd-MM-yyyy HH:mm:ss");
+
+        return logNumber + ". " + dataLog.getLog_action() + ", " + formattedDate;
     }
 
      public void goBackBtn(ActionEvent event) throws Exception {

@@ -1,30 +1,25 @@
 package gui.controllers;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import client.ClientUI;
 import client.SharedController;
 import common.BookCopy;
-import common.BorrowingRecord;
 import common.MessageUtils;
 import common.Subscriber;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 public class ReturnBookController implements ItemLoader {
-    private Subscriber s;
     private BookCopy bc;
 
     @FXML private Button btnback;
@@ -42,7 +37,7 @@ public class ReturnBookController implements ItemLoader {
         txtCopyId.setEditable(false);
         actualReturnDate.setValue(LocalDate.now());
         actualReturnDate.setEditable(false);
-        // actualReturnDate.setDisable(true);
+        actualReturnDate.setDisable(true);
     }
 
     private String getSubId() { return txtID.getText(); }
@@ -122,7 +117,6 @@ public class ReturnBookController implements ItemLoader {
     @Override
     public void loadSubscriber(Subscriber subscriber) {
         setID(String.valueOf(subscriber.getSub_id()));
-        s = subscriber;
         SharedController.setSubscriber(null);
         displayMessage("Subscriber found");
     }
@@ -132,7 +126,6 @@ public class ReturnBookController implements ItemLoader {
         if (msg.equals("Book has been returned successfully")) {
             txtCopyId.clear();
             txtID.clear();
-            actualReturnDate.setValue(null);
         } else {
             displayMessage(msg);
         }

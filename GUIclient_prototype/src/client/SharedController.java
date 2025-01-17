@@ -4,13 +4,16 @@ import common.Subscriber;
 import common.Librarian;
 import common.BookCopy;
 import gui.controllers.ClientPortController;
+import gui.controllers.ExtendWindowController;
 import gui.controllers.LandingWindowController;
 import gui.controllers.LoginWindowController;
 import gui.controllers.PersonalDetailsController;
 import gui.controllers.ReturnBookController;
 import gui.controllers.SubscriberMainFrameController;
 import gui.controllers.SubscribersTableController;
+import gui.controllers.ReaderCardController;
 import gui.controllers.ScanWindowController;
+import gui.controllers.ActiveOrdersController;
 import gui.controllers.BorrowFormController;
 import gui.controllers.SubscriberLogsController;
 import gui.controllers.ItemLoader;
@@ -25,9 +28,11 @@ public class SharedController {
     public static LoginWindowController logwc;
     public static SubscriberMainFrameController smfc;
     public static SubscribersTableController stc;
+    public static ReaderCardController rcc;
+    public static ExtendWindowController ewc;
     public static PersonalDetailsController pdc;
     public static SubscriberLogsController slc;
-
+    public static ActiveOrdersController aoc;
     public static BorrowFormController bfc;
     public static ReturnBookController rbc;
     private static ItemLoader itemLoader;
@@ -47,9 +52,6 @@ public class SharedController {
     public static void setBookCopy(BookCopy bc) { SharedController.bc = bc; }
     public static BookCopy getBookCopy() { return bc; }
 
-    public static void setSubscribersTableController(SubscribersTableController controller) { stc = controller; }
-    public static SubscribersTableController getSubscribersTableController() { return stc; }
-
     public static void setClientPortController(ClientPortController controller) { cpc = controller; }
     public static ClientPortController getClientPortController() { return cpc; }
 
@@ -59,11 +61,8 @@ public class SharedController {
     public static void setLoginWindowController(LoginWindowController controller) { logwc = controller; }
     public static LoginWindowController getLoginWindowController() { return logwc; }
 
-    public static void setBorrowFormController(BorrowFormController controller) { bfc = controller; }
-    public static BorrowFormController getBorrowFormController() { return bfc; }
-
-    public static void setScanWindowController(ScanWindowController controller) { swc = controller; }
-    public static ScanWindowController getScanWindowController() { return swc; }
+    public static void setSubscriberMainFrameController(SubscriberMainFrameController controller) { smfc = controller; }
+    public static SubscriberMainFrameController getSubscriberMainFrameController() { return smfc; }
     
     public static void setPersonalDetailsController(PersonalDetailsController controller) { pdc = controller; }
     public static PersonalDetailsController getPersonalDetailsController() { return pdc; }
@@ -71,14 +70,31 @@ public class SharedController {
     public static void setSubscriberLogsController(SubscriberLogsController controller) { slc = controller; }
     public static SubscriberLogsController getSubscriberLogsController() { return slc; }
 
-    public static void setSubscriberMainFrameController(SubscriberMainFrameController controller) { smfc = controller; }
-    public static SubscriberMainFrameController getSubscriberMainFrameController() { return smfc; }
+    public static void setActiveOrdersController(ActiveOrdersController controller) { aoc = controller; }
+    public static ActiveOrdersController getActiveOrdersController() { return aoc; }
+
+    public static void setBorrowFormController(BorrowFormController controller) { bfc = controller; }
+    public static BorrowFormController getBorrowFormController() { return bfc; }
+
+    public static void setScanWindowController(ScanWindowController controller) { swc = controller; }
+    public static ScanWindowController getScanWindowController() { return swc; }
+    
+    public static void setItemLoader(ItemLoader loader) { itemLoader = loader; }
+    public static ItemLoader getItemLoader() { return itemLoader; }  
+
+    public static void setSubscribersTableController(SubscribersTableController controller) { stc = controller; }
+    public static SubscribersTableController getSubscribersTableController() { return stc; }
+
+    public static void setReaderCardController(ReaderCardController controller) { rcc = controller; }
+    public static ReaderCardController getReaderCardController() { return rcc; }
+
+    public static void setExtendWindowController(ExtendWindowController controller) { ewc = controller; }
+    public static ExtendWindowController getExtendWindowController() { return ewc; }
 
     public static void setReturnBookController(ReturnBookController controller) { rbc = controller; }
     public static ReturnBookController getReturnBookController() { return rbc; }
 
-    public static void setItemLoader(ItemLoader loader) { itemLoader = loader; }
-    public static ItemLoader getItemLoader() { return itemLoader; }
+
 
 }
 

@@ -85,6 +85,12 @@ public class EchoServer extends AbstractServer
             } case "userLogs": {
               Logic.sendDataLogs(user, Integer.parseInt(data.toString()), client);
               break;
+            } case "userBorrows": {
+              Logic.sendUserBorrows(user, data, client);
+              break;
+            } case "userOrders": {
+              Logic.sendUserOrders(user, data, client);
+              break;
             } case "sendSearchedBooks": {
               Logic.sendSearchedBooks(user, data, client);
               break;
@@ -92,17 +98,20 @@ public class EchoServer extends AbstractServer
               Logic.scan(user, type, Integer.parseInt(data.toString()), client);
               break;
             } case "newBorrow": {
-              // print test
-              System.out.println("New borrow");
               Logic.newBorrow(user, data, client);
               break;
             } case "returnBook": {
               Logic.returnBook(user, data, client);
               break;
             } case "newOrder": {
-                System.out.println("New order");
-                Logic.newOrder(user, data, client);
-                break;
+              Logic.newOrder(user, data, client);
+              break;
+            } case "checkOrder": {
+              Logic.checkOrder(user, data, client);
+              break;
+            } case "cancelOrder": {
+              Logic.cancelOrder(user, data, client);
+              break;
             } case "connect": {
               Logic.connect(user, client);
               break;

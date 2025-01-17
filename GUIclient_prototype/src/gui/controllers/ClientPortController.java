@@ -44,7 +44,6 @@ public class ClientPortController  {
 				System.out.println("IP at Done: " + ip);
 				ClientUI clientUI = ClientUI.getInstance();
 				clientUI.startClient(ip);
-				// ClientUI.cc.accept("connect");
 				MessageUtils.sendMessage(ClientUI.cc, "user", "connect", null);
 				if (ClientUI.cc.getConnectionStatusFlag() == 1) {
 					((Node) event.getSource()).getScene().getWindow().hide();

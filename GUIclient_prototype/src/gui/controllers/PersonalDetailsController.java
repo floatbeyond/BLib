@@ -1,5 +1,7 @@
 package gui.controllers;
 
+import java.time.format.DateTimeFormatter;
+
 import client.ClientUI;
 import common.MessageUtils;
 import common.Subscriber;
@@ -41,6 +43,7 @@ public class PersonalDetailsController {
     @FXML private TextField txtNumBookBorrowed;
     @FXML private TextField txtNumBookOrdered;
 
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 	
 	public void loadSubscriber(Subscriber subscriber) {
@@ -50,8 +53,8 @@ public class PersonalDetailsController {
 		this.txtName.setText(s.getSub_name());
 		this.txtPNumber.setText(s.getSub_phone_num());
 		this.txtEmail.setText(s.getSub_email());
-        this.txtJoinDate.setText(s.getSub_joined().toString());
-		this.txtExDate.setText(s.getSub_expiration().toString());
+		this.txtJoinDate.setText(s.getSub_joined().format(DATE_FORMATTER));
+		this.txtExDate.setText(s.getSub_expiration().format(DATE_FORMATTER));
 		this.txtNumBookBorrowed.setText(String.valueOf(s.getCurrentlyBorrowed()));
 		this.txtNumBookOrdered.setText(String.valueOf(s.getCurrentlyOrdered()));
 

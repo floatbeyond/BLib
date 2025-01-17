@@ -32,3 +32,14 @@
     -fx-text-fill: #01579b;       
     -fx-font-size: 14px;           
 }
+
+.date-picker:disabled {
+    -fx-opacity: 1.0; /* Keep the opacity at 100% */
+    -fx-background-color: #f0f0f0; /* Optional: Change the background color to indicate it's disabled */
+
+}
+
+.date-picker:disabled .text-field {
+    -fx-text-fill: #000000; /* Change the text color */
+    -fx-opacity: 1.0; /* Keep the text opacity at 100% */
+}

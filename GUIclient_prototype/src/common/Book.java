@@ -15,6 +15,7 @@ public class Book implements Serializable {
     private String description;
     private int numOfCopies;
     private List<BookCopy> copies;
+    private boolean isOrdered; // New property
 
     public Book(int bookId, String title, String author, String genre, String description, int numOfCopies) {
         this.bookId = bookId;
@@ -24,6 +25,7 @@ public class Book implements Serializable {
         this.description = description;
         this.numOfCopies = numOfCopies;
         this.copies = new ArrayList<>();
+        this.isOrdered = false; // Initialize as false
     }
 
     // Getters
@@ -33,6 +35,10 @@ public class Book implements Serializable {
     public String getGenre() { return genre; }
     public String getDescription() { return description; }
     public int getNumOfCopies() { return numOfCopies; }
+    public boolean isOrdered() { return isOrdered; } // New getter
+
+    // Setters
+    public void setOrdered(boolean isOrdered) { this.isOrdered = isOrdered; } // New setter
 
     // Copy management
     public List<BookCopy> getAllCopies() { return copies; }
@@ -72,6 +78,7 @@ public class Book implements Serializable {
                 ", genre='" + genre + '\'' +
                 ", description='" + description + '\'' +
                 ", numOfCopies=" + numOfCopies +
+                ", isOrdered=" + isOrdered + // Include new property in toString
                 '}';
     }
 }

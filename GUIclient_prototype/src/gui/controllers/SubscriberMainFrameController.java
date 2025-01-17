@@ -6,6 +6,7 @@ import common.Book;
 import common.BookCopy;
 import common.BorrowingRecord;
 import common.MessageUtils;
+import common.OrderRecordDTO;
 import common.Subscriber;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -36,6 +37,7 @@ import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
+import common.OrderResponse; // Replace 'some.package' with the actual package name
 
 
 import java.io.IOException;
@@ -56,6 +58,7 @@ public class SubscriberMainFrameController implements Initializable {
     @FXML private Button btnLogOut = null;
     @FXML private Button btnLogs = null;
     @FXML private Button btnPersonalDetails = null;
+    @FXML private Button btnActiveOrders = null;
 
     @FXML private TableView<Book> bookTable;
     @FXML private TableColumn<Book, String> bookNameColumn;
@@ -69,6 +72,7 @@ public class SubscriberMainFrameController implements Initializable {
 
     private Map<Integer, Stage> openDialogs = new HashMap<>(); // Track open dialogs
     private Subscriber s;
+    private List<OrderRecordDTO> orderRecords = new ArrayList<>();
 
     private String getSearch() { return searchField.getText(); }
     private String getMenu() { return menuButton.getText(); }
@@ -78,16 +82,37 @@ public class SubscriberMainFrameController implements Initializable {
         setupButtonWidth();
         setupColumns();
         setupSearch();
-
         SharedController.setSubscriberMainFrameController(this);
+        s = SharedController.getSubscriber();
+        MessageUtils.sendMessage(ClientUI.cc, "subscriber", "userOrders", s.getSub_id());
     }
 
-    private void showOrderSuccessMessage() {
+    public void handleOrderResponse(OrderResponse response) {
+        String status = response.getStatus();
+        Book orderedBook = response.getBook();
+
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Order Success");
+        alert.setTitle("Order");
         alert.setHeaderText(null);
-        alert.setContentText("The book has been successfully ordered!");
+        alert.setContentText(status);
         alert.showAndWait();
+
+        if (orderedBook != null && status.contains("success")) {
+            System.out.println("Order successful for book: " + orderedBook.getTitle());
+            Platform.runLater(() -> {
+                for (Book book : bookTable.getItems()) {
+                    if (book.getBookId() == orderedBook.getBookId()) {
+                        book.setOrdered(true);
+                        break;
+                    }
+                }
+                bookTable.refresh();
+            });
+        } else {
+            Platform.runLater(() -> {
+                bookTable.refresh();
+            });
+        }
     }
 
     private void orderBook(Book book) {
@@ -95,10 +120,25 @@ public class SubscriberMainFrameController implements Initializable {
         System.out.println("Ordering book: " + book.getTitle());
 
         // Send a request to the server to order the book
-        MessageUtils.sendMessage(ClientUI.cc, "user", "newOrder", book);
+        MessageUtils.sendMessage(ClientUI.cc, "subscriber", "newOrder", book.getBookId() + ":" + s.getSub_id());
+    }
 
-        // Show success message to the user
-        showOrderSuccessMessage();
+    public void setOrderRecords(List<OrderRecordDTO> list) {
+        this.orderRecords = list;
+        loadUserOrders();
+    }
+
+    private void loadUserOrders() {
+        List<String> orderedBookTitles = new ArrayList<>();
+        for (OrderRecordDTO order : orderRecords) {
+            orderedBookTitles.add(order.getBookTitle());
+        }
+        for (Book book : bookTable.getItems()) {
+            if (orderedBookTitles.contains(book.getTitle())) {
+                book.setOrdered(true);
+            }
+        }
+        bookTable.refresh();
     }
 
     private void setupButtonWidth() {
@@ -177,10 +217,10 @@ public class SubscriberMainFrameController implements Initializable {
                 Book book = getTableView().getItems().get(getIndex());
                 try {
                     int copyCount = book.getAvailableCopies().size();
-                    if (copyCount == 0) {
-                        setGraphic(orderButton);
-                    } else {
+                    if (copyCount > 0) {
                         setGraphic(copiesButton);
+                    } else {
+                        setGraphic(orderButton);
                     }
                 } catch (NumberFormatException e) {
                     System.err.println("Invalid copy count: " + book.getCopyCount());
@@ -333,12 +373,6 @@ public class SubscriberMainFrameController implements Initializable {
         }        
     }
 
-
-    
-    public void displayMessage(String message) {
-        messageLabel.setText(message);
-    }
-
     public void logoutBtn(ActionEvent event) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/LandingWindow.fxml"));
         Pane root = loader.load();
@@ -401,6 +435,7 @@ public class SubscriberMainFrameController implements Initializable {
     }
 
     public void personalDetailsBtn(ActionEvent event) throws Exception {
+
         try {
             MessageUtils.sendMessage(ClientUI.cc, "subscriber", "connect", null);
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
@@ -425,7 +460,6 @@ public class SubscriberMainFrameController implements Initializable {
                 
                 ((Node)event.getSource()).getScene().getWindow().hide();
                 primaryStage.setResizable(false);
-                s = SharedController.getSubscriber();
                 SharedController.pdc.loadSubscriber(s);
                 primaryStage.show();
             } else {
@@ -435,4 +469,44 @@ public class SubscriberMainFrameController implements Initializable {
             e.printStackTrace();
         }
     }
+
+    public void handleActiveOrders(ActionEvent event) throws Exception {
+        MessageUtils.sendMessage(ClientUI.cc, "subscriber", "connect", null);
+        if (ClientUI.cc.getConnectionStatusFlag() == 1) {
+            MessageUtils.sendMessage(ClientUI.cc, "subscriber", "userOrders", s.getSub_id());
+            Platform.runLater(() -> {
+                try {
+                    if (orderRecords.size() == 0) {
+                        displayMessage("No active orders");
+                        return;
+                    }
+
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/ActiveOrders.fxml"));
+                    AnchorPane pane = loader.load();
+
+                    ActiveOrdersController controller = loader.getController();
+                    SharedController.setActiveOrdersController(controller);
+                    controller.setOrdersData(FXCollections.observableArrayList(orderRecords));
+
+
+                    Stage view = new Stage();
+                    Scene scene = new Scene(pane);
+                    view.setScene(scene);
+                    view.setTitle("Orders");
+                    view.setResizable(false);
+
+                    view.show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        } else {
+            displayMessage("No server connection");
+        }
+    }
+    
+    public void displayMessage(String message) {
+        messageLabel.setText(message);
+    }
+
 }

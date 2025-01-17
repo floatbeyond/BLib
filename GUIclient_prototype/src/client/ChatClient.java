@@ -9,9 +9,12 @@ import common.ChatIF;
 import common.Subscriber;
 import common.ServerMessage;
 import common.BookCopy;
+import common.BorrowRecordDTO;
+import common.OrderRecordDTO;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("unchecked")
 
@@ -95,11 +98,15 @@ public class ChatClient extends AbstractClient
                   Logic.parseSubscriberList((ArrayList<Subscriber>) data);
                   break;
               case "DataLogsList":
-                  Logic.parseDataLogsList((ArrayList<Object>) data);
+                  Logic.parseDataLogsList(user, (ArrayList<Object>) data);
+                  break;
+              case "UserBorrowsList":
+                  Logic.parseUserBorrowsList(user, (List<BorrowRecordDTO>) data);
+                  break;
+              case "UserOrdersList":
+                  Logic.parseUserOrdersList(user, (List<OrderRecordDTO>) data);
                   break;
               case "BookList":
-                  // print book list
-                  System.out.println("ChatClient: Received book list");
                   Logic.parseBookList(user, (ArrayList<Object>) data);
                   break;
               case "BookCopy":
@@ -110,6 +117,15 @@ public class ChatClient extends AbstractClient
                   break;
               case "ReturnStatus":
                   Logic.returnBookStatus((String) data);
+                  break;
+              case "ExtendStatus":
+                  Logic.extendBorrowStatus((String) data);
+                  break;
+              case "OrderStatus":
+                  Logic.newOrderStatus(data);
+                  break;
+              case "CancelStatus":
+                  Logic.cancelOrderStatus((String) data);
                   break;
               case "Print":
                   Logic.print((String) data);

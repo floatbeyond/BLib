@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="307.0" prefWidth="582.0" styleClass="anchor-pane" stylesheets="@../css/CopiesDialog.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.ActiveOrdersController">
+    <TableView fx:id="activeOrdersTable" layoutX="6.0" layoutY="12.0" prefHeight="284.0" prefWidth="565.0">
+        <columns>
+            <TableColumn fx:id="bookTitleCol" prefWidth="182.0" text="Title" />
+            <TableColumn fx:id="orderDateCol" prefWidth="84.0" text="Date" />
+            <TableColumn fx:id="statusCol" prefWidth="83.0" text="Status" />
+            <TableColumn fx:id="notificationStampCol" prefWidth="124.0" text="Notify" />
+            <TableColumn fx:id="actionCol" prefWidth="85.0" text="Action" />
+        </columns>
+    </TableView>
+</AnchorPane>

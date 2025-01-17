@@ -8,9 +8,10 @@ import common.Subscriber;
 import common.Librarian;
 import common.Book;
 import common.BookCopy;
+import common.BorrowRecordDTO;
 import common.BorrowingRecord;
 import common.DateUtils;
-import common.OrderRecord;
+import common.OrderRecordDTO;
 import common.DataLogs;
 
 import java.sql.DriverManager;
@@ -18,8 +19,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Date;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.sql.Timestamp;
 
 public class mysqlConnection {
     
@@ -222,11 +225,68 @@ public class mysqlConnection {
 		return null;
 	}
 
+	public static List<BorrowRecordDTO> getUserBorrows(Connection conn, int subId) {
+		List<BorrowRecordDTO> borrows = new ArrayList<>();
+		String query = "SELECT br.BorrowID, br.CopyID, br.BorrowDate, br.ExpectedReturnDate, br.ActualReturnDate, br.Status, b.Title " +
+						"FROM borrowrecords br " +
+						"JOIN bookcopies bc ON br.CopyID = bc.CopyID " +
+						"JOIN books b ON bc.BookID = b.BookID " +
+						"WHERE br.SubID = ? AND br.Status != 'Returned'";
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setInt(1, subId);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String bookName = rs.getString("Title");
+				int borrowId = rs.getInt("BorrowID");
+				LocalDate borrowDate = DateUtils.toLocalDate(rs.getDate("BorrowDate"));
+				LocalDate expectedReturnDate = DateUtils.toLocalDate(rs.getDate("ExpectedReturnDate"));
+				String status = rs.getString("Status");
+
+				borrows.add(new BorrowRecordDTO(bookName, borrowId, borrowDate, expectedReturnDate, status));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return borrows;
+	}
+
+	public static List<OrderRecordDTO> getUserOrders(Connection conn, String user, int subId) {
+		List<OrderRecordDTO> orders = new ArrayList<>();
+		String query;
+		if (user.equals("librarian")) {
+			query = "SELECT o.OrderID, o.BookID, o.OrderDate, o.Status, o.NotificationTimestamp, b.Title " +
+						"FROM orderrecords o " +
+						"JOIN books b ON o.BookID = b.BookID " +
+						"WHERE o.SubID = ?";
+		} else {
+			query = "SELECT o.OrderID, o.BookID, o.OrderDate, o.Status, o.NotificationTimestamp, b.Title " +
+						"FROM orderrecords o " +
+						"JOIN books b ON o.BookID = b.BookID " +
+						"WHERE o.SubID = ? AND o.Status NOT IN ('Cancelled', 'Completed')";
+		}
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setInt(1, subId);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				int orderId = rs.getInt("OrderID");
+				String bookName = rs.getString("Title");
+				LocalDate orderDate = DateUtils.toLocalDate(rs.getDate("OrderDate"));
+				String status = rs.getString("Status");
+				Timestamp notificationTimestamp = rs.getTimestamp("NotificationTimestamp");
+
+				orders.add(new OrderRecordDTO(orderId, bookName, orderDate, status, notificationTimestamp));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return orders;
+	}
+
 	public static List<Object> searchBooks(Connection conn, String searchType, String searchText) {
 		List<Object> results = new ArrayList<>();
 		String bookQuery = "SELECT * FROM books WHERE " + searchType + " LIKE ?";
 		String bookCopyQuery = "SELECT * FROM bookcopies WHERE BookID = ?";
-		String borrowingRecordQuery = "SELECT * FROM borrowrecords WHERE CopyID = ? AND Status = 'Borrowed'";
+		String borrowingRecordQuery = "SELECT * FROM borrowrecords WHERE CopyID = ? AND Status IN ('Borrowed', 'Late')";
 
 		try (PreparedStatement bookStmt = conn.prepareStatement(bookQuery);
 			PreparedStatement bookCopyStmt = conn.prepareStatement(bookCopyQuery);
@@ -289,7 +349,39 @@ public class mysqlConnection {
 
 		return results;
 	}
+
+	public static int getBookIdByBorrowId(Connection conn, int borrowId) {
+		String query = "SELECT BookID FROM bookcopies WHERE CopyID = (SELECT CopyID FROM borrowrecords WHERE BorrowID = ?)";
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setInt(1, borrowId);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				return rs.getInt("BookID");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
 	
+	public static Book getBookById(Connection conn, int bookId) {
+		String query = "SELECT * FROM books WHERE BookID = ?";
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setInt(1, bookId);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				String title = rs.getString("Title");
+				String author = rs.getString("Author");
+				String genre = rs.getString("Genre");
+				String description = rs.getString("Description");
+				int numOfCopies = rs.getInt("NumOfCopies");
+				return new Book(bookId, title, author, genre, description, numOfCopies);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	public static BookCopy findBookCopy(Connection conn, int bookCopyId) {
 		String query = "SELECT * FROM bookcopies WHERE CopyID = ?";
@@ -337,6 +429,50 @@ public class mysqlConnection {
 		return false;
 	}
 
+	public static boolean extendBorrow(Connection conn, int subId, int borrowId, LocalDate extensionDate) {
+		String query = "UPDATE borrowrecords SET ExpectedReturnDate = ? WHERE SubID = ? AND BorrowID = ?";
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setDate(1, DateUtils.toSqlDate(extensionDate));
+			stmt.setInt(2, subId);
+			stmt.setInt(3, borrowId);
+			int affectedRows = stmt.executeUpdate();
+			if (affectedRows == 0) {
+				System.out.println("No matching records found to update.");
+				return false;
+			}
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public static boolean logExtensionByLibrarian(Connection conn, int subId, int bookId, String libName) {
+		String bookTitleQuery = "SELECT Title FROM books WHERE BookID = ?";
+		String logQuery = "INSERT INTO datalogs (SubID, Action, Timestamp) VALUES (?, ?, ?)";
+		try (PreparedStatement bookTitleStmt = conn.prepareStatement(bookTitleQuery);
+			 PreparedStatement logStmt = conn.prepareStatement(logQuery)) {
+
+			// Query the book title
+			bookTitleStmt.setInt(1, bookId);
+			ResultSet rs = bookTitleStmt.executeQuery();
+			if (rs.next()) {
+				String bookTitle = rs.getString("Title");
+				logStmt.setInt(1, subId);
+				logStmt.setString(2, "Extended book '" + bookTitle + "' by librarian " + libName);
+				logStmt.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+				logStmt.executeUpdate();
+				return true;
+			} else {
+				System.out.println("Book not found.");
+				return false;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
 	public static boolean returnBook(Connection conn, int subId, int copyId, LocalDate returnDate) {
 		String query = "UPDATE borrowrecords SET ActualReturnDate = ?, Status = 'Returned' WHERE SubID = ? AND CopyID = ? AND (Status = 'Borrowed' OR Status = 'Late')";
 		try (PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -355,15 +491,13 @@ public class mysqlConnection {
 		}
 	}
 
-	public static boolean addOrderRecord(Connection conn, OrderRecord order) {
-        String query = "INSERT INTO orders (order_id, subscriber_id, book_id, order_date) VALUES (?, ?, ?, ?)";
+    public static boolean addOrderRecord(Connection conn, int bookId, int subId) {
+        String query = "INSERT INTO orderrecords (BookID, SubID, OrderDate, Status) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
-			stmt.setInt(1, order.getOrderId());
-			stmt.setInt(2, order.getSubId());
-			stmt.setInt(3, order.getBookId());
-			stmt.setDate(4, Date.valueOf(order.getOrderDate()));
-			stmt.setString(5, order.getStatus());
-			stmt.setDate(6, Date.valueOf(order.getNotificationStamp()));
+            stmt.setInt(1, bookId);
+            stmt.setInt(2, subId);
+            stmt.setDate(3, DateUtils.toSqlDate(LocalDate.now()));
+            stmt.setString(4, "Waiting");
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
@@ -372,14 +506,44 @@ public class mysqlConnection {
         }
     }
 
-	public static boolean isOrderExists(Connection conn, int subscriberId, int bookId) {
-		String query = "SELECT COUNT(*) FROM orderrecord WHERE subscriber_id = ? AND book_id = ?";
-		try (PreparedStatement stmt = conn.prepareStatement(query)) {
-			stmt.setInt(1, subscriberId);
-			stmt.setInt(2, bookId);
-			ResultSet rs = stmt.executeQuery();
-			if (rs.next()) {
-				return rs.getInt(1) > 0;
+    public static boolean isOrderExists(Connection conn, int bookId, int subId) {
+        String query = "SELECT 1 FROM orderrecords WHERE SubID = ? AND BookID = ? AND Status IN (?, ?)";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, subId);
+            stmt.setInt(2, bookId);
+            stmt.setString(3, "Waiting");
+            stmt.setString(4, "In-Progress");
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+	public static boolean areOrdersCapped(Connection conn, int bookId) {
+		String copiesQuery = "SELECT NumOfCopies FROM books WHERE BookID = ?";
+		String ordersCountQuery = "SELECT COUNT(*) AS orderCount FROM orderrecords WHERE BookID = ? AND Status IN ('Waiting', 'In-Progress')";
+		try (PreparedStatement copiesStmt = conn.prepareStatement(copiesQuery);
+			 PreparedStatement ordersCountStmt = conn.prepareStatement(ordersCountQuery)) {
+			
+			// Query the number of copies available for the book
+			copiesStmt.setInt(1, bookId);
+			ResultSet copiesRs = copiesStmt.executeQuery();
+			if (copiesRs.next()) {
+				int numOfCopies = copiesRs.getInt("NumOfCopies");
+				
+				// Count the number of orders for the book that are either "Waiting" or "In-Progress"
+				ordersCountStmt.setInt(1, bookId);
+				ResultSet ordersCountRs = ordersCountStmt.executeQuery();
+				if (ordersCountRs.next()) {
+					int orderCount = ordersCountRs.getInt("orderCount");
+					
+					// Compare the count of orders with the number of copies
+					return orderCount >= numOfCopies;
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -387,24 +551,46 @@ public class mysqlConnection {
 		return false;
 	}
 
+	public static boolean cancelOrder(Connection conn, int orderId) {
+		String checkStatusQuery = "SELECT Status FROM orderrecords WHERE OrderID = ?";
+		String updateQuery = "UPDATE orderrecords SET Status = 'Cancelled' WHERE OrderID = ?";
+		try (PreparedStatement checkStatusStmt = conn.prepareStatement(checkStatusQuery);
+		PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
+			checkStatusStmt.setInt(1, orderId);
+			ResultSet rs = checkStatusStmt.executeQuery();
+			if (rs.next()) {
+				String currentStatus = rs.getString("Status");
+				if ("Cancelled".equals(currentStatus)) {
+					return false; // Already cancelled
+				}
+			}
+			updateStmt.setInt(1, orderId);
+			int rowsAffected = updateStmt.executeUpdate();
+			return rowsAffected > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
 	// show to user all the logs in the DB
 	public static ArrayList<DataLogs> getDataLogs(Connection conn, int subscriberId) {
 		ArrayList<DataLogs> dataLogs = new ArrayList<>();
-		String query = "SELECT * FROM datalogs WHERE SubID = ?";
+		String query = "SELECT LogID, SubID, Action, CONVERT_TZ(Timestamp, '+00:00', '+03:00') AS Timestamp\n" + //
+						"FROM datalogs WHERE SubID = ?";
 		
 		try (PreparedStatement stmt = conn.prepareStatement(query)) {
 			stmt.setInt(1, subscriberId);
 			ResultSet rs = stmt.executeQuery();
 			
 			while (rs.next()) {
-				LocalDate timestamp = DateUtils.toLocalDate(rs.getDate("Timestamp"));
-				DataLogs log = new DataLogs(
-					rs.getInt("LogID"),
-					rs.getInt("SubID"),
-					rs.getString("Action"),
-					timestamp
-				);
-				dataLogs.add(log);
+				int logId = rs.getInt("LogID");
+				int subId = rs.getInt("SubID");
+				String logAction = rs.getString("Action");
+				Timestamp timestamp = rs.getTimestamp("Timestamp");
+
+				DataLogs logs = new DataLogs(logId, subId, logAction, timestamp);
+            	dataLogs.add(logs);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
