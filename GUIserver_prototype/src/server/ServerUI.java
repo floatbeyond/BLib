@@ -6,12 +6,12 @@ import gui.SqlConnectionController;
 
 
 public class ServerUI extends Application {
+	private static ReportScheduler reportScheduler;
 	final public static int DEFAULT_PORT = 5555;
 
-	public static void main( String args[] ) throws Exception
-	   {   
-		 launch(args);
-	  } // end main
+	public static void main( String args[] ) throws Exception {   
+		launch(args);
+	}
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {		  		
@@ -21,7 +21,7 @@ public class ServerUI extends Application {
 	}
 	
 	public static void runServer(String p) {
-		 int port = 0; //Port to listen on
+		int port = 0; //Port to listen on
 
 	    try {
 	        port = Integer.parseInt(p); //Set port to 5555
@@ -30,8 +30,11 @@ public class ServerUI extends Application {
 	    }
 
 	    EchoServer sv = new EchoServer(port);
+		// Initialize the report scheduler
 	        
-	    try { 
+	    try {
+			reportScheduler = new ReportScheduler();
+			InstanceManager.setReportScheduler(reportScheduler);
 			sv.listen(); //Start listening for connections
 	    } catch (Exception ex) {
 	        System.out.println("ERROR - Could not listen for clients!");

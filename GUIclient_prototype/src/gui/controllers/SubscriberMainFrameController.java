@@ -404,6 +404,7 @@ public class SubscriberMainFrameController implements Initializable {
     public void logoutBtn(ActionEvent event) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/LandingWindow.fxml"));
         Pane root = loader.load();
+        NotificationScheduler.stop();
         
         Stage primaryStage = new Stage();
         Scene scene = new Scene(root);			

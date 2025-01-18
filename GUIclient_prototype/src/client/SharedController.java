@@ -4,6 +4,7 @@ import common.Subscriber;
 import common.Librarian;
 import common.BookCopy;
 import gui.controllers.ClientPortController;
+import gui.controllers.DataReportsController;
 import gui.controllers.ExtendWindowController;
 import gui.controllers.LandingWindowController;
 import gui.controllers.LoginWindowController;
@@ -37,9 +38,9 @@ public class SharedController {
     public static BorrowFormController bfc;
     public static ReturnBookController rbc;
     public static AddSubscriberController asc;
+    public static DataReportsController drc;
     private static ItemLoader itemLoader;
     public static ScanWindowController swc;
-
 
 
 
@@ -98,6 +99,9 @@ public class SharedController {
 
     public static void setAddSubscriberController(AddSubscriberController controller) { asc = controller; }
     public static AddSubscriberController getAddSubscriberController() { return asc; }
+
+    public static void setDataReportsController(DataReportsController controller) { drc = controller; }
+    public static DataReportsController getDataReportsController() { return drc; }
 
 
 }

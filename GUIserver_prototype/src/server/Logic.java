@@ -2,19 +2,24 @@ package server;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javafx.application.Platform;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import common.Notification;
 import common.BorrowingRecord;
 import common.DataLogs;
 import common.MessageUtils;
 import common.Subscriber;
+import common.SubscriberStatusReport;
 import common.Book;
 import common.BookCopy;
 import common.BorrowRecordDTO;
+import common.BorrowTimeReport;
 import common.OrderRecordDTO;
 import ocsf.server.ConnectionToClient;
 import gui.ClientConnectedController;
@@ -23,10 +28,12 @@ import common.OrderResponse;
 
 public class Logic {
     private static Connection conn = InstanceManager.getDbConnection();
-    private static ClientConnectedController ccc = InstanceManager.getClientConnectedController();
+    private static ClientConnectedController ccc;
     private static Subscriber s;
     private static BookCopy bc;
     private static BorrowingRecord br;
+    private static List<BorrowTimeReport> borrowTimesReport;
+    private static List<SubscriberStatusReport> subscriberStatusReport;
 
 
     // Login
@@ -66,10 +73,6 @@ public class Logic {
     }
 
     public static void updateSubscriberDetails(String user, Object data, ConnectionToClient client) {
-        // int subscriberId = s.getSub_id();
-        // String phoneNumber = s.getSub_phone_num();
-        // String email = s.getSub_email();
-
         String subscriberDetails = (String) data;
         String[] parts = subscriberDetails.split(":", 3);
         int subscriberId = Integer.parseInt(parts[0]);
@@ -79,6 +82,14 @@ public class Logic {
         Object responseFromDB = mysqlConnection.updateSubscriber(conn, subscriberId, phoneNumber, email);
         MessageUtils.sendResponseToClient(user, "UpdateStatus", responseFromDB, client);
 	}
+
+    public static void reactivateSubscriber(String user, Object data, ConnectionToClient client) {
+        String[] parts = ((String) data).split(":", 2);
+        int subscriberId = Integer.parseInt(parts[0]);
+        String librarianName = parts[1];
+        boolean success = mysqlConnection.reactivateSubscriber(conn, subscriberId, librarianName);
+        MessageUtils.sendResponseToClient(user, "SubReactivated", success ? "Subscriber reactivated" : "ERROR: Subscriber not found", client);
+    }
 
     public static void showSubscribersTable(String user, ConnectionToClient client) {
         ArrayList<Subscriber> table = mysqlConnection.getSubscribers(conn);
@@ -204,16 +215,78 @@ public class Logic {
         }
     }
 
+    // Monthly reports
 
+    public static void fetchMonthlyReports(String user, ConnectionToClient client) {
+        Map<String, List<BorrowTimeReport>> allBorrowTimesReports = new LinkedHashMap<>();
+        Map<String, List<SubscriberStatusReport>> allSubscriberStatusReports = new LinkedHashMap<>();
 
+        List<String> reportMonths = ReportSaver.getReportMonths();
+        for (String monthYear : reportMonths) {
+            List<BorrowTimeReport> borrowTimesReports = ReportSaver.loadBorrowTimesReport(monthYear);
+            List<SubscriberStatusReport> subscriberStatusReports = ReportSaver.loadSubscriberStatusReport(monthYear);
 
+            allBorrowTimesReports.put(monthYear, borrowTimesReports);
+            allSubscriberStatusReports.put(monthYear, subscriberStatusReports);
+        }
 
+        MessageUtils.sendResponseToClient(user, "AllBorrowReports", allBorrowTimesReports, client);
+        MessageUtils.sendResponseToClient(user, "AllSubscriberReports", allSubscriberStatusReports, client);
+    }
 
+    public static void generateMonthlyReports() {
+        // Get the current month and year
+        LocalDate now = LocalDate.now();
+        // print local date now
+        System.out.println("CURRENT TIME: " + now);
+        String monthYear = now.format(DateTimeFormatter.ofPattern("MM-yyyy"));
 
+        // Check if reports for the current month already exist
+        List<String> existingReportMonths = ReportSaver.getReportMonths();
+        if (existingReportMonths.contains(monthYear)) {
+            System.out.println("Reports for " + monthYear + " already exist. Skipping generation.");
+            return;
+        }
 
+        // Generate borrow times report
+        borrowTimesReport = mysqlConnection.fetchBorrowTimesReport(conn, now);
 
+        // Generate subscriber status report
+        subscriberStatusReport = mysqlConnection.fetchSubscriberStatusReport(conn, now);
 
+        // Save the reports
+        ReportSaver.saveReports(borrowTimesReport, subscriberStatusReport, monthYear);
+    }
 
+    public static void generateMissingReports() {
+        // Get the current date
+        LocalDate now = LocalDate.now();
+        System.out.println("CURRENT TIME: " + now);
+        LocalDate startDate = LocalDate.of(2024, 1, 1); // Assuming data starts from January 2024
+
+        // Get existing report months
+        List<String> existingReportMonths = ReportSaver.getReportMonths();
+
+        // Generate reports for all missing months up to the previous month
+        while (startDate.isBefore(now.withDayOfMonth(1))) {
+            String monthYear = startDate.format(DateTimeFormatter.ofPattern("MM-yyyy"));
+            if (!existingReportMonths.contains(monthYear)) {
+                System.out.println("Generating reports for " + monthYear);
+
+                // Generate borrow times report
+                List<BorrowTimeReport> borrowTimesReport = mysqlConnection.fetchBorrowTimesReport(conn, startDate);
+
+                // Generate subscriber status report
+                List<SubscriberStatusReport> subscriberStatusReport = mysqlConnection.fetchSubscriberStatusReport(conn, startDate);
+
+                // Save the reports
+                ReportSaver.saveReports(borrowTimesReport, subscriberStatusReport, monthYear);
+            } else {
+                System.out.println("Reports for " + monthYear + " already exist. Skipping generation.");
+            }
+            startDate = startDate.plusMonths(1);
+        }
+    }
 
 
 
@@ -222,13 +295,16 @@ public class Logic {
     public static void connect(String user, ConnectionToClient client) {
         String clientInfo = client.toString();
         String connectionStatus = client.isAlive() ? "Connected" : "Disconnected";
-        
+        ccc = InstanceManager.getClientConnectedController();
+
         System.out.println("Client info: " + clientInfo);
         ccc.loadClientDetails(clientInfo, connectionStatus);
         MessageUtils.sendResponseToClient(user, "Print", "Client details loaded", client);
     }
 
     public static void disconnect(String user, ConnectionToClient client) {
+        ccc = InstanceManager.getClientConnectedController();
+
         ccc.loadClientDetails("null", "Disconnected");
         MessageUtils.sendResponseToClient(user, "Print", "Server disconnected", client);
     }

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="213.0" prefWidth="390.0" stylesheets="@../css/DataReports.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.DataReportsController">
+    <children>
+        <ComboBox fx:id="monthComboBox" layoutX="14.0" layoutY="15.0" prefWidth="150.0" promptText="Month" />
+        <ComboBox fx:id="yearComboBox" layoutX="195.0" layoutY="15.0" prefWidth="100.0" promptText="Year" />
+        <Button fx:id="showButton" layoutX="323.0" layoutY="15.0" onAction="#showReports" text="Show" />
+      <Button fx:id="backButton" layoutX="14.0" layoutY="174.0" mnemonicParsing="false" onAction="#goBackBtn" text="Back" />
+    </children>
+</AnchorPane>

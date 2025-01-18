@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="736.0" prefWidth="1081.0" stylesheets="@../css/ReportWindow.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.ReportWindowController">
+    <children>
+        <BarChart fx:id="subscriberStatusChart" layoutX="247.0" layoutY="50.0" prefHeight="276.0" prefWidth="591.0">
+            <xAxis>
+                <CategoryAxis side="BOTTOM" />
+            </xAxis>
+            <yAxis>
+                <NumberAxis side="LEFT" />
+            </yAxis>
+        </BarChart>
+        <BarChart fx:id="returnedBooksChart" layoutX="14.0" layoutY="404.0" prefHeight="276.0" prefWidth="500.0">
+            <xAxis>
+                <CategoryAxis side="BOTTOM" />
+            </xAxis>
+            <yAxis>
+                <NumberAxis side="LEFT" />
+            </yAxis>
+        </BarChart>
+        <BarChart fx:id="notReturnedBooksChart" layoutX="564.0" layoutY="404.0" prefHeight="276.0" prefWidth="500.0">
+            <xAxis>
+                <CategoryAxis side="BOTTOM" />
+            </xAxis>
+            <yAxis>
+                <NumberAxis side="LEFT" />
+            </yAxis>
+        </BarChart>
+        <Separator layoutX="14.0" layoutY="373.0" prefHeight="6.0" prefWidth="1050.0" />
+        <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" prefHeight="30.0" prefWidth="1050.0" text="Subscriber Status" />
+        <Label alignment="CENTER" layoutX="14.0" layoutY="346.0" prefHeight="30.0" prefWidth="500.0" text="Returned Books" />
+        <Label alignment="CENTER" layoutX="564.0" layoutY="346.0" prefHeight="30.0" prefWidth="500.0" text="Not Returned Books" />
+    </children>
+</AnchorPane>

@@ -45,6 +45,9 @@ public class ReaderCardController {
     @FXML private Label lblExpires;
     @FXML private Label lblBooksHeld;
 
+    @FXML private Label messageLabel;
+    @FXML private Button btnReactivate;
+
     @FXML private TabPane tabPane;
     @FXML private Tab tabLogs;
     @FXML private Tab tabBorrowed;
@@ -145,6 +148,34 @@ public class ReaderCardController {
         appendText(lblExpires, s.getSub_expiration().format(DATE_FORMATTER));
         String booksHeld = s.getCurrentlyBorrowed() + "/" + s.getCurrentlyOrdered();
         appendText(lblBooksHeld, booksHeld);
+
+        if (s.getSub_status().equals("In-Active")) {
+            btnReactivate.setVisible(true);
+        }
+    }
+
+    @FXML
+    private void handleReactivate() {
+        try {
+            MessageUtils.sendMessage(ClientUI.cc, "librarian", "connect", null);
+            if (ClientUI.cc.getConnectionStatusFlag() == 1) {
+                MessageUtils.sendMessage(ClientUI.cc, "librarian", "reactivate", s.getSub_id() + ":" + SharedController.getLibrarian().getLibrarian_name());
+            } else {
+                displayMessage("Failed to connect to server");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void subscriberReactivated(String status) {
+        if (status.contains("Reactivated")) {
+            displayMessage("Subscriber reactivated successfully");
+            btnReactivate.setVisible(false);
+            lblStatus.setText("Active");
+        } else {
+            displayMessage("Failed to reactivate subscriber");
+        }
     }
 
     private void appendText(Label label, String text) {
@@ -215,5 +246,9 @@ public class ReaderCardController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void displayMessage(String message) {
+        messageLabel.setText(message);
     }
 }
