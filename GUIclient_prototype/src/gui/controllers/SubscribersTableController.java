@@ -39,9 +39,8 @@ public class SubscribersTableController implements Initializable {
     @FXML private TableColumn<Subscriber, LocalDate> colfrozenUntil;
     @FXML private TableColumn<Subscriber, LocalDate> coljoinDate;
     @FXML private TableColumn<Subscriber, LocalDate> colexpDate;
-    @FXML private TableColumn<Subscriber, LocalDate> colBorrows;
-    @FXML private TableColumn<Subscriber, LocalDate> colOrders;
-
+    @FXML private TableColumn<Subscriber, Integer> colBorrows;
+    @FXML private TableColumn<Subscriber, Integer> colOrders;
 
 	@FXML private Label copiedLabel;
 
@@ -50,7 +49,16 @@ public class SubscribersTableController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		System.out.println("Initializing controller...");
-  
+		
+		// Verify FXML injection
+		assert subscriberTable != null : "fx:id=\"subscriberTable\" was not injected";
+		assert colID != null : "fx:id=\"colID\" was not injected";
+		assert colName != null : "fx:id=\"colName\" was not injected";
+		assert colStatus != null : "fx:id=\"colHistory\" was not injected";
+		assert colPhone != null : "fx:id=\"colPhone\" was not injected";
+		assert colEmail != null : "fx:id=\"colEmail\" was not injected";
+        assert copiedLabel != null : "fx:id=\"copiedLabel\" was not injected";
+
 		// Initialize columns
 		setupColumns();
 
