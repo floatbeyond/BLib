@@ -7,6 +7,7 @@ import java.util.List;
 import javafx.application.Platform;
 import java.time.LocalDate;
 
+import common.Notification;
 import common.BorrowingRecord;
 import common.DataLogs;
 import common.MessageUtils;
@@ -33,6 +34,14 @@ public class Logic {
     public static void userLogin(String user, int userId, ConnectionToClient client) {
         Object userInfo = mysqlConnection.userLogin(conn, userId);
         MessageUtils.sendResponseToClient(user, "LoginStatus", userInfo, client);
+    }
+
+    // Notifications
+
+    public static void fetchNotifications(String user, Object data, ConnectionToClient client) {
+        int subId = (int) data;
+        List<Notification> notifications = mysqlConnection.getNewNotifications(conn, subId);
+        MessageUtils.sendResponseToClient(user, "NewNotifications", notifications, client);
     }
 
     // Subscriber
@@ -128,6 +137,9 @@ public class Logic {
         int copyId = Integer.parseInt(parts[1]);
         LocalDate returnDate = LocalDate.parse(parts[2]);
         boolean success = mysqlConnection.returnBook(conn, subId, copyId, returnDate);
+        if (success) {
+            mysqlConnection.sendOrderNotification(conn, copyId);
+        }
         MessageUtils.sendResponseToClient(user, "ReturnStatus", success ? "Book has been returned successfully" : "ERROR: Book does not match subscriber", client);
     }
 
@@ -160,7 +172,6 @@ public class Logic {
         System.out.println("Order ID: " + orderId);
         boolean success = mysqlConnection.cancelOrder(conn, orderId);
         MessageUtils.sendResponseToClient(user, "CancelStatus", success ? "Order has been cancelled" : "ERROR: Order not found", client);
-
     }
 
     public static void checkOrder(String user, Object data, ConnectionToClient client) {
@@ -171,14 +182,14 @@ public class Logic {
         int bookId = mysqlConnection.getBookIdByBorrowId(conn, borrowId);
         String libName = parts[3];
         boolean success = false;
-        boolean orderExists = mysqlConnection.isOrderExists(conn, subId, bookId);
+        boolean orderExists = mysqlConnection.anyOrderExists(conn, bookId);
         if (orderExists == false) {
             success = mysqlConnection.extendBorrow(conn, subId, borrowId, extensionDate);
             if (success == true) {
                 mysqlConnection.logExtensionByLibrarian(conn, subId, bookId, libName);
             }
         }
-        MessageUtils.sendResponseToClient(user, "ExtendStatus" , success ? "Borrowing extended" : "Order exists", client);
+        MessageUtils.sendResponseToClient(user, "ExtendStatus" , success ? "Borrowing extended" : "Cant extend, someone ordered the book", client);
     }
 
     // Scan

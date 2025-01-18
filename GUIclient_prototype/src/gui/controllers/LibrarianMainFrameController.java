@@ -204,6 +204,40 @@ public class LibrarianMainFrameController {
     }
 
     @FXML
+    private void goAddSubscriber(ActionEvent event) {
+        try {
+            MessageUtils.sendMessage(ClientUI.cc,"user", "connect" , null);
+            if (ClientUI.cc.getConnectionStatusFlag() == 1) {
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gui/fxml/AddSubscriber.fxml"));
+                Parent root = fxmlLoader.load();
+
+                SharedController.setAddSubscriberController(fxmlLoader.getController());
+                Stage stage = new Stage();
+                stage.setTitle("Return Book");
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+                stage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
+                    try {
+                        if (ClientUI.chat != null) {
+                            MessageUtils.sendMessage(ClientUI.cc, "librarian",  "disconnect" , null);
+                            ClientUI.chat.quit();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+                ((Node) event.getSource()).getScene().getWindow().hide();
+                stage.setResizable(false);
+                stage.show();
+            } else { 
+                displayMessage("No server connection");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
     private void goLogOut(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/LandingWindow.fxml"));

@@ -49,12 +49,13 @@
                      </children></AnchorPane>
             </content>
           </Tab>
-          <Tab fx:id="tabOrder" text="Ordering">
+          <Tab fx:id="tabOrdered" text="Ordering">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView fx:id="tableViewOrders" prefHeight="279.0" prefWidth="438.0">
+                        <TableView fx:id="tableViewOrders" prefHeight="284.0" prefWidth="503.0">
                           <columns>
+                            <TableColumn fx:id="colOrderId" prefWidth="62.0" text="Order#" />
                             <TableColumn fx:id="colBookName2" prefWidth="148.0" text="Book Name" />
                             <TableColumn fx:id="colOrderDate" prefWidth="85.0" text="Order Date" />
                             <TableColumn fx:id="colStatus2" prefWidth="78.0" text="Status" />

@@ -4,18 +4,24 @@ package client;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import javafx.application.Platform;
 
-
+import common.Notification;
 import common.Subscriber;
 import common.BookCopy;
 import common.BorrowRecordDTO;
 import common.Librarian;
+import common.MessageUtils;
 import common.OrderRecordDTO;
 import common.OrderResponse;
 
 public class Logic {
+    
+    private static Map<Integer, List<Notification>> notificationsMap = new HashMap<>();
 
     // Login
 
@@ -34,6 +40,36 @@ public class Logic {
         }
     }
 
+    public static void fetchNotifications(int subId) {
+        try {
+            MessageUtils.sendMessage(ClientUI.cc, "subscriber", "fetchNotifications", subId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Handle received notifications
+    public static void handleNotifications(List<Notification> notifications) {
+        if (notifications.isEmpty()) {
+            return;
+        }
+
+        int subId = notifications.get(0).getSubId();
+        notificationsMap.putIfAbsent(subId, new ArrayList<>());
+        notificationsMap.get(subId).addAll(notifications);
+        // Display notifications to the user
+        for (Notification notification : notifications) {
+            System.out.println("Notification: " + notification.toString());
+            // You can also update the UI to display notifications
+        }
+
+        Platform.runLater(() -> {
+            if (SharedController.smfc != null) {
+                SharedController.smfc.addNotifications(notifications);
+            }
+        });
+    }
+
     // Librarian
 
     public static void parseLibrarian(Librarian receivedLibrarian) {
@@ -43,9 +79,18 @@ public class Logic {
 
     // Subscriber
 
-    public static void newSubscriber(int subscriberId) {
-        // Send subscriberId to new subscriber window to display
-        System.out.println("New Subscriber: " + subscriberId);
+    public static void newSubscriber(int subId) {
+        String message;
+        if (subId > 0) {
+            message = "Added Subscriber: " + subId;
+        } else if (subId == 0) {
+            message = "Couldnt add subscriber";
+        } else {
+            message = "Duplicate entry for PhoneNumber or Email";
+        }
+        Platform.runLater(() -> {
+            SharedController.asc.newSubAdded(message);
+        });
     }
 
     public static void parseSubscriber(Subscriber receivedSubscriber) {

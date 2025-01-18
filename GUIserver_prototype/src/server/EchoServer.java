@@ -70,6 +70,9 @@ public class EchoServer extends AbstractServer
             case "login" : {
               Logic.userLogin(user, (int) data, client);
               break;
+            } case "fetchNotifications": {
+              Logic.fetchNotifications(user, data, client);
+              break;
             } case "newSubscriber": {
               Logic.newSubscriber(user, data, client);
               break;

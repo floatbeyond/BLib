@@ -1,8 +1,12 @@
-AnchorPane {
+#mainPanel {
     -fx-background-color: #e1dcc5;
 }
 
-Button, MenuButton, #loginButton, #disconnectButton, #copiesButton { 
+AnchorPane {
+    -fx-background-color: #fff;
+}
+
+#btnLogOut, #btnPersonalDetails, #btnActiveOrders, #searchButton, #btnLogs { 
     -fx-font-size: 14px;
     -fx-font-family: "Arial";
     -fx-background-color: #F2F0E8;
@@ -13,14 +17,28 @@ Button, MenuButton, #loginButton, #disconnectButton, #copiesButton {
     -fx-border-radius: 4px; /* Match the default TextField border radius */
     -fx-background-radius: 4px; /* Match the background radius to the border radius */
     -fx-padding: 5px; /* Add padding to match the TextField */
-    -fx-cursor: hand;
-}
-
-#loginButton, #disconnectButton, #searchButton, #copiesButton {
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 0, 1);
 }
 
-#loginButton:hover, #disconnectButton:hover{
+MenuButton {
+    -fx-font-size: 14px;
+    -fx-font-family: "Arial";
+    -fx-background-color: #F2F0E8;
+    -fx-text-fill: #000000;
+    -fx-prompt-text-fill: #a0a0a0;
+    -fx-border-color: #ccc; /* Match the default TextField border color */
+    -fx-border-width: 1px; /* Match the default TextField border width */
+    -fx-border-radius: 4px; /* Match the default TextField border radius */
+    -fx-background-radius: 4px; /* Match the background radius to the border radius */
+    -fx-padding: 5px; /* Add padding to match the TextField */
+}
+
+#btnNotifications{
+    -fx-background-color: #e1dcc5;
+    -fx-cursor: hand;
+}
+
+Button:hover {
     -fx-background-color: #e1dcc5;
 }
 
@@ -29,6 +47,17 @@ TextField {
     -fx-font-family: "Arial";
     -fx-prompt-text-fill: #a0a0a0;
     -fx-padding: 0 50px 0 10px; /* Add right padding to stop text before the button */
+}
+
+#labelNotifications {
+    -fx-font-size: 14px;
+    -fx-font-family: "Arial";
+    -fx-text-fill: #000000;
+    -fx-padding: 5px;
+}
+
+#btnCloseNotifications {
+    -fx-background-color: transparent;
 }
 
 TextField:focused {

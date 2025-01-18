@@ -19,6 +19,7 @@
             <Button fx:id="btnBorrow" mnemonicParsing="false" onAction="#goBorrow" prefHeight="40.0" prefWidth="93.0" styleClass="small-button" text="Borrow" />
             <Button fx:id="btnShowSubscribers" mnemonicParsing="false" onAction="#goShowSubscribers" prefHeight="40.0" prefWidth="150.0" styleClass="small-button" text="Show Subscribers" />
             <Button fx:id="btnReturnBook" mnemonicParsing="false" onAction="#goReturnBook" prefHeight="40.0" prefWidth="122.0" styleClass="small-button" text="Return Book" />
+            <Button fx:id="btnAddSubscriber" mnemonicParsing="false" onAction="#goAddSubscriber" text="Add Subscriber" />
         </items>
       </ToolBar>
       <Button fx:id="btnLogOut" layoutX="23.0" layoutY="295.0" mnemonicParsing="false" onAction="#goLogOut" prefHeight="40.0" prefWidth="123.0" styleClass="small-button" text="Log Out" />

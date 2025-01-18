@@ -11,6 +11,7 @@ import common.ServerMessage;
 import common.BookCopy;
 import common.BorrowRecordDTO;
 import common.OrderRecordDTO;
+import common.Notification;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -82,6 +83,9 @@ public class ChatClient extends AbstractClient
           switch (type) {
               case "LoginStatus":
                   Logic.parseLogin(data);
+                  break;
+              case "NewNotifications":
+                  Logic.handleNotifications((List<Notification>) data);
                   break;
               case "NewSubscriber":
                   Logic.newSubscriber((int) data);

@@ -25,10 +25,10 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableCell;
+import java.sql.Timestamp;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,10 +60,11 @@ public class ReaderCardController {
     @FXML private TableColumn<BorrowRecordDTO, Void> colExtend;
 
     @FXML private TableView<OrderRecordDTO> tableViewOrders;
+    @FXML private TableColumn<OrderRecordDTO, Integer> colOrderId;
     @FXML private TableColumn<OrderRecordDTO, String> colBookName2;
     @FXML private TableColumn<OrderRecordDTO, LocalDate> colOrderDate;
-    @FXML private TableColumn<OrderRecordDTO, LocalDate> colStatus2;
-    @FXML private TableColumn<OrderRecordDTO, String> colNotify;
+    @FXML private TableColumn<OrderRecordDTO, String> colStatus2;
+    @FXML private TableColumn<OrderRecordDTO, Timestamp> colNotify;
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private Subscriber s;
@@ -97,6 +98,7 @@ public class ReaderCardController {
     }
 
     private void initBorrowCols() {
+        colOrderId.setCellValueFactory(new PropertyValueFactory<>("orderId"));
         colBookName.setCellValueFactory(new PropertyValueFactory<>("bookTitle"));
         colBorrowDate.setCellValueFactory(new PropertyValueFactory<>("borrowDate"));
         colExpectedReturnDate.setCellValueFactory(new PropertyValueFactory<>("expectedReturnDate"));
@@ -126,9 +128,9 @@ public class ReaderCardController {
 
     private void initOrderCols() {
         colBookName2.setCellValueFactory(new PropertyValueFactory<>("bookTitle"));
-        colOrderDate.setCellValueFactory(new PropertyValueFactory<>("borrowDate"));
+        colOrderDate.setCellValueFactory(new PropertyValueFactory<>("orderDate"));
         colStatus2.setCellValueFactory(new PropertyValueFactory<>("status"));
-        colNotify.setCellValueFactory(new PropertyValueFactory<>("notificationStamp"));
+        colNotify.setCellValueFactory(new PropertyValueFactory<>("notificationTimestamp"));
     }
 
     private void loadSubscriber(Subscriber subscriber) {
@@ -155,14 +157,6 @@ public class ReaderCardController {
         showDataLogs(userLogs);
     }
 
-    public void setBorrowRecords(List<BorrowRecordDTO> list) {
-        this.borrowRecords = list;
-    }
-
-    public void setOrderRecords(List<OrderRecordDTO> list) {
-        this.orderRecords = list;
-    }
-
     public void showDataLogs(List<Object> logs) {
         ObservableList<String> items = FXCollections.observableArrayList();
         int logNumber = 1;
@@ -181,17 +175,25 @@ public class ReaderCardController {
         return logNumber + ". " + dataLog.getLog_action() + ", " + formattedDate;
     }
 
+    public void setBorrowRecords(List<BorrowRecordDTO> list) {
+        this.borrowRecords = list;
+    }
+
+    public void setOrderRecords(List<OrderRecordDTO> list) {
+        this.orderRecords = list;
+    }
 
     public void showUserBorrows() {
-        ObservableList<BorrowRecordDTO> data = FXCollections.observableArrayList(borrowRecords);
-        tableViewBorrows.setItems(data);
+        ObservableList<BorrowRecordDTO> borrowsData = FXCollections.observableArrayList(borrowRecords);
+        tableViewBorrows.setItems(borrowsData);
     }
 
 
 
     public void showUserOrders() {
-        ObservableList<OrderRecordDTO> data = FXCollections.observableArrayList(orderRecords);
-        tableViewOrders.setItems(data);
+        ObservableList<OrderRecordDTO> ordersData = FXCollections.observableArrayList(orderRecords);
+        tableViewOrders.setItems(ordersData);
+        tableViewOrders.refresh();
     }
 
     private void openExtendWindow(BorrowRecordDTO borrowRecord) {

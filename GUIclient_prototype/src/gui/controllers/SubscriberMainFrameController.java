@@ -1,6 +1,7 @@
 package gui.controllers;
 
 import client.ClientUI;
+import client.NotificationScheduler;
 import client.SharedController;
 import common.Book;
 import common.BookCopy;
@@ -19,8 +20,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -37,7 +40,8 @@ import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
-import common.OrderResponse; // Replace 'some.package' with the actual package name
+import common.OrderResponse;
+import common.Notification;
 
 
 import java.io.IOException;
@@ -59,6 +63,11 @@ public class SubscriberMainFrameController implements Initializable {
     @FXML private Button btnLogs = null;
     @FXML private Button btnPersonalDetails = null;
     @FXML private Button btnActiveOrders = null;
+    @FXML private Button btnNotifications = null;
+    @FXML private Button btnCloseNotifications = null;
+
+    @FXML private SplitPane notificationSplitPane;
+    @FXML private ListView<String> notificationListView;
 
     @FXML private TableView<Book> bookTable;
     @FXML private TableColumn<Book, String> bookNameColumn;
@@ -73,6 +82,7 @@ public class SubscriberMainFrameController implements Initializable {
     private Map<Integer, Stage> openDialogs = new HashMap<>(); // Track open dialogs
     private Subscriber s;
     private List<OrderRecordDTO> orderRecords = new ArrayList<>();
+    private ObservableList<String> notifications = FXCollections.observableArrayList();
 
     private String getSearch() { return searchField.getText(); }
     private String getMenu() { return menuButton.getText(); }
@@ -84,7 +94,25 @@ public class SubscriberMainFrameController implements Initializable {
         setupSearch();
         SharedController.setSubscriberMainFrameController(this);
         s = SharedController.getSubscriber();
+        NotificationScheduler.start(s.getSub_id());
         MessageUtils.sendMessage(ClientUI.cc, "subscriber", "userOrders", s.getSub_id());
+    }
+
+    public void addNotifications(List<Notification> newNotifications) {
+        for (Notification notification : newNotifications) {
+            notifications.add(notification.getMessage());
+        }
+    }
+
+    @FXML
+    private void showNotifications(ActionEvent event) {
+        notificationSplitPane.setVisible(true);
+        notificationListView.setItems(notifications);
+    }
+
+    @FXML
+    private void closeNotifications(ActionEvent event) {
+        notificationSplitPane.setVisible(false);
     }
 
     public void handleOrderResponse(OrderResponse response) {

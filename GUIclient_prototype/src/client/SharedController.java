@@ -14,6 +14,7 @@ import gui.controllers.SubscribersTableController;
 import gui.controllers.ReaderCardController;
 import gui.controllers.ScanWindowController;
 import gui.controllers.ActiveOrdersController;
+import gui.controllers.AddSubscriberController;
 import gui.controllers.BorrowFormController;
 import gui.controllers.SubscriberLogsController;
 import gui.controllers.ItemLoader;
@@ -35,6 +36,7 @@ public class SharedController {
     public static ActiveOrdersController aoc;
     public static BorrowFormController bfc;
     public static ReturnBookController rbc;
+    public static AddSubscriberController asc;
     private static ItemLoader itemLoader;
     public static ScanWindowController swc;
 
@@ -94,6 +96,8 @@ public class SharedController {
     public static void setReturnBookController(ReturnBookController controller) { rbc = controller; }
     public static ReturnBookController getReturnBookController() { return rbc; }
 
+    public static void setAddSubscriberController(AddSubscriberController controller) { asc = controller; }
+    public static AddSubscriberController getAddSubscriberController() { return asc; }
 
 
 }

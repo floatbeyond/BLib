@@ -13,6 +13,7 @@ import common.BorrowingRecord;
 import common.DateUtils;
 import common.OrderRecordDTO;
 import common.DataLogs;
+import common.Notification;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -20,8 +21,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.sql.Timestamp;
 
 public class mysqlConnection {
@@ -102,18 +101,131 @@ public class mysqlConnection {
 		return null;
 	}
 
+	// Fetch notifications for a subscriber
+    public static List<Notification> getNotifications(Connection conn, int subId) {
+        List<Notification> notifications = new ArrayList<>();
+        String query = "SELECT * FROM notifications WHERE SubID = ? ORDER BY Timestamp DESC";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, subId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                int notificationId = rs.getInt("NotificationID");
+                String message = rs.getString("Message");
+                Timestamp timestamp = rs.getTimestamp("Timestamp");
+                notifications.add(new Notification(notificationId, subId, message, timestamp));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return notifications;
+    }
+
+	// Fetch new notifications for a subscriber
+	public static List<Notification> getNewNotifications(Connection conn, int subId) {
+		List<Notification> notifications = new ArrayList<>();
+		String query = "SELECT * FROM notifications WHERE SubID = ? AND Timestamp > (SELECT LastFetched FROM subscribers WHERE SubID = ?) ORDER BY Timestamp DESC";
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setInt(1, subId);
+			stmt.setInt(2, subId);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				int notificationId = rs.getInt("NotificationID");
+				String message = rs.getString("Message");
+				Timestamp timestamp = rs.getTimestamp("Timestamp");
+				notifications.add(new Notification(notificationId, subId, message, timestamp));
+			}
+			// Update the last fetched timestamp
+			updateLastFetched(conn, subId);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return notifications;
+	}
+
+	// Update the last fetched timestamp for a subscriber
+	private static void updateLastFetched(Connection conn, int subId) {
+		String query = "UPDATE subscribers SET LastFetched = NOW() WHERE SubID = ?";
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setInt(1, subId);
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// Send a notification to a subscriber
+	public static boolean sendNotification(Connection conn, int subId, String message) {
+		String query = "INSERT INTO notifications (SubID, Message, Timestamp) VALUES (?, ?, ?)";
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setInt(1, subId);
+			stmt.setString(2, message);
+			stmt.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+			int rowsAffected = stmt.executeUpdate();
+			return rowsAffected > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public static boolean sendOrderNotification(Connection conn, int copyId) {
+		try {
+            // Step 1: Get the book ID and name using the copy ID
+            String bookQuery = "SELECT b.BookID, b.Title FROM bookcopies bc JOIN books b ON bc.BookID = b.BookID WHERE bc.CopyID = ?";
+            int bookId = 0;
+            String bookName = "";
+            try (PreparedStatement bookStmt = conn.prepareStatement(bookQuery)) {
+                bookStmt.setInt(1, copyId);
+                ResultSet bookRs = bookStmt.executeQuery();
+                if (bookRs.next()) {
+                    bookId = bookRs.getInt("BookID");
+                    bookName = bookRs.getString("Title");
+                }
+            }
+
+            // Step 2: Query the orderrecords table for the next order with the same book ID and status 'Waiting'
+            String orderQuery = "SELECT OrderID, SubID FROM orderrecords WHERE BookID = ? AND Status = 'Waiting' ORDER BY OrderID ASC LIMIT 1";
+            int orderId = 0;
+            int subId = 0;
+            try (PreparedStatement orderStmt = conn.prepareStatement(orderQuery)) {
+                orderStmt.setInt(1, bookId);
+                ResultSet orderRs = orderStmt.executeQuery();
+                if (orderRs.next()) {
+                    orderId = orderRs.getInt("OrderID");
+                    subId = orderRs.getInt("SubID");
+                }
+            }
+
+			// Step 3: Update the status of the order to 'In-Progress'
+			if (orderId != 0) {
+				String updateOrderQuery = "UPDATE orderrecords SET Status = 'In-Progress', NotificationTimestamp = NOW() WHERE OrderID = ?";
+				try (PreparedStatement updateOrderStmt = conn.prepareStatement(updateOrderQuery)) {
+					updateOrderStmt.setInt(1, orderId);
+					updateOrderStmt.executeUpdate();
+				}
+			}
+
+            // Step 4: Insert a notification into the notifications table
+            if (subId != 0) {
+                String message = "Your book '" + bookName + "' is ready for pick-up";
+                return sendNotification(conn, subId, message);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+	}
+
 	// add new subscriber to the DB
 	public static int addSubscriber(Connection conn, Subscriber s) {
-		String query = "INSERT INTO subscribers (Name, Status, PhoneNumber, Email, Penalties, FreezeUntil, Joined, Expiration) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+		String query = "INSERT INTO subscribers (Name, Status, PhoneNumber, Email, Joined, Expiration) VALUES (?, ?, ?, ?, ?, ?)";
+		try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 			stmt.setString(1, s.getSub_name());
 			stmt.setString(2, s.getSub_status());
 			stmt.setString(3, s.getSub_phone_num());
 			stmt.setString(4, s.getSub_email());
-			stmt.setInt(5, s.getSub_penalties());
-			stmt.setDate(6, DateUtils.toSqlDate(s.getSub_freeze()));
-			stmt.setDate(7, DateUtils.toSqlDate(s.getSub_joined()));
-			stmt.setDate(8, DateUtils.toSqlDate(s.getSub_expiration()));
+			stmt.setDate(5, DateUtils.toSqlDate(s.getSub_joined()));
+			stmt.setDate(6, DateUtils.toSqlDate(s.getSub_expiration()));
 			stmt.executeUpdate();
 			ResultSet rs = stmt.getGeneratedKeys();
 			if (rs.next()) {
@@ -121,7 +233,11 @@ public class mysqlConnection {
 				return subId;
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			if (e.getErrorCode() == 1062) {
+				return -1;
+			} else {
+				e.printStackTrace();
+			}
 		}
 		return 0;
 	}
@@ -363,6 +479,10 @@ public class mysqlConnection {
 		}
 		return -1;
 	}
+
+	// public static int notifyUserOrdering(Connection conn, int copyId) {
+	// 	String query = "SELECT BookID FROM bookcopies WHERE CopyID = ?";
+
 	
 	public static Book getBookById(Connection conn, int bookId) {
 		String query = "SELECT * FROM books WHERE BookID = ?";
@@ -513,6 +633,22 @@ public class mysqlConnection {
             stmt.setInt(2, bookId);
             stmt.setString(3, "Waiting");
             stmt.setString(4, "In-Progress");
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+	public static boolean anyOrderExists(Connection conn, int bookId) {
+        String query = "SELECT 1 FROM orderrecords WHERE BookID = ? AND Status IN (?, ?)";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, bookId);
+            stmt.setString(2, "Waiting");
+            stmt.setString(3, "In-Progress");
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return true;

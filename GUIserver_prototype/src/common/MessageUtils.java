@@ -4,7 +4,7 @@ import java.io.IOException;
 import ocsf.server.ConnectionToClient;
 
 public class MessageUtils {
-    public static void sendResponseToClient(String user, String messageType, Object data, ConnectionToClient client) {
+    public static synchronized void sendResponseToClient(String user, String messageType, Object data, ConnectionToClient client) {
         ServerMessage response = new ServerMessage(user, messageType, data);
         try {
             // print message being sent and data
