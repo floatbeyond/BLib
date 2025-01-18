@@ -12,8 +12,10 @@ import javafx.application.Platform;
 
 import common.Notification;
 import common.Subscriber;
+import common.SubscriberStatusReport;
 import common.BookCopy;
 import common.BorrowRecordDTO;
+import common.BorrowTimeReport;
 import common.Librarian;
 import common.MessageUtils;
 import common.OrderRecordDTO;
@@ -29,15 +31,14 @@ public class Logic {
         if (user instanceof Librarian) {
             System.out.println("User is a librarian");
             SharedController.setLibrarian((Librarian) user);
-            SharedController.logwc.userType = "Librarian";
+            // SharedController.logwc.setUserStatus(user);
         } else if (user instanceof Subscriber) {
             System.out.println("User is a subscriber");
             SharedController.setSubscriber((Subscriber) user);
-            SharedController.logwc.userType = "Subscriber";
         } else {
             System.out.println("User not found");
-            SharedController.logwc.userType = "NotFound";
         }
+        SharedController.logwc.setUserStatus(user);
     }
 
     public static void fetchNotifications(int subId) {
@@ -121,6 +122,12 @@ public class Logic {
                 SharedController.setSubscriber((Subscriber) data);
                 SharedController.pdc.updateSubscriberStatus("Subscriber details updated");
             }
+        });
+    }
+
+    public static void reactivateSubscriberStatus(String status) {
+        Platform.runLater(() -> {
+            SharedController.rcc.subscriberReactivated(status);
         });
     }
 
@@ -270,6 +277,31 @@ public class Logic {
         });
     }
 
+    // Monthyly reports
+
+    public static void parseAllBorrowTimesReports(Map<String, List<BorrowTimeReport>> reports) {
+        System.out.println("Received all borrow times reports");
+        Platform.runLater(() -> {
+            if (SharedController.drc != null) {
+                SharedController.drc.setAllBorrowTimesReports(reports);
+            } else {
+                // print its null
+                System.out.println("DataReportsController is null");
+            }
+        });
+    }
+
+    public static void parseAllSubscriberStatusReports(Map<String, List<SubscriberStatusReport>> reports) {
+        System.out.println("Received all subscriber status reports");
+        Platform.runLater(() -> {
+            if (SharedController.drc != null) {
+                SharedController.drc.setAllSubscriberStatusReports(reports);
+            } else {
+                // print its null
+                System.out.println("DataReportsController is null");
+            }
+        });
+    }
 
     // Prints
 

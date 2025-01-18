@@ -24,8 +24,6 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-
 
 public class SubscribersTableController implements Initializable {
 
@@ -42,10 +40,8 @@ public class SubscribersTableController implements Initializable {
     @FXML private TableColumn<Subscriber, LocalDate> colBorrows;
     @FXML private TableColumn<Subscriber, LocalDate> colOrders;
 
-
-	@FXML private Label copiedLabel;
-
     @FXML private Button btnBack = null;
+    @FXML private Button btnRefresh;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -119,6 +115,11 @@ public class SubscribersTableController implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void handleRefresh(ActionEvent event) {
+        System.out.println("Refresh button clicked");
+        MessageUtils.sendMessage(ClientUI.cc, "librarian", "showSubscribersTable", null);
     }
 
     public void goBackBtn(ActionEvent event) throws Exception {

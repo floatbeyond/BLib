@@ -1,6 +1,8 @@
 package gui.controllers;
 
 import client.ClientUI;
+import common.Subscriber;
+import common.Librarian;
 import client.SharedController;
 import common.MessageUtils;
 import javafx.fxml.FXML;
@@ -28,14 +30,15 @@ public class LoginWindowController {
 
     @FXML private Label messageLabel;
 
-    public String userType;
+    private String userType;
+    private Object userConnected;
 
     private String getId() { return idField.getText(); }
 
     @FXML
     public void initialize() {
         setupLogin();
-        userType = "NotFound";
+        userType = "";
         // Set the controller in SharedController
         SharedController.setLoginWindowController(this);
         SharedController.setSubscriber(null);
@@ -63,40 +66,51 @@ public class LoginWindowController {
                     displayMessage("Please enter ID"); 
                 } else if (idText.length() > 9 || !idText.matches("\\d+")) {
                     displayMessage("Please enter a valid ID number");
-                } else { 
+                } else {
                     MessageUtils.sendMessage(ClientUI.cc, "user", "login" , Integer.parseInt(idText));
-                    if (userType == "NotFound") {
+                    if (userConnected == null) {
                         displayMessage("User not found");
-                    } else {
-                        System.out.println("User found");
-                        ((Node) event.getSource()).getScene().getWindow().hide();
-                        // Load and display MainFrame GUI
-                        if (userType != "Subscriber") {
-                            MessageUtils.sendMessage(ClientUI.cc, "subscriber", "sendSubscriber", idText);
-                        }
-                        String fxmlPath = String.format("/gui/fxml/%sMainFrame.fxml", userType);
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-                        Pane root = loader.load();
-                        Stage stage = new Stage();
-                        Scene scene = new Scene(root);
-                        stage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
-                            try {
-                                // print message to console
-                                System.out.println("clientui.chat: " + ClientUI.chat);
-                                if (ClientUI.chat != null) {
-                                    ClientUI.chat.quit();
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        });
-                        stage.setScene(scene);
-                        String windowTitle = userType + " Main Frame";
-                        stage.setTitle(windowTitle);
-                        stage.setResizable(false);
-                        stage.show();
+                        return;
+                    }
+                    if ((userConnected instanceof Librarian)) {
+                        userType = "Librarian";
+                    }
+                    if ((userConnected instanceof Subscriber)) {
+                        if (((Subscriber) userConnected).getSub_status().equals("In-Active")) {
+                            displayMessage("User is In-Active, ask librarian to re-activate account");
+                            return;
+                        } else if (((Subscriber) userConnected).getSub_status().equals("Frozen")) {
+                            displayMessage("User is frozen until " + ((Subscriber) userConnected).getSub_freeze());
+                            return;
+                        } else {
+                            userType = "Subscriber";
                         }
                     }
+                    System.out.println("User found");
+                    ((Node) event.getSource()).getScene().getWindow().hide();
+                    // Load and display MainFrame GUI
+                    String fxmlPath = String.format("/gui/fxml/%sMainFrame.fxml", userType);
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+                    Pane root = loader.load();
+                    Stage stage = new Stage();
+                    Scene scene = new Scene(root);
+                    stage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
+                        try {
+                            // print message to console
+                            System.out.println("clientui.chat: " + ClientUI.chat);
+                            if (ClientUI.chat != null) {
+                                ClientUI.chat.quit();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+                    stage.setScene(scene);
+                    String windowTitle = userType + " Main Frame";
+                    stage.setTitle(windowTitle);
+                    stage.setResizable(false);
+                    stage.show();
+                }
             } else {
                 displayMessage("Connection failed");
             }
@@ -122,6 +136,9 @@ public class LoginWindowController {
         }
     }
 
+    public void setUserStatus(Object user) {
+        userConnected = user;
+    }
 
     public void displayMessage(String message) {
         messageLabel.setText(message);

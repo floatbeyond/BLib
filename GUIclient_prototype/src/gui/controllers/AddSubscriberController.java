@@ -33,8 +33,6 @@ public class AddSubscriberController {
     @FXML private TextField txtExDate;
 
     private static final DateTimeFormatter USER_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    private static final DateTimeFormatter DB_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
 
     @FXML
     private void initialize() {

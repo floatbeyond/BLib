@@ -7,6 +7,7 @@ public class InstanceManager {
     private static EchoServer instance;
     private static ClientConnectedController ccc;
     private static Connection conn;
+    private static ReportScheduler reportScheduler;
 
     // Setters and getters
     
@@ -18,4 +19,7 @@ public class InstanceManager {
 
     public static void setDbConnection(Connection connection) { conn = connection; }
     public static Connection getDbConnection() { return conn; }
+
+    public static void setReportScheduler(ReportScheduler scheduler) { reportScheduler = scheduler; }
+    public static ReportScheduler getReportScheduler() { return reportScheduler; }
 }

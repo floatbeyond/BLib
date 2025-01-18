@@ -7,15 +7,18 @@ package client;
 import ocsf.client.*;
 import common.ChatIF;
 import common.Subscriber;
+import common.SubscriberStatusReport;
 import common.ServerMessage;
 import common.BookCopy;
 import common.BorrowRecordDTO;
+import common.BorrowTimeReport;
 import common.OrderRecordDTO;
 import common.Notification;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("unchecked")
 
@@ -81,65 +84,74 @@ public class ChatClient extends AbstractClient
           System.out.println("Received message type: " + type + " | to user: " + user);
           awaitResponse = false;
           switch (type) {
-              case "LoginStatus":
-                  Logic.parseLogin(data);
-                  break;
-              case "NewNotifications":
-                  Logic.handleNotifications((List<Notification>) data);
-                  break;
-              case "NewSubscriber":
-                  Logic.newSubscriber((int) data);
-                  break;
-              case "foundSubscriber":
-                  if (data instanceof Subscriber) {
-                    Logic.parseSubscriber((Subscriber) data);
-                  }
-                  break;
-              case "UpdateStatus":
-                  Logic.updateSubscriberStatus( data);
-                  break;
-              case "SubscriberList":
-                  Logic.parseSubscriberList((ArrayList<Subscriber>) data);
-                  break;
-              case "DataLogsList":
-                  Logic.parseDataLogsList(user, (ArrayList<Object>) data);
-                  break;
-              case "UserBorrowsList":
-                  Logic.parseUserBorrowsList(user, (List<BorrowRecordDTO>) data);
-                  break;
-              case "UserOrdersList":
-                  Logic.parseUserOrdersList(user, (List<OrderRecordDTO>) data);
-                  break;
-              case "BookList":
-                  Logic.parseBookList(user, (ArrayList<Object>) data);
-                  break;
-              case "BookCopy":
-                  Logic.parseBookCopy(user, (BookCopy) data);
-                  break;
-              case "BorrowStatus":
-                  Logic.newBorrowStatus((String) data);
-                  break;
-              case "ReturnStatus":
-                  Logic.returnBookStatus((String) data);
-                  break;
-              case "ExtendStatus":
-                  Logic.extendBorrowStatus((String) data);
-                  break;
-              case "OrderStatus":
-                  Logic.newOrderStatus(data);
-                  break;
-              case "CancelStatus":
-                  Logic.cancelOrderStatus((String) data);
-                  break;
-              case "Print":
-                  Logic.print((String) data);
-                  break;
-              case "Error":
-                  Logic.printError((String) data);
-                  break;
-              default:
-                  System.out.println("Unknown message type: " + type);
-                  break;
+                case "LoginStatus":
+                    Logic.parseLogin(data);
+                    break;
+                case "NewNotifications":
+                    Logic.handleNotifications((List<Notification>) data);
+                    break;
+                case "NewSubscriber":
+                    Logic.newSubscriber((int) data);
+                    break;
+                case "foundSubscriber":
+                    if (data instanceof Subscriber) {
+                        Logic.parseSubscriber((Subscriber) data);
+                    }
+                    break;
+                case "UpdateStatus":
+                    Logic.updateSubscriberStatus( data);
+                    break;
+                case "SubReactivated":
+                    Logic.reactivateSubscriberStatus((String) data);
+                    break;
+                case "SubscriberList":
+                    Logic.parseSubscriberList((ArrayList<Subscriber>) data);
+                    break;
+                case "DataLogsList":
+                    Logic.parseDataLogsList(user, (ArrayList<Object>) data);
+                    break;
+                case "UserBorrowsList":
+                    Logic.parseUserBorrowsList(user, (List<BorrowRecordDTO>) data);
+                    break;
+                case "UserOrdersList":
+                    Logic.parseUserOrdersList(user, (List<OrderRecordDTO>) data);
+                    break;
+                case "BookList":
+                    Logic.parseBookList(user, (ArrayList<Object>) data);
+                    break;
+                case "BookCopy":
+                    Logic.parseBookCopy(user, (BookCopy) data);
+                    break;
+                case "BorrowStatus":
+                    Logic.newBorrowStatus((String) data);
+                    break;
+                case "ReturnStatus":
+                    Logic.returnBookStatus((String) data);
+                    break;
+                case "ExtendStatus":
+                    Logic.extendBorrowStatus((String) data);
+                    break;
+                case "OrderStatus":
+                    Logic.newOrderStatus(data);
+                    break;
+                case "CancelStatus":
+                    Logic.cancelOrderStatus((String) data);
+                    break;
+                case "AllBorrowReports":
+                    Logic.parseAllBorrowTimesReports((Map<String, List<BorrowTimeReport>>) data);
+                    break;
+                case "AllSubscriberReports":
+                    Logic.parseAllSubscriberStatusReports((Map<String, List<SubscriberStatusReport>>) data);
+                    break;
+                case "Print":
+                    Logic.print((String) data);
+                    break;
+                case "Error":
+                    Logic.printError((String) data);
+                    break;
+                default:
+                    System.out.println("Unknown message type: " + type);
+                    break;
           }
       } else {
           System.out.println("Received unknown message format");

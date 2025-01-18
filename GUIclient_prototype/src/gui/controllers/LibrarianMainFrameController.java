@@ -75,6 +75,11 @@ public class LibrarianMainFrameController {
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gui/fxml/DataReports.fxml"));
                 Parent root = fxmlLoader.load();
+                SharedController.setDataReportsController(fxmlLoader.getController());
+
+                // Fetch and set the reports data after the controller is initialized
+                MessageUtils.sendMessage(ClientUI.cc, "librarian", "fetchAllReports", null);
+
                 Stage stage = new Stage();
                 stage.setTitle("Data Reports");
                 Scene scene = new Scene(root);

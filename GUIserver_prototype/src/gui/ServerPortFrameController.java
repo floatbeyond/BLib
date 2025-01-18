@@ -40,7 +40,7 @@ public class ServerPortFrameController  {
 			displayMessage("Must enter port");
 		} else if (p.equals("5555")) {
 			((Node)event.getSource()).getScene().getWindow().hide(); //hiding primary window
-			ServerUI.runServer(p);  
+			ServerUI.runServer(p);  // Start the server
 			// Load and display the SQL connection GUI
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/ClientConnected.fxml"));
 			Parent root = loader.load();
@@ -52,6 +52,7 @@ public class ServerPortFrameController  {
 				try {
 					InstanceManager.getInstance().close();
 					InstanceManager.getInstance().stopListening();
+					InstanceManager.getReportScheduler().stopScheduler();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

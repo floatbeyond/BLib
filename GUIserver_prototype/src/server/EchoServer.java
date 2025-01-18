@@ -41,9 +41,9 @@ public class EchoServer extends AbstractServer
    * @param port The port number to connect on.
    */
   public EchoServer(int port) {
-    super(port);
-	InstanceManager.setInstance(this);
-	InstanceManager.setClientConnectedController(ccc);
+      super(port);
+      InstanceManager.setInstance(this);
+      InstanceManager.setClientConnectedController(ccc);
   }
   
   /**
@@ -78,6 +78,9 @@ public class EchoServer extends AbstractServer
               break;
             } case "updateSubscriber": {
               Logic.updateSubscriberDetails(user, data, client);
+              break;
+            } case "reactivateSubscriber": {
+              Logic.reactivateSubscriber(user, data, client);
               break;
             } case "showSubscribersTable": {
               Logic.showSubscribersTable(user, client);
@@ -115,6 +118,8 @@ public class EchoServer extends AbstractServer
             } case "cancelOrder": {
               Logic.cancelOrder(user, data, client);
               break;
+            } case "fetchAllReports": {
+              Logic.fetchMonthlyReports(user, client);
             } case "connect": {
               Logic.connect(user, client);
               break;

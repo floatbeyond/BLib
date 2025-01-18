@@ -24,6 +24,7 @@
         </columns>
       </TableView>
       <Label fx:id="copiedLabel" layoutX="267.0" layoutY="12.0" prefHeight="37.0" prefWidth="85.0" text="Copied!" visible="false" />
-      <Button fx:id="btnBack" layoutX="28.0" layoutY="591.0" mnemonicParsing="false" onAction="#goBackBtn" prefHeight="20.0" prefWidth="60.0" text="Back" />
+      <Button fx:id="btnBack" layoutX="28.0" layoutY="585.0" mnemonicParsing="false" onAction="#goBackBtn" prefHeight="31.0" prefWidth="60.0" text="Back" />
+      <Button fx:id="btnRefresh" layoutX="1133.0" layoutY="585.0" mnemonicParsing="false" onAction="#handleRefresh" prefHeight="31.0" prefWidth="60.0" text="Refresh" />
    </children>
 </AnchorPane>
