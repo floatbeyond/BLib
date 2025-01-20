@@ -5,7 +5,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="582.0" prefWidth="657.0" styleClass="anchor-pane" stylesheets="@SubscriberForm.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.PersonalDetailsController">
+<AnchorPane fx:id="searchHome" prefHeight="582.0" prefWidth="657.0" styleClass="anchor-pane" stylesheets="@../css/SubscriberForm.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.PersonalDetailsController">
    <children>
       <Label id="lblName" fx:id="lblName" layoutX="135.0" layoutY="127.0" styleClass="label" text="Subscriber Name:" />
       <Label id="lblHistory" fx:id="lblPNumber" layoutX="141.0" layoutY="176.0" styleClass="label" text="Phone Number:" />

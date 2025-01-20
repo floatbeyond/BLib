@@ -1,0 +1,51 @@
+.anchor-pane {
+    -fx-background-color: #e0f7fa; /* Background color from BorrowForm */
+    -fx-padding: 10;
+}
+
+.label {
+    -fx-font-family: "Arial";
+    -fx-font-size: 14px;
+    -fx-text-fill: #01579b;
+    -fx-font-weight: bold;
+}
+
+.text-field {
+    -fx-background-color: white;
+    -fx-border-color: #0288d1;
+    -fx-border-width: 2;
+    -fx-font-family: "Arial";
+    -fx-font-size: 14px;
+    -fx-text-fill: #01579b;
+    -fx-padding: 5;
+}
+
+.button {
+    -fx-background-color: linear-gradient(to bottom, #64b5f6, #42a5f5);
+    -fx-text-fill: white;
+    -fx-font-family: "Arial";
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 5 10;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 5, 0, 0, 1);
+}
+
+.button:hover {
+    -fx-background-color: linear-gradient(to bottom, #42a5f5, #2196f3);
+}
+
+.message-label {
+    -fx-font-family: "Arial";
+    -fx-font-size: 14px;
+    -fx-text-fill: #d32f2f;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+.combo-box {
+    -fx-font-family: "Arial";
+    -fx-font-size: 14px;
+    -fx-text-fill: #01579b;
+}
