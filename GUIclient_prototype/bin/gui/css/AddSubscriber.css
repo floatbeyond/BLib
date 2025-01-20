@@ -1,0 +1,43 @@
+.anchor-pane {
+    -fx-background-color: #e0f7fa;
+}
+
+.label {
+    -fx-font-family: "Arial";
+    -fx-font-size: 14px;
+    -fx-text-fill: #01579b;
+    -fx-font-weight: bold;
+}
+
+.text-field {
+    -fx-background-color: white;
+    -fx-border-color: #0288d1;
+    -fx-border-width: 2;
+    -fx-font-family: "Arial";
+    -fx-font-size: 14px;
+    -fx-text-fill: #01579b;
+    -fx-padding: 5;
+}
+
+.button {
+    -fx-background-color: #0288d1;
+    -fx-text-fill: white;
+    -fx-font-family: "Arial";
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 5 10;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.button:hover {
+    -fx-background-color: #0277bd;
+}
+
+.message-label {
+    -fx-font-family: "Arial";
+    -fx-font-size: 14px;
+    -fx-text-fill: #d32f2f;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}

@@ -1,18 +1,18 @@
 AnchorPane {
-    -fx-background-color: #e1dcc5;
+    -fx-background-color: #e0f7fa; /* Light blue background */
 }
 
 Button, MenuButton, #loginButton, #disconnectButton, #copiesButton { 
     -fx-font-size: 14px;
     -fx-font-family: "Arial";
-    -fx-background-color: #F2F0E8;
-    -fx-text-fill: #000000;
+    -fx-background-color: #bbdefb; /* Light blue button background */
+    -fx-text-fill: #01579b; /* Dark blue text color */
     -fx-prompt-text-fill: #a0a0a0;
-    -fx-border-color: #ccc; /* Match the default TextField border color */
-    -fx-border-width: 1px; /* Match the default TextField border width */
-    -fx-border-radius: 4px; /* Match the default TextField border radius */
-    -fx-background-radius: 4px; /* Match the background radius to the border radius */
-    -fx-padding: 5px; /* Add padding to match the TextField */
+    -fx-border-color: #0288d1; /* Blue border color */
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 5px;
     -fx-cursor: hand;
 }
 
@@ -20,15 +20,19 @@ Button, MenuButton, #loginButton, #disconnectButton, #copiesButton {
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 0, 1);
 }
 
-#loginButton:hover, #disconnectButton:hover{
-    -fx-background-color: #e1dcc5;
+#loginButton:hover, #disconnectButton:hover {
+    -fx-background-color: #90caf9; /* Slightly darker blue on hover */
 }
 
 TextField {
     -fx-font-size: 14px;
     -fx-font-family: "Arial";
+    -fx-background-color: white;
+    -fx-border-color: #0288d1; /* Blue border color */
+    -fx-border-width: 2px;
+    -fx-text-fill: #01579b; /* Dark blue text color */
     -fx-prompt-text-fill: #a0a0a0;
-    -fx-padding: 0 50px 0 10px; /* Add right padding to stop text before the button */
+    -fx-padding: 5px;
 }
 
 TextField:focused {
@@ -66,5 +70,3 @@ TableView:focused {
     -fx-background-insets: 0; /* Remove the default padding */
     -fx-text-fill: #000000
 }
-
-

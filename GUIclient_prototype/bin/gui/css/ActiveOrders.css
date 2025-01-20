@@ -1,6 +1,6 @@
 .anchor-pane {
-    -fx-background-color: #e0f7fa; 
-    -fx-padding: 10;
+    -fx-background-color: #e0f7fa;
+
 }
 
 .table-view {
@@ -38,4 +38,12 @@
 
 .table-column-header .label {
     -fx-text-fill: #0288d1;
+}
+
+#bookTitleCol .table-cell,
+#orderDateCol .table-cell,
+#statusCol .table-cell,
+#notificationStampCol .table-cell,
+#actionCol .table-cell {
+    -fx-background-color: #b3e5fc;
 }

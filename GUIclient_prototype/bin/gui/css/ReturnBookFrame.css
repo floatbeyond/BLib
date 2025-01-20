@@ -1,36 +1,40 @@
-
 .anchor-pane {
-    -fx-background-color: #e0f7fa; 
+    -fx-background-color: #e0f7fa; /* Light blue background */
+    -fx-padding: 10;
 }
-
 
 .button {
-    -fx-background-color: #0288d1; 
-    -fx-text-fill: white;          
-    -fx-font-size: 14px;           
-    -fx-padding: 10px;             
-    -fx-border-radius: 5px;        
-    -fx-background-radius: 5px;   
+    -fx-background-color: linear-gradient(to bottom, #64b5f6, #42a5f5); /* Gradient background */
+    -fx-text-fill: white;
+    -fx-font-family: "Arial";
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 5 10;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 5, 0, 0, 1);
+    -fx-cursor: hand;
 }
-
 
 .button:hover {
-    -fx-background-color: #0277bd; 
+    -fx-background-color: linear-gradient(to bottom, #42a5f5, #2196f3); /* Hover effect */
 }
-
 
 .text-field {
-    -fx-background-color: #ffffff; 
-    -fx-border-color: #0288d1;     
-    -fx-border-width: 1px;        
-    -fx-padding: 5px;              
-    -fx-font-size: 14px;           
+    -fx-background-color: white;
+    -fx-border-color: #0288d1; /* Blue border color */
+    -fx-border-width: 2px;
+    -fx-font-family: "Arial";
+    -fx-font-size: 14px;
+    -fx-text-fill: #01579b; /* Dark blue text color */
+    -fx-padding: 5;
 }
 
-
 .label {
-    -fx-text-fill: #01579b;       
-    -fx-font-size: 14px;           
+    -fx-font-family: "Arial";
+    -fx-font-size: 14px;
+    -fx-text-fill: #01579b; /* Dark blue text color */
+    -fx-font-weight: bold;
 }
 
 .date-picker:disabled {
@@ -42,4 +46,19 @@
 .date-picker:disabled .text-field {
     -fx-text-fill: #000000; /* Change the text color */
     -fx-opacity: 1.0; /* Keep the text opacity at 100% */
+}
+
+.message-label {
+    -fx-font-family: "Arial";
+    -fx-font-size: 14px;
+    -fx-text-fill: #d32f2f; /* Error message color */
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+.bold-label {
+    -fx-font-family: "Arial";
+    -fx-font-size: 18px; /* Match the font size of SQL IP label */
+    -fx-text-fill: #01579b; /* Dark blue text color */
+    -fx-font-weight: bold;
 }
