@@ -622,17 +622,44 @@ public class mysqlConnection {
 	}
 
 	public static boolean returnBook(Connection conn, int subId, int copyId, LocalDate returnDate) {
-		String query = "UPDATE borrowrecords SET ActualReturnDate = ?, Status = 'Returned' WHERE SubID = ? AND CopyID = ? AND (Status = 'Borrowed' OR Status = 'Late')";
-		try (PreparedStatement stmt = conn.prepareStatement(query)) {
-			stmt.setDate(1, DateUtils.toSqlDate(returnDate));
-			stmt.setInt(2, subId);
-			stmt.setInt(3, copyId);
-			int affectedRows = stmt.executeUpdate();
-			if (affectedRows == 0) {
+		String selectQuery = "SELECT ExpectedReturnDate FROM borrowrecords WHERE SubID = ? AND CopyID = ? AND (Status = 'Borrowed' OR Status = 'Late')";
+		String updateQuery = "UPDATE borrowrecords SET ActualReturnDate = ?, Status = ? WHERE SubID = ? AND CopyID = ? AND (Status = 'Borrowed' OR Status = 'Late')";
+		
+		try (PreparedStatement selectStmt = conn.prepareStatement(selectQuery);
+			 PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
+			
+			// Retrieve the expected return date
+			selectStmt.setInt(1, subId);
+			selectStmt.setInt(2, copyId);
+			ResultSet rs = selectStmt.executeQuery();
+			
+			if (rs.next()) {
+				LocalDate expectedReturnDate = rs.getDate("ExpectedReturnDate").toLocalDate();
+				String status;
+				
+				// Determine the status based on the return date
+				if (returnDate.isAfter(expectedReturnDate)) {
+					status = "ReturnedLate";
+				} else {
+					status = "Returned";
+				}
+				
+				// Update the borrow record with the actual return date and status
+				updateStmt.setDate(1, DateUtils.toSqlDate(returnDate));
+				updateStmt.setString(2, status);
+				updateStmt.setInt(3, subId);
+				updateStmt.setInt(4, copyId);
+				int affectedRows = updateStmt.executeUpdate();
+				
+				if (affectedRows == 0) {
+					System.out.println("No matching records found to update.");
+					return false;
+				}
+				return true;
+			} else {
 				System.out.println("No matching records found to update.");
 				return false;
 			}
-			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
