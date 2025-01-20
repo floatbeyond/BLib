@@ -817,42 +817,43 @@ public class mysqlConnection {
                     LocalDate expectedReturnDate = rs.getDate("ExpectedReturnDate").toLocalDate();
                     LocalDate actualReturnDate = rs.getDate("ActualReturnDate") != null ? rs.getDate("ActualReturnDate").toLocalDate() : null;
 
-                    // Calculate days held for returned books
-                    if (status.equals("Returned")) {
-                        int daysHeld = (int) ChronoUnit.DAYS.between(borrowDate, actualReturnDate);
-                        heldDaysMap.computeIfAbsent(bookTitle, k -> new ArrayList<>()).add(daysHeld);
-                    }
+					// Calculate days held for returned books
+					if (status.equals("Returned")) {
+						int daysHeld = (int) ChronoUnit.DAYS.between(borrowDate, actualReturnDate);
+						heldDaysMap.computeIfAbsent(bookTitle, k -> new ArrayList<>()).add(daysHeld);
+					}
 
-                    // Calculate days late for late or lost books
-                    if (status.equals("ReturnedLate") || status.equals("Late") || status.equals("Lost")) {
-                        int daysLate = (int) ChronoUnit.DAYS.between(expectedReturnDate, actualReturnDate != null ? actualReturnDate : now);
-                        lateDaysMap.computeIfAbsent(bookTitle, k -> new ArrayList<>()).add(daysLate);
-                    }
+					// Calculate days late for late or lost books
+					if (status.equals("ReturnedLate") || status.equals("Late") || status.equals("Lost")) {
+						int daysLate = (int) ChronoUnit.DAYS.between(expectedReturnDate, actualReturnDate != null ? actualReturnDate : now);
+						daysLate = Math.abs(daysLate); // Ensure the value is positive
+						lateDaysMap.computeIfAbsent(bookTitle, k -> new ArrayList<>()).add(daysLate);
+					}
 
-                    // Count total books borrowed this month
-                    if (borrowDate.getMonthValue() == now.getMonthValue() && borrowDate.getYear() == now.getYear()) {
-                        borrowCountMap.put(bookTitle, borrowCountMap.getOrDefault(bookTitle, 0) + 1);
-                    }
-                }
+					// Count total books borrowed this month
+					if (borrowDate.getMonthValue() == now.getMonthValue() && borrowDate.getYear() == now.getYear()) {
+						borrowCountMap.put(bookTitle, borrowCountMap.getOrDefault(bookTitle, 0) + 1);
+					}
+				}
 
-                // Calculate averages and create report entries
-                for (String bookTitle : heldDaysMap.keySet()) {
-                    List<Integer> heldDays = heldDaysMap.get(bookTitle);
-                    double averageHeldDays = heldDays.stream().mapToInt(Integer::intValue).average().orElse(0.0);
-                    report.add(new BorrowTimeReport(bookTitle, "Returned", averageHeldDays));
-                }
+				// Calculate averages and create report entries
+				for (String bookTitle : heldDaysMap.keySet()) {
+					List<Integer> heldDays = heldDaysMap.get(bookTitle);
+					double averageHeldDays = heldDays.stream().mapToInt(Integer::intValue).average().orElse(0.0);
+					report.add(new BorrowTimeReport(bookTitle, "Returned", averageHeldDays));
+				}
 
-                for (String bookTitle : lateDaysMap.keySet()) {
-                    List<Integer> lateDays = lateDaysMap.get(bookTitle);
-                    double averageLateDays = lateDays.stream().mapToInt(Integer::intValue).average().orElse(0.0);
-                    report.add(new BorrowTimeReport(bookTitle, "Late", averageLateDays));
-                }
+				for (String bookTitle : lateDaysMap.keySet()) {
+					List<Integer> lateDays = lateDaysMap.get(bookTitle);
+					double averageLateDays = lateDays.stream().mapToInt(Integer::intValue).average().orElse(0.0);
+					report.add(new BorrowTimeReport(bookTitle, "Late", averageLateDays));
+				}
 
-                for (String bookTitle : borrowCountMap.keySet()) {
-                    int borrowCount = borrowCountMap.get(bookTitle);
-                    report.add(new BorrowTimeReport(bookTitle, "BorrowedThisMonth", borrowCount));
-                }
-            }
+				for (String bookTitle : borrowCountMap.keySet()) {
+					int borrowCount = borrowCountMap.get(bookTitle);
+					report.add(new BorrowTimeReport(bookTitle, "BorrowedThisMonth", borrowCount));
+				}
+			}
         } catch (SQLException e) {
             e.printStackTrace();
         }
