@@ -1,18 +1,41 @@
-TableView {
-    -fx-font-size: 14px;
+.anchor-pane {
+    -fx-background-color: #e0f7fa; 
+    -fx-padding: 10;
+}
+
+.table-view {
+    -fx-background-color: white;
+    -fx-border-color: #0288d1;
+    -fx-border-width: 2;
+    -fx-table-cell-border-color: #0288d1;
     -fx-font-family: "Arial";
-    -fx-background-color: #F2F0E8;
-    -fx-border-color: #ccc;
-    -fx-border-width: 1px;
+    -fx-font-size: 14px;
+    -fx-text-fill: #01579b;
 }
 
-TableView:focused {
-    -fx-border-color: #ccc;
+.table-column-header {
+    -fx-background-color: #0288d1;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
 }
 
-.table-row-cell:selected {
-    -fx-background-color: #838383; /* Change background color when row is clicked */
-    -fx-table-cell-border-color: #838383; /* Ensure column dividers retain the desired color */
-    -fx-background-insets: 0; /* Remove the default padding */
-    -fx-text-fill: #000000
+.table-cell {
+    -fx-alignment: CENTER;
+    -fx-padding: 5;
+}
+
+.table-cell:filled:selected {
+    -fx-background-color: #b3e5fc;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #e1f5fe;
+}
+
+.table-row-cell:even {
+    -fx-background-color: #ffffff;
+}
+
+.table-column-header .label {
+    -fx-text-fill: #0288d1;
 }
