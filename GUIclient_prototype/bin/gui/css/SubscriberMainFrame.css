@@ -1,4 +1,4 @@
-#mainPanel {
+#mainPanel, #btnNotifications {
     -fx-background-color: #e0f7fa; /* Light blue background */
 }
 
@@ -65,7 +65,7 @@ TextField {
     -fx-padding: 5px;
 }
 
-#btnCloseNotifications {
+#btnNotifications, #btnCloseNotifications {
     -fx-background-color: transparent;
 }
 

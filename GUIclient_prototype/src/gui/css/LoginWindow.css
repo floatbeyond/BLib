@@ -1,14 +1,14 @@
 AnchorPane {
-    -fx-background-color: #e1dcc5;
+    -fx-background-color: #e0f7fa; /* Light blue background */
 }
 
 Button { 
     -fx-font-size: 14px;
     -fx-font-family: "Arial";
-    -fx-background-color: #F2F0E8;
-    -fx-text-fill: #000000;
-    -fx-prompt-text-fill: #a0a0a0;
-    -fx-border-color: #ccc; /* Match the default TextField border color */
+    -fx-background-color: #bbdefb; /* Light blue button background */
+    -fx-text-fill: #01579b; /* Dark blue text color */
+    -fx-prompt-text-fill: #b5dded;
+    -fx-border-color: #0288d1; /* Blue border color */
     -fx-border-width: 1px; /* Match the default TextField border width */
     -fx-border-radius: 4px; /* Match the default TextField border radius */
     -fx-background-radius: 4px; /* Match the background radius to the border radius */
@@ -17,22 +17,25 @@ Button {
     -fx-cursor: hand;
 }
 
-Button:hover{
-    -fx-background-color: #e1dcc5;
+Button:hover {
+    -fx-background-color: #90caf9; /* Slightly darker blue on hover */
 }
 
 TextField {
     -fx-font-size: 18px;
     -fx-font-family: "Arial";
-    -fx-prompt-text-fill: #a0a0a0;
+    -fx-background-color: white;
+    -fx-border-color: #0288d1; /* Blue border color */
+    -fx-border-width: 2px;
+    -fx-text-fill: #01579b; /* Dark blue text color */
+    -fx-prompt-text-fill: #7fb8c9;
     -fx-padding: 0 50px 0 10px; /* Add right padding to stop text before the button */
 }
 
 TextField:focused {
-    -fx-border-color: #ccc; /* Remove blue focus border */
-    -fx-background-color: #fff; /* Ensure background color remains white */
+    -fx-border-color: #0288d1; /* Blue focus border */
+    -fx-background-color: white; /* Ensure background color remains white */
 }
-
 
 #messageLabel {
     -fx-text-fill: #a30303;

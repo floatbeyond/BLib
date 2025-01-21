@@ -1,18 +1,18 @@
-#mainPanel {
-    -fx-background-color: #e1dcc5;
+#mainPanel, #btnNotifications {
+    -fx-background-color: #e0f7fa; /* Light blue background */
 }
 
 AnchorPane {
-    -fx-background-color: #fff;
+    -fx-background-color: #ffffff; /* White background */
 }
 
 #btnLogOut, #btnPersonalDetails, #btnActiveOrders, #searchButton, #btnLogs { 
     -fx-font-size: 14px;
     -fx-font-family: "Arial";
-    -fx-background-color: #F2F0E8;
-    -fx-text-fill: #000000;
+    -fx-background-color: #bbdefb; /* Light blue button background */
+    -fx-text-fill: #01579b; /* Dark blue text color */
     -fx-prompt-text-fill: #a0a0a0;
-    -fx-border-color: #ccc; /* Match the default TextField border color */
+    -fx-border-color: #0288d1; /* Blue border color */
     -fx-border-width: 1px; /* Match the default TextField border width */
     -fx-border-radius: 4px; /* Match the default TextField border radius */
     -fx-background-radius: 4px; /* Match the background radius to the border radius */
@@ -20,17 +20,26 @@ AnchorPane {
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 0, 1);
 }
 
+#btnLogOut:hover, #btnPersonalDetails:hover, #btnActiveOrders:hover, #searchButton:hover, #btnLogs:hover {
+    -fx-background-color: #90caf9; /* Slightly darker blue on hover */
+}
+
 MenuButton {
     -fx-font-size: 14px;
     -fx-font-family: "Arial";
-    -fx-background-color: #F2F0E8;
-    -fx-text-fill: #000000;
+    -fx-background-color: #bbdefb; /* Light blue button background */
+    -fx-text-fill: #01579b; /* Dark blue text color */
     -fx-prompt-text-fill: #a0a0a0;
-    -fx-border-color: #ccc; /* Match the default TextField border color */
+    -fx-border-color: #0288d1; /* Blue border color */
     -fx-border-width: 1px; /* Match the default TextField border width */
     -fx-border-radius: 4px; /* Match the default TextField border radius */
     -fx-background-radius: 4px; /* Match the background radius to the border radius */
     -fx-padding: 5px; /* Add padding to match the TextField */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 0, 1);
+}
+
+MenuButton:hover {
+    -fx-background-color: #90caf9; /* Slightly darker blue on hover */
 }
 
 #btnNotifications{
@@ -56,7 +65,7 @@ TextField {
     -fx-padding: 5px;
 }
 
-#btnCloseNotifications {
+#btnNotifications, #btnCloseNotifications {
     -fx-background-color: transparent;
 }
 
@@ -95,5 +104,3 @@ TableView:focused {
     -fx-background-insets: 0; /* Remove the default padding */
     -fx-text-fill: #000000
 }
-
-

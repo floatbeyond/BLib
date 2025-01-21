@@ -1,5 +1,6 @@
 #searchHome {
-    -fx-background-color: linear-gradient(to bottom, #e0f7fa, #80deea);
+    -fx-background-color: #e0f7fa; /* Background color from BorrowForm */
+    -fx-padding: 10;
 }
 
 .label {

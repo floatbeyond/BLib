@@ -1,30 +1,39 @@
 AnchorPane {
-    -fx-background-color: #e1dcc5;
+    -fx-background-color: #e0f7fa; /* Background color from BorrowForm */
 }
 
 Button { 
     -fx-font-size: 14px;
     -fx-font-family: "Arial";
-    -fx-background-color: #F2F0E8;
-    -fx-text-fill: #000000;
+    -fx-background-color: linear-gradient(to bottom, #64b5f6, #42a5f5); /* Gradient background */
+    -fx-text-fill: white;
     -fx-prompt-text-fill: #a0a0a0;
-    -fx-border-color: #ccc; /* Match the default TextField border color */
-    -fx-border-width: 1px; /* Match the default TextField border width */
-    -fx-border-radius: 4px; /* Match the default TextField border radius */
-    -fx-background-radius: 4px; /* Match the background radius to the border radius */
-    -fx-padding: 5px; /* Add padding to match the TextField */
+    -fx-border-color: #0288d1; /* Border color */
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 5px;
     -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 5, 0, 0, 1);
 }
 
-TextField {
+Button:hover {
+    -fx-background-color: linear-gradient(to bottom, #42a5f5, #2196f3); /* Hover effect */
+}
+
+TextField, DatePicker {
     -fx-font-size: 14px;
     -fx-font-family: "Arial";
+    -fx-background-color: white;
+    -fx-border-color: #0288d1;
+    -fx-border-width: 2px;
+    -fx-text-fill: #01579b;
     -fx-prompt-text-fill: #a0a0a0;
-    -fx-padding: 0 50px 0 10px; /* Add right padding to stop text before the button */
+    -fx-padding: 5px;
 }
 
 #messageLabel {
-    -fx-text-fill: #a30303;
+    -fx-text-fill: #d32f2f; /* Error message color */
     -fx-font-size: 16px;
     -fx-font-family: "Arial";
     -fx-padding: 2px;
