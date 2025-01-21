@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 public class Notification implements Serializable {
+    private static final long serialVersionUID = 1L;
     private int notificationId;
     private int subId;
     private String message;
