@@ -41,17 +41,23 @@ public class Logic {
         SharedController.logwc.setUserStatus(user);
     }
 
-    public static void fetchNotifications(int subId) {
-        try {
-            MessageUtils.sendMessage(ClientUI.cc, "subscriber", "fetchNotifications", subId);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    // public static void fetchNotifications(int subId) {
+    //     try {
+    //         MessageUtils.sendMessage(ClientUI.cc, "subscriber", "fetchNotifications", subId);
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //     }
+    // }
 
     // Handle received notifications
     public static void handleNotifications(List<Notification> notifications) {
+        for (Notification notification : notifications) {
+            System.out.println("Notification: " + notification.toString());
+            // You can also update the UI to display notifications
+        }
         if (notifications.isEmpty()) {
+            // print empty
+            System.out.println("No notifications found");
             return;
         }
 

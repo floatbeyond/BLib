@@ -21,6 +21,10 @@ public class CopiesDialogController {
         statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
         expectedReturnDateCol.setCellValueFactory(data -> {
             BookCopy copy = data.getValue();
+            String status = copy.getStatus();
+            if (status != null && status.startsWith("Ordered by")) {
+                status = "Ordered";
+            }
             BorrowingRecord record = copy.getBorrowingRecord();
             return new SimpleStringProperty(record != null ? record.getExpectedReturnDate().toString() : "N/A");
         });

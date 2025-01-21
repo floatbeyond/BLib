@@ -173,35 +173,11 @@ public class mysqlConnection {
 		}
 	}
 
-	public static boolean sendOrderNotification(Connection conn, int copyId) {
+
+
+	public static boolean sendOrderNotification(Connection conn, int orderId, int subId, String bookTitle) {
 		try {
-            // Step 1: Get the book ID and name using the copy ID
-            String bookQuery = "SELECT b.BookID, b.Title FROM bookcopies bc JOIN books b ON bc.BookID = b.BookID WHERE bc.CopyID = ?";
-            int bookId = 0;
-            String bookName = "";
-            try (PreparedStatement bookStmt = conn.prepareStatement(bookQuery)) {
-                bookStmt.setInt(1, copyId);
-                ResultSet bookRs = bookStmt.executeQuery();
-                if (bookRs.next()) {
-                    bookId = bookRs.getInt("BookID");
-                    bookName = bookRs.getString("Title");
-                }
-            }
-
-            // Step 2: Query the orderrecords table for the next order with the same book ID and status 'Waiting'
-            String orderQuery = "SELECT OrderID, SubID FROM orderrecords WHERE BookID = ? AND Status = 'Waiting' ORDER BY OrderID ASC LIMIT 1";
-            int orderId = 0;
-            int subId = 0;
-            try (PreparedStatement orderStmt = conn.prepareStatement(orderQuery)) {
-                orderStmt.setInt(1, bookId);
-                ResultSet orderRs = orderStmt.executeQuery();
-                if (orderRs.next()) {
-                    orderId = orderRs.getInt("OrderID");
-                    subId = orderRs.getInt("SubID");
-                }
-            }
-
-			// Step 3: Update the status of the order to 'In-Progress'
+			// Step 1: Update the status of the order to 'In-Progress'
 			if (orderId != 0) {
 				String updateOrderQuery = "UPDATE orderrecords SET Status = 'In-Progress', NotificationTimestamp = NOW() WHERE OrderID = ?";
 				try (PreparedStatement updateOrderStmt = conn.prepareStatement(updateOrderQuery)) {
@@ -210,9 +186,9 @@ public class mysqlConnection {
 				}
 			}
 
-            // Step 4: Insert a notification into the notifications table
+            // Step 2: Insert a notification into the notifications table
             if (subId != 0) {
-                String message = "Your book '" + bookName + "' is ready for pick-up";
+                String message = "Your book '" + bookTitle + "' is ready for pick-up";
                 return sendNotification(conn, subId, message);
             }
         } catch (SQLException e) {
@@ -499,9 +475,20 @@ public class mysqlConnection {
 		return -1;
 	}
 
-	// public static int notifyUserOrdering(Connection conn, int copyId) {
-	// 	String query = "SELECT BookID FROM bookcopies WHERE CopyID = ?";
-
+	public static Book getBookByCopyId(Connection conn, int copyId) {
+		String query = "SELECT BookID FROM bookcopies WHERE CopyID = ?";
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setInt(1, copyId);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				int bookId = rs.getInt("BookID");
+				return getBookById(conn, bookId);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
 	public static Book getBookById(Connection conn, int bookId) {
 		String query = "SELECT * FROM books WHERE BookID = ?";
@@ -520,6 +507,35 @@ public class mysqlConnection {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public static int getCopyIdByCancelledOrder(Connection conn, int subId, int bookId) {
+		String query = "SELECT CopyID FROM bookcopies WHERE BookID = ? AND Status = ? ORDER BY CopyID ASC LIMIT 1";
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setInt(1, bookId);
+			stmt.setString(2, "Ordered by " + subId);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				int copyId = rs.getInt("CopyID");
+				return copyId;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	public static boolean setBookCopyOrdered(Connection conn, int copyId, int subId) {
+		String query = "UPDATE bookcopies SET Status = ? WHERE CopyID = ?";
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setInt(2, copyId);
+			stmt.setString(1, "Ordered by " + subId);
+			int affectedRows = stmt.executeUpdate();
+			return affectedRows > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	public static BookCopy findBookCopy(Connection conn, int bookCopyId) {
@@ -624,28 +640,29 @@ public class mysqlConnection {
 	public static boolean returnBook(Connection conn, int subId, int copyId, LocalDate returnDate) {
 		String selectQuery = "SELECT ExpectedReturnDate FROM borrowrecords WHERE SubID = ? AND CopyID = ? AND (Status = 'Borrowed' OR Status = 'Late')";
 		String updateQuery = "UPDATE borrowrecords SET ActualReturnDate = ?, Status = ? WHERE SubID = ? AND CopyID = ? AND (Status = 'Borrowed' OR Status = 'Late')";
-		
 		try (PreparedStatement selectStmt = conn.prepareStatement(selectQuery);
 			 PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
-			
 			// Retrieve the expected return date
 			selectStmt.setInt(1, subId);
 			selectStmt.setInt(2, copyId);
 			ResultSet rs = selectStmt.executeQuery();
-			
+
 			if (rs.next()) {
+				
 				LocalDate expectedReturnDate = rs.getDate("ExpectedReturnDate").toLocalDate();
-				String status;
+				String status = "Returned";
 				
 				// Determine the status based on the return date
 				if (returnDate.isAfter(expectedReturnDate)) {
 					status = "ReturnedLate";
-				} else {
-					status = "Returned";
 				}
 				
 				// Update the borrow record with the actual return date and status
-				updateStmt.setDate(1, DateUtils.toSqlDate(returnDate));
+				 // Debugging logs
+				 System.out.println("Executing update: " + updateQuery);
+				 System.out.println("Parameters: " + returnDate + ", " + status + ", " + subId + ", " + copyId);
+
+				updateStmt.setDate(1, java.sql.Date.valueOf(returnDate));
 				updateStmt.setString(2, status);
 				updateStmt.setInt(3, subId);
 				updateStmt.setInt(4, copyId);
@@ -654,6 +671,11 @@ public class mysqlConnection {
 				if (affectedRows == 0) {
 					System.out.println("No matching records found to update.");
 					return false;
+				}
+				Book returnedBook = getBookByCopyId(conn, copyId);
+				Integer nextSubId = mysqlConnection.getFirstWaitingSubId(conn, returnedBook.getBookId());
+				if (nextSubId != null) {
+					mysqlConnection.setBookCopyOrdered(conn, copyId, (int) nextSubId);
 				}
 				return true;
 			} else {
@@ -680,6 +702,20 @@ public class mysqlConnection {
             return false;
         }
     }
+
+	public static Integer getFirstWaitingSubId(Connection conn, int bookId) {
+		String query = "SELECT SubID FROM orderrecords WHERE BookID = ? AND Status = 'Waiting'";
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setInt(1, bookId);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				return rs.getInt("SubID");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
     public static boolean isOrderExists(Connection conn, int bookId, int subId) {
         String query = "SELECT 1 FROM orderrecords WHERE SubID = ? AND BookID = ? AND Status IN (?, ?)";
@@ -742,26 +778,47 @@ public class mysqlConnection {
 		return false;
 	}
 
-	public static boolean cancelOrder(Connection conn, int orderId) {
-		String checkStatusQuery = "SELECT Status FROM orderrecords WHERE OrderID = ?";
+	public static int cancelOrder(Connection conn, int orderId) {
+		int bookId = 0;
+		String checkStatusQuery = "SELECT BookID, Status FROM orderrecords WHERE OrderID = ?";
 		String updateQuery = "UPDATE orderrecords SET Status = 'Cancelled' WHERE OrderID = ?";
 		try (PreparedStatement checkStatusStmt = conn.prepareStatement(checkStatusQuery);
 		PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
 			checkStatusStmt.setInt(1, orderId);
 			ResultSet rs = checkStatusStmt.executeQuery();
 			if (rs.next()) {
+				bookId = rs.getInt("BookID");
 				String currentStatus = rs.getString("Status");
 				if ("Cancelled".equals(currentStatus)) {
-					return false; // Already cancelled
+					return 0; // Already cancelled
 				}
 			}
 			updateStmt.setInt(1, orderId);
-			int rowsAffected = updateStmt.executeUpdate();
-			return rowsAffected > 0;
+			updateStmt.executeUpdate();
+			return bookId;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return false;
+			return -1;
 		}
+	}
+
+	public static Integer notifyNextOrder(Connection conn, int bookId) {
+		String query = "SELECT OrderID, SubID FROM orderrecords WHERE BookID = ? AND Status = 'Waiting' ORDER BY OrderID ASC LIMIT 1";
+		int orderId = 0;
+		int subId = 0;
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				subId = rs.getInt("SubID");
+				orderId = rs.getInt("OrderID");
+				Book b = getBookById(conn, subId);
+				sendOrderNotification(conn, orderId, subId, b.getTitle());
+				return subId;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	// show to user all the logs in the DB

@@ -4,7 +4,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="213.0" prefWidth="390.0" styleClass="anchor-pane" stylesheets="@../css/DataReports.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.DataReportsController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="213.0" prefWidth="390.0" stylesheets="@../css/DataReports.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.DataReportsController">
     <children>
         <ComboBox fx:id="monthComboBox" layoutX="14.0" layoutY="15.0" prefWidth="150.0" promptText="Month" />
         <ComboBox fx:id="yearComboBox" layoutX="195.0" layoutY="15.0" prefWidth="100.0" promptText="Year" />

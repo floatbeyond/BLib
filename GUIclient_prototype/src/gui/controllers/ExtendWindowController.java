@@ -30,11 +30,12 @@ public class ExtendWindowController {
 
     public void setBorrowRecord(BorrowRecordDTO borrowRecord) {
         this.borrowRecord = borrowRecord;
+        LocalDate currentDate = LocalDate.now();
         datePicker.setDayCellFactory(picker -> new DateCell() {
             @Override
             public void updateItem(LocalDate date, boolean empty) {
                 super.updateItem(date, empty);
-                if (date.isBefore(borrowRecord.getExpectedReturnDate().plusDays(1))) {
+                if (date.isBefore(currentDate.plusDays(1))) {
                     setDisable(true);
                     setStyle("-fx-background-color: #ffc0cb;");
                 }

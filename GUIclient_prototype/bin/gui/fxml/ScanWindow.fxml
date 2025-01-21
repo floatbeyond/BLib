@@ -7,7 +7,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="120.0" prefWidth="354.0" styleClass="anchor-pane" stylesheets="@../css/ScanWindow.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.ScanWindowController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="120.0" prefWidth="354.0" stylesheets="@../css/ScanWindow.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.ScanWindowController">
    <children>
       <Label fx:id="messageLabel" layoutX="20.0" layoutY="63.0" prefHeight="43.0" prefWidth="319.0" />
       <TextField fx:id="txtScan" layoutX="20.0" layoutY="14.0" prefHeight="45.0" prefWidth="319.0" promptText="Scan" />

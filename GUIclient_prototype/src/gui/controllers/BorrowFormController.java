@@ -11,6 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
+import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import java.time.LocalDate;
 
@@ -39,17 +40,32 @@ public class BorrowFormController implements ItemLoader {
     @FXML private Label messageLabel;
 
     private static Stage scanWindowStage; // Track the ScanWindow stage
+    private LocalDate currentDate = LocalDate.now();
 
     @FXML
     private void initialize() {
-        txtID.setEditable(false);
-        txtCopyId.setEditable(false);
-        dpReturnDate.setEditable(false);
+        setFields();
     }
 
     private String getSubId() { return txtID.getText(); }
     private String getCopyId() { return txtCopyId.getText(); }
     private LocalDate getReturnDate() { return dpReturnDate.getValue(); }
+
+    private void setFields() {
+        txtID.setEditable(false);
+        txtCopyId.setEditable(false);
+        dpReturnDate.setEditable(false);
+        dpReturnDate.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                if (date.isBefore(currentDate.plusDays(1)) || date.isAfter(currentDate.plusDays(14))) {
+                    setDisable(true);
+                    setStyle("-fx-background-color: #ffc0cb;");
+                }
+            }
+        });
+    }
 
     @FXML
     private void showScanWindow(ActionEvent event) throws Exception {
@@ -83,7 +99,6 @@ public class BorrowFormController implements ItemLoader {
             LocalDate returnDate = getReturnDate();
             String subId = getSubId();
             String copyId = getCopyId();
-            LocalDate currentDate = LocalDate.now();
             // Input validation
             if (subId.isEmpty() || copyId.isEmpty()) {
                 displayMessage("Please scan first");
@@ -92,13 +107,25 @@ public class BorrowFormController implements ItemLoader {
     
             MessageUtils.sendMessage(ClientUI.cc, "librarian", "connect", null);
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
+                if (bc.getStatus().startsWith("Ordered")) {
+                    // get the 
+                    String status = bc.getStatus();
+                    String orderedSubId = status.substring(status.lastIndexOf(' ') + 1);
+                    if (!orderedSubId.equals(subId)) {
+                        displayMessage("Book is already ordered, scan another");
+                        return;
+                    }
+                }
                 if (s.getSub_status().equals("Frozen")) {
                     displayMessage("Subscriber is frozen");
+                    return;
+                } else if (s.getSub_status().equals("In-Active")) {
+                    displayMessage("Ask subscriber to renew subscription");
                     return;
                 } else if (bc.getStatus().equals("Borrowed")) {
                     displayMessage("Book is already borrowed, scan another");
                     return;
-                } else if (returnDate == null || returnDate.isBefore(currentDate.plusDays(1)) || returnDate.isAfter(currentDate.plusDays(14))) {
+                } else if (returnDate == null || returnDate.isAfter(currentDate.plusDays(14))) {
                     displayMessage("Please select a valid return date");
                     return;
                 } else {
@@ -123,11 +150,7 @@ public class BorrowFormController implements ItemLoader {
         bc = bookCopy;
         SharedController.setBookCopy(null);
         System.out.println("Book status: " + bookCopy.getStatus());
-        if (bookCopy.getStatus().equals("Borrowed")) {
-            displayMessage("Book is already borrowed, scan another");
-        } else {
-            displayMessage("Book found");
-        }
+        displayMessage("Book found");
     }
 
     @Override
@@ -135,11 +158,7 @@ public class BorrowFormController implements ItemLoader {
         txtID.setText(String.valueOf(subscriber.getSub_id()));
         s = subscriber;
         SharedController.setSubscriber(null);
-        if (subscriber.getSub_status().equals("Frozen")) {
-            displayMessage("Subscriber is frozen");
-        } else {
-            displayMessage("Subscriber found");
-        }
+        displayMessage("Subscriber found");
     }
 
     public void successfulBorrow(String msg) {

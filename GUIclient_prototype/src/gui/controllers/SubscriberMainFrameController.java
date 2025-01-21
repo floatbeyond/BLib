@@ -94,8 +94,9 @@ public class SubscriberMainFrameController implements Initializable {
         setupSearch();
         SharedController.setSubscriberMainFrameController(this);
         s = SharedController.getSubscriber();
-        NotificationScheduler.start(s.getSub_id());
+        // NotificationScheduler.start(s.getSub_id());
         MessageUtils.sendMessage(ClientUI.cc, "subscriber", "userOrders", s.getSub_id());
+        MessageUtils.sendMessage(ClientUI.cc, "subscriber", "fetchNotifications", s.getSub_id());
     }
 
     public void addNotifications(List<Notification> newNotifications) {
@@ -404,7 +405,7 @@ public class SubscriberMainFrameController implements Initializable {
     public void logoutBtn(ActionEvent event) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/LandingWindow.fxml"));
         Pane root = loader.load();
-        NotificationScheduler.stop();
+        // NotificationScheduler.stop();
         
         Stage primaryStage = new Stage();
         Scene scene = new Scene(root);			

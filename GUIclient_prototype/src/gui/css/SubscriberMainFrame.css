@@ -2,10 +2,6 @@
     -fx-background-color: #e0f7fa; /* Light blue background */
 }
 
-AnchorPane {
-    -fx-background-color: #ffffff; /* White background */
-}
-
 #btnLogOut, #btnPersonalDetails, #btnActiveOrders, #searchButton, #btnLogs { 
     -fx-font-size: 14px;
     -fx-font-family: "Arial";
