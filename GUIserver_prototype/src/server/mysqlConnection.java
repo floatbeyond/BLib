@@ -658,9 +658,8 @@ public class mysqlConnection {
 				}
 				
 				// Update the borrow record with the actual return date and status
-				 // Debugging logs
-				 System.out.println("Executing update: " + updateQuery);
-				 System.out.println("Parameters: " + returnDate + ", " + status + ", " + subId + ", " + copyId);
+				// Debugging logs
+				System.out.println("Parameters: " + returnDate + ", " + status + ", " + subId + ", " + copyId);
 
 				updateStmt.setDate(1, java.sql.Date.valueOf(returnDate));
 				updateStmt.setString(2, status);
@@ -673,6 +672,7 @@ public class mysqlConnection {
 					return false;
 				}
 				Book returnedBook = getBookByCopyId(conn, copyId);
+				System.out.println("Returned book: " + returnedBook.getBookId());
 				Integer nextSubId = mysqlConnection.getFirstWaitingSubId(conn, returnedBook.getBookId());
 				if (nextSubId != null) {
 					mysqlConnection.setBookCopyOrdered(conn, copyId, (int) nextSubId);
@@ -803,15 +803,20 @@ public class mysqlConnection {
 	}
 
 	public static Integer notifyNextOrder(Connection conn, int bookId) {
-		String query = "SELECT OrderID, SubID FROM orderrecords WHERE BookID = ? AND Status = 'Waiting' ORDER BY OrderID ASC LIMIT 1";
+		String query = "SELECT OrderID, BookID, SubID FROM orderrecords WHERE BookID = ? AND Status = 'Waiting' ORDER BY OrderID ASC LIMIT 1";
 		int orderId = 0;
 		int subId = 0;
 		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setInt(1, bookId);
 			ResultSet rs = stmt.executeQuery();
 			if (rs.next()) {
 				subId = rs.getInt("SubID");
 				orderId = rs.getInt("OrderID");
-				Book b = getBookById(conn, subId);
+				Book b = getBookById(conn, bookId);
+				// print book title
+				System.out.println("Order ID: " + orderId);
+				System.out.println("Sub ID: " + subId);
+				System.out.println("Book Title: " + b.getTitle());
 				sendOrderNotification(conn, orderId, subId, b.getTitle());
 				return subId;
 			}
