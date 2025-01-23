@@ -9,7 +9,7 @@ import java.util.Map;
 import javafx.application.Platform;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-
+import common.OrderRecord;
 import common.Notification;
 import common.BorrowingRecord;
 import common.DataLogs;
@@ -48,7 +48,12 @@ public class Logic {
     public static void fetchNotifications(String user, Object data, ConnectionToClient client) {
         int subId = (int) data;
         List<Notification> notifications = mysqlConnection.getNewNotifications(conn, subId);
-        MessageUtils.sendResponseToClient(user, "NewNotifications", notifications, client);
+        try {
+            MessageUtils.sendResponseToClient(user, "NewNotifications", notifications, client);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error serializing notifications: " + e.getMessage());
+        }
     }
 
     // Subscriber
@@ -149,7 +154,8 @@ public class Logic {
         LocalDate returnDate = LocalDate.parse(parts[2]);
         boolean success = mysqlConnection.returnBook(conn, subId, copyId, returnDate);
         if (success) {
-            mysqlConnection.sendOrderNotification(conn, copyId);
+            Book returnedBook = mysqlConnection.getBookByCopyId(conn, copyId);
+            mysqlConnection.notifyNextOrder(conn, returnedBook.getBookId());
         }
         MessageUtils.sendResponseToClient(user, "ReturnStatus", success ? "Book has been returned successfully" : "ERROR: Book does not match subscriber", client);
     }
@@ -179,10 +185,30 @@ public class Logic {
 
     public static void cancelOrder(String user, Object order, ConnectionToClient client) {
         int orderId = (int) order;
-        // print order id
-        System.out.println("Order ID: " + orderId);
-        boolean success = mysqlConnection.cancelOrder(conn, orderId);
-        MessageUtils.sendResponseToClient(user, "CancelStatus", success ? "Order has been cancelled" : "ERROR: Order not found", client);
+        String cancelStatus = "ERROR: Order not found";
+        OrderRecord cancelledOrder = mysqlConnection.cancelOrder(conn, orderId);
+        if (cancelledOrder != null) {
+            cancelStatus = "Order cancelled";
+            if (cancelledOrder.getStatus().equals("In-Progress")) {
+                Integer subId = mysqlConnection.notifyNextOrder(conn, cancelledOrder.getBookId());
+                
+                // print sub id
+                System.out.println("Next order SubID: " + subId);
+                int copyId = mysqlConnection.getCopyIdByCancelledOrder(conn, cancelledOrder.getSubId(), cancelledOrder.getBookId());
+
+                if (subId != null) {
+                    // print copy id
+                    System.out.println("Cancelled order: " + cancelledOrder);
+                    System.out.println("Copy ID: " + copyId);
+                    mysqlConnection.setBookCopyOrdered(conn, copyId, subId);
+                } else { 
+                    mysqlConnection.setBookCopyAvailable(conn, copyId);
+                }
+            }
+        } else {
+            System.out.println("Order not found");
+        }
+        MessageUtils.sendResponseToClient(user, "CancelStatus", cancelStatus, client);
     }
 
     public static void checkOrder(String user, Object data, ConnectionToClient client) {

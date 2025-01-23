@@ -88,7 +88,12 @@ public class ChatClient extends AbstractClient
                     Logic.parseLogin(data);
                     break;
                 case "NewNotifications":
-                    Logic.handleNotifications((List<Notification>) data);
+                    try {
+                        Logic.handleNotifications((List<Notification>) data);
+                    } catch (ClassCastException e) {
+                        e.printStackTrace();
+                        System.out.println("Error deserializing notifications: " + e.getMessage());
+                    }
                     break;
                 case "NewSubscriber":
                     Logic.newSubscriber((int) data);

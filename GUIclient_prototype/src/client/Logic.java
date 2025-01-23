@@ -13,11 +13,12 @@ import javafx.application.Platform;
 import common.Notification;
 import common.Subscriber;
 import common.SubscriberStatusReport;
+import gui.controllers.LandingWindowController;
+import gui.controllers.SubscriberMainFrameController;
 import common.BookCopy;
 import common.BorrowRecordDTO;
 import common.BorrowTimeReport;
 import common.Librarian;
-import common.MessageUtils;
 import common.OrderRecordDTO;
 import common.OrderResponse;
 
@@ -41,17 +42,23 @@ public class Logic {
         SharedController.logwc.setUserStatus(user);
     }
 
-    public static void fetchNotifications(int subId) {
-        try {
-            MessageUtils.sendMessage(ClientUI.cc, "subscriber", "fetchNotifications", subId);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    // public static void fetchNotifications(int subId) {
+    //     try {
+    //         MessageUtils.sendMessage(ClientUI.cc, "subscriber", "fetchNotifications", subId);
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //     }
+    // }
 
     // Handle received notifications
     public static void handleNotifications(List<Notification> notifications) {
+        for (Notification notification : notifications) {
+            System.out.println("Notification: " + notification.toString());
+            // You can also update the UI to display notifications
+        }
         if (notifications.isEmpty()) {
+            // print empty
+            System.out.println("No notifications found");
             return;
         }
 
@@ -218,33 +225,45 @@ public class Logic {
 
     public static void parseBookList(String user, List<Object> list) {
         // print book list
-        System.out.println("parseBookList method called");
-        
-        // Print the size of the list
-        System.out.println("List size: " + list.size());
+        System.out.println("parseBookList method called with list size: " + list.size());
 
         Platform.runLater(() -> {
             if (!list.isEmpty() && list.stream().allMatch(item -> item instanceof Object)) {
-                if (user.equals("user")) {
                     System.out.println("Loading table");
-                    if (SharedController.lwc != null) {
-                        System.out.println("SearchBookTable is initialized");
-                        SharedController.lwc.loadBookDetails(list);
-                    } else {
-                        System.out.println("SearchBookTable is null");
-                    }
-                } else if (user.equals("subscriber")) {
+                    if (user.equals("user")) {
+                        LandingWindowController controller = SharedController.lwc;
+                        System.out.println("Loading user table");
+                        if (controller != null) {
+                            System.out.println("LandingWindowController is initialized");
+                            controller.loadBookDetails(list);
+                        } else {
+                            System.out.println("LandingWindowController is null");
+                        }
+                    // } else if (user.equals("librarian")) {
+                    //     System.out.println("Loading librarian table");
+                    //     if (SharedController.lmfc != null) {
+                    //         System.out.println("LibrarianMainFrameController is initialized");
+                    //         SharedController.lmfc.loadBookDetails(list);
+                    //     } else {
+                    //         System.out.println("LibrarianMainFrameController is null");
+                    //     }
+                    } else if (user.equals("subscriber")) {
+                        SubscriberMainFrameController controller = SharedController.smfc;
                         System.out.println("Loading subscriber table");
-                        if (SharedController.smfc != null) {
+                        if (controller != null) {
                             System.out.println("SubscriberTable is initialized");
-                            SharedController.smfc.loadBookDetails(list);
+                            controller.loadBookDetails(list);
                         } else {
                             System.out.println("SubscriberTable is null");
                         }
-                }
+                    }
             } else {
                 System.out.println("Error in parsing book list");
-                SharedController.lwc.noBooksFound();
+                if (user.equals("user")) {
+                    SharedController.lwc.noBooksFound();
+                } else if (user.equals("subscriber")) {
+                    SharedController.smfc.noBooksFound();
+                }
             }
         });
     }

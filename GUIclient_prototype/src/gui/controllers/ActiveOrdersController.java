@@ -5,10 +5,12 @@ import common.DateUtils;
 import common.MessageUtils;
 import common.OrderRecordDTO;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.Alert;
@@ -25,6 +27,8 @@ public class ActiveOrdersController {
     @FXML private TableColumn<OrderRecordDTO, String> statusCol;
     @FXML private TableColumn<OrderRecordDTO, Timestamp> notificationStampCol;
     @FXML private TableColumn<OrderRecordDTO, Void> actionCol;
+
+    @FXML private Button closeButton;
 
     @FXML
     public void initialize() {
@@ -113,5 +117,12 @@ public class ActiveOrdersController {
 
         // Send a request to the server to cancel the order
         MessageUtils.sendMessage(ClientUI.cc, "user", "cancelOrder", order.getOrderId());
+    }
+
+    @FXML
+    private void handleClose(ActionEvent event) {
+        Stage stage = (Stage) closeButton.getScene().getWindow();
+        SubscriberMainFrameController.setActiveOrdersStage(null);
+        stage.close();
     }
 }

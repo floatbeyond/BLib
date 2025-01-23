@@ -16,7 +16,7 @@ public class NotificationScheduler {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                Logic.fetchNotifications(subId);
+                // Logic.fetchNotifications(subId);
             }
         }, 0, FETCH_INTERVAL);
     }

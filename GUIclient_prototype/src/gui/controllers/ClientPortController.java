@@ -61,9 +61,8 @@ public class ClientPortController  {
 					Scene scene = new Scene(root);
 					stage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
             			try {
-							// print message to console
-							System.out.println("clientui.chat: " + ClientUI.chat);
                 			if (ClientUI.chat != null) {
+								MessageUtils.sendMessage(ClientUI.cc, "user",  "disconnect" , null);
 								ClientUI.chat.quit();
 							}
 						} catch (Exception e) {

@@ -10,9 +10,9 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane fx:id="searchHome" prefHeight="462.0" prefWidth="777.0" styleClass="anchor-pane" stylesheets="@../css/ReaderCard.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.ReaderCardController">
+<AnchorPane fx:id="searchHome" prefHeight="462.0" prefWidth="832.0" styleClass="anchor-pane" stylesheets="@../css/ReaderCard.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.ReaderCardController">
    <children>
-      <Label fx:id="lblName" alignment="CENTER" layoutX="204.0" layoutY="14.0" prefHeight="48.0" prefWidth="369.0" />
+      <Label fx:id="lblName" alignment="CENTER" layoutX="232.0" layoutY="14.0" prefHeight="48.0" prefWidth="369.0" />
       <Label fx:id="lblID" layoutX="14.0" layoutY="77.0" prefHeight="30.0" prefWidth="237.0" text="ID:" />
       <Label fx:id="lblPhone" layoutX="14.0" layoutY="107.0" prefHeight="30.0" prefWidth="237.0" text="Phone:" />
       <Label fx:id="lblEmail" layoutX="14.0" layoutY="137.0" prefHeight="30.0" prefWidth="237.0" text="Email:" />
@@ -21,16 +21,16 @@
       <Label fx:id="lblJoined" layoutX="14.0" layoutY="227.0" prefHeight="30.0" prefWidth="237.0" text="Joined:" />
       <Label fx:id="lblExpires" layoutX="14.0" layoutY="257.0" prefHeight="30.0" prefWidth="237.0" text="Expires:" />
       <Label fx:id="lblBooksHeld" layoutX="14.0" layoutY="287.0" prefHeight="30.0" prefWidth="237.0" text="Borrow/Ordered:" />
-      <Separator layoutX="249.0" layoutY="64.0" orientation="VERTICAL" prefHeight="354.0" prefWidth="21.0" />
-      <Separator layoutY="62.0" prefHeight="3.0" prefWidth="777.0" />
-      <Separator layoutY="414.0" prefHeight="3.0" prefWidth="777.0" />
-      <TabPane fx:id="tabPane" layoutX="270.0" layoutY="71.0" prefHeight="341.0" prefWidth="503.0" tabClosingPolicy="UNAVAILABLE">
+      <Separator layoutX="275.0" layoutY="65.0" orientation="VERTICAL" prefHeight="343.0" prefWidth="21.0" />
+      <Separator layoutY="62.0" prefHeight="3.0" prefWidth="826.0" />
+      <Separator layoutY="411.0" prefHeight="3.0" prefWidth="826.0" />
+      <TabPane fx:id="tabPane" layoutX="296.0" layoutY="72.0" prefHeight="333.0" prefWidth="531.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
             <Tab fx:id="tabLogs" text="Logs">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <ListView fx:id="listViewLogs" prefHeight="283.0" prefWidth="503.0" />
+                        <ListView fx:id="listViewLogs" prefHeight="283.0" prefWidth="531.0" />
                      </children></AnchorPane>
               </content>
             </Tab>
@@ -38,13 +38,13 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView fx:id="tableViewBorrows" prefHeight="283.0" prefWidth="503.0">
+                        <TableView fx:id="tableViewBorrows" prefHeight="283.0" prefWidth="531.0">
                           <columns>
                             <TableColumn fx:id="colBookName" prefWidth="148.0" text="Book Name" />
                             <TableColumn fx:id="colBorrowDate" prefWidth="85.0" text="Borrow Date" />
                             <TableColumn fx:id="colExpectedReturnDate" prefWidth="127.0" text="Expected Return Date" />
                             <TableColumn fx:id="colStatus" prefWidth="78.0" text="Status" />
-                            <TableColumn fx:id="colExtend" prefWidth="60.0" text="Extend" />
+                            <TableColumn fx:id="colExtend" prefWidth="89.0" text="Extend" />
                           </columns>
                         </TableView>
                      </children></AnchorPane>
@@ -54,13 +54,13 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView fx:id="tableViewOrders" prefHeight="284.0" prefWidth="503.0">
+                        <TableView fx:id="tableViewOrders" prefHeight="284.0" prefWidth="531.0">
                           <columns>
                             <TableColumn fx:id="colOrderId" prefWidth="62.0" text="Order#" />
                             <TableColumn fx:id="colBookName2" prefWidth="148.0" text="Book Name" />
                             <TableColumn fx:id="colOrderDate" prefWidth="85.0" text="Order Date" />
                             <TableColumn fx:id="colStatus2" prefWidth="78.0" text="Status" />
-                            <TableColumn fx:id="colNotify" prefWidth="126.0" text="Notify" />
+                            <TableColumn fx:id="colNotify" prefWidth="153.0" text="Notify" />
                           </columns>
                         </TableView>
                      </children>
@@ -70,6 +70,7 @@
         </tabs>
       </TabPane>
       <Button fx:id="btnReactivate" layoutX="93.0" layoutY="328.0" mnemonicParsing="false" onAction="#handleReactivate" text="Re-activate" visible="false" />
-      <Label fx:id="messageLabel" alignment="CENTER" layoutX="35.0" layoutY="382.0" prefHeight="30.0" prefWidth="195.0" />
+      <Label fx:id="messageLabel" alignment="CENTER" layoutX="15.0" layoutY="375.0" prefHeight="30.0" prefWidth="260.0" />
+      <Button fx:id="buttonClose" layoutX="14.0" layoutY="424.0" mnemonicParsing="false" onAction="#handleClose" text="Close" />
    </children>
 </AnchorPane>
