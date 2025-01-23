@@ -21,6 +21,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -63,7 +64,7 @@ public class ReaderCardController {
     @FXML private TableColumn<BorrowRecordDTO, LocalDate> colBorrowDate;
     @FXML private TableColumn<BorrowRecordDTO, LocalDate> colExpectedReturnDate;
     @FXML private TableColumn<BorrowRecordDTO, String> colStatus;
-    @FXML private TableColumn<BorrowRecordDTO, Void> colExtend;
+    @FXML private TableColumn<BorrowRecordDTO, Void> colAction;
 
     @FXML private TableView<OrderRecordDTO> tableViewOrders;
     @FXML private TableColumn<OrderRecordDTO, Integer> colOrderId;
@@ -110,14 +111,23 @@ public class ReaderCardController {
         colExpectedReturnDate.setCellValueFactory(new PropertyValueFactory<>("expectedReturnDate"));
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
 
-        colExtend.setCellFactory(param -> new TableCell<BorrowRecordDTO, Void>() {
-            private final Button btn = new Button("Extend");
+        colAction.setCellFactory(param -> new TableCell<BorrowRecordDTO, Void>() {
+            private final Button btnExtend = new Button("Extend");
+            private final Button btnLost = new Button("Lost");
+            private final HBox hbox = new HBox(5); // 5 is the spacing between buttons
 
             {
-                btn.setOnAction(event -> {
+                btnExtend.setOnAction(event -> {
                     BorrowRecordDTO borrowRecord = getTableView().getItems().get(getIndex());
                     openExtendWindow(borrowRecord);
                 });
+
+                btnLost.setOnAction(event -> {
+                    BorrowRecordDTO borrowRecord = getTableView().getItems().get(getIndex());
+                    handleLost(borrowRecord);
+                });
+
+                hbox.getChildren().addAll(btnExtend, btnLost);
             }
 
             @Override
@@ -126,7 +136,7 @@ public class ReaderCardController {
                 if (empty) {
                     setGraphic(null);
                 } else {
-                    setGraphic(btn);
+                    setGraphic(hbox);
                 }
             }
         });
@@ -179,6 +189,10 @@ public class ReaderCardController {
         } else {
             displayMessage("Failed to reactivate subscriber");
         }
+    }
+
+    public void lostMessage(String status) {
+        displayMessage(status);
     }
 
     private void appendText(Label label, String text) {
@@ -263,6 +277,20 @@ public class ReaderCardController {
                 displayMessage("Failed to connect to server");
             }
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleLost(BorrowRecordDTO borrowRecord) {
+        try {
+            MessageUtils.sendMessage(ClientUI.cc, "librarian", "connect", null);
+            if (ClientUI.cc.getConnectionStatusFlag() == 1) {
+                MessageUtils.sendMessage(ClientUI.cc, "librarian", "markLost", borrowRecord.getBorrowId());
+            } else {
+                displayMessage("Failed to connect to server");
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

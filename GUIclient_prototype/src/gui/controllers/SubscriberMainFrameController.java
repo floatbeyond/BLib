@@ -503,10 +503,13 @@ public class SubscriberMainFrameController implements Initializable {
         try {
             MessageUtils.sendMessage(ClientUI.cc, "subscriber", "connect", null);
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
+                MessageUtils.sendMessage(ClientUI.cc, "subscriber", "sendSubscriber", s.getSub_id());
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/PersonalDetails.fxml"));
                 Pane root = loader.load();
                 
-                SharedController.setPersonalDetailsController(loader.getController());
+                PersonalDetailsController controller = loader.getController();
+                controller.setSubscriber(SharedController.getSubscriber());
+                SharedController.setPersonalDetailsController(controller);
                 Stage primaryStage = new Stage();
                 Scene scene = new Scene(root);			
                 primaryStage.setTitle("Personal Details");
@@ -524,7 +527,7 @@ public class SubscriberMainFrameController implements Initializable {
                 
                 ((Node)event.getSource()).getScene().getWindow().hide();
                 primaryStage.setResizable(false);
-                SharedController.pdc.loadSubscriber(s);
+                // SharedController.pdc.loadSubscriber(s);
                 primaryStage.show();
             } else {
                 displayMessage("No server connection");

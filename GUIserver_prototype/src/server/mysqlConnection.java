@@ -32,7 +32,25 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.sql.Timestamp;
 
+/**
+ * MySQL Database Connection Manager for the Library Management System.
+ * Handles all database operations including connections, queries, and data manipulation.
+ *
+ * @author G16
+ * @version 1.0
+ * @since 2024-01-23
+ */
+
 public class mysqlConnection {
+	/**
+     * Establishes connection to MySQL database with specified credentials.
+     *
+     * @param ip The IP address of the database server
+     * @param user MySQL username
+     * @param password MySQL password
+     * @return Connection object if successful, null if connection fails
+     * @throws SQLException if database access error occurs
+     */
     
 	public static Connection connectToDB(String ip, String user, String password) 
 	{		
@@ -94,12 +112,14 @@ public class mysqlConnection {
         }
    	}
 
-	/**
-	 * check if the user exists in the DB
-	 * get - id(PK)
-	 * return - true if exists in DB otherwise false
-	 */
-
+    /**
+     * Authenticates user and returns appropriate user object.
+     * Checks both librarian and subscriber tables.
+     *
+     * @param conn Active database connection
+     * @param userId User ID to authenticate
+     * @return Librarian or Subscriber object if found, null if not found
+     */
 	public static Object userLogin(Connection conn, int userId) {
 		// Check librarians first
 		String librarianQuery = "SELECT * FROM librarians WHERE LibID = ?";
@@ -147,7 +167,15 @@ public class mysqlConnection {
 		return null;
 	}
 
-	// Fetch notifications for a subscriber
+
+    /**
+     * Retrieves notifications for a subscriber.
+     * Returns all notifications sorted by timestamp in descending order.
+     *
+     * @param conn Active database connection
+     * @param subId Subscriber ID
+     * @return List of Notification objects
+     */
     public static List<Notification> getNotifications(Connection conn, int subId) {
         List<Notification> notifications = new ArrayList<>();
         String query = "SELECT * FROM notifications WHERE SubID = ? ORDER BY Timestamp DESC";
@@ -166,7 +194,16 @@ public class mysqlConnection {
         return notifications;
     }
 
-	// Fetch new notifications for a subscriber
+    /**
+     * Retrieves new notifications for a subscriber.
+     * Only returns notifications that haven't been fetched yet.
+     * Updates the LastFetched timestamp after retrieval.
+     *
+     * @param conn Active database connection
+     * @param subId Subscriber ID to fetch notifications for
+     * @return List of new Notification objects, empty list if none found
+     * @throws SQLException if database access error occurs
+     */
 	public static List<Notification> getNewNotifications(Connection conn, int subId) {
 		List<Notification> notifications = new ArrayList<>();
 		String query = "SELECT * FROM notifications WHERE SubID = ? AND Timestamp > (SELECT LastFetched FROM subscribers WHERE SubID = ?) ORDER BY Timestamp DESC";
@@ -188,7 +225,14 @@ public class mysqlConnection {
 		return notifications;
 	}
 
-	// Update the last fetched timestamp for a subscriber
+	/**
+     * Updates the last fetched timestamp for a subscriber.
+     * Used to track which notifications have been seen.
+     *
+     * @param conn Active database connection
+     * @param subId Subscriber ID to update
+     * @throws SQLException if database update fails
+     */
 	private static void updateLastFetched(Connection conn, int subId) {
 		String query = "UPDATE subscribers SET LastFetched = NOW() WHERE SubID = ?";
 		try (PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -199,8 +243,16 @@ public class mysqlConnection {
 		}
 	}
 
-	// Send a notification to a subscriber
-	public static boolean sendNotification(Connection conn, int subId, String message) {
+	/**
+     * Sends a notification to a subscriber.
+     * Creates a new notification record in the database.
+     *
+     * @param conn Active database connection
+     * @param subId Subscriber ID to notify
+     * @param message Notification message content
+     * @return true if notification sent successfully, false otherwise
+     */
+	public static boolean sendSubNotification(Connection conn, int subId, String message) {
 		String query = "INSERT INTO notifications (SubID, Message, Timestamp) VALUES (?, ?, ?)";
 		try (PreparedStatement stmt = conn.prepareStatement(query)) {
 			stmt.setInt(1, subId);
@@ -214,8 +266,39 @@ public class mysqlConnection {
 		}
 	}
 
+	/**
+	 * Sends a notification to a librarian.
+	 * Creates a new notification record in the database.
+	 *
+	 * @param conn Active database connection
+	 * @param libId Librarian ID to notify
+	 * @param message Notification message content
+	 * @return true if notification sent successfully, false otherwise
+	 */
+	public static boolean sendLibNotification(Connection conn, int libId, String message) {
+		String query = "INSERT INTO notifications (LibID, Message, Timestamp) VALUES (?, ?, ?)";
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setInt(1, libId);
+			stmt.setString(2, message);
+			stmt.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+			int rowsAffected = stmt.executeUpdate();
+			return rowsAffected > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 
-
+    /**
+     * Sends a notification for an order and updates its status.
+     * Updates order status to 'In-Progress' and notifies subscriber.
+     *
+     * @param conn Active database connection
+     * @param orderId ID of the order to update
+     * @param subId Subscriber ID to notify
+     * @param bookTitle Title of the book that's ready
+     * @return true if notification sent successfully, false otherwise
+     */
 	public static boolean sendOrderNotification(Connection conn, int orderId, int subId, String bookTitle) {
 		try {
 			// Step 1: Update the status of the order to 'In-Progress'
@@ -230,7 +313,7 @@ public class mysqlConnection {
             // Step 2: Insert a notification into the notifications table
             if (subId != 0) {
                 String message = "Your book '" + bookTitle + "' is ready for pick-up";
-                return sendNotification(conn, subId, message);
+                return sendSubNotification(conn, subId, message);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -238,7 +321,18 @@ public class mysqlConnection {
         return false;
 	}
 
-	// add new subscriber to the DB
+	/**
+	 * Subscriber Management Methods
+	 */
+
+	/**
+     * Adds a new subscriber to the database.
+     * Validates and inserts subscriber information.
+     *
+     * @param conn Active database connection
+     * @param s Subscriber object containing new subscriber details
+     * @return Generated subscriber ID if successful, -1 if duplicate, 0 if error
+     */
 	public static int addSubscriber(Connection conn, Subscriber s) {
 		String query = "INSERT INTO subscribers (Name, Status, PhoneNumber, Email, Joined, Expiration) VALUES (?, ?, ?, ?, ?, ?)";
 		try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
@@ -264,7 +358,13 @@ public class mysqlConnection {
 		return 0;
 	}
 	
-	// show to user all the subscribers in the DB
+	/**
+     * Retrieves all subscribers from the database.
+     * Returns list of all subscribers.
+     *
+     * @param conn Active database connection
+     * @return ArrayList of Subscriber objects
+     */
 	public static ArrayList<Subscriber> getSubscribers(Connection conn) {
 		ArrayList<Subscriber> subscribers = new ArrayList<>();
 		String query = "SELECT * FROM subscribers";
@@ -301,8 +401,14 @@ public class mysqlConnection {
 	
 	
 	/**
-     * update a specific phone number and email of a subscriber
-     * get - id(PK)
+	 * Updates a subscriber's contact information in the database.
+	 * 
+	 * @param conn Active database connection
+	 * @param subscriberId ID of subscriber to update
+	 * @param phoneNumber New phone number
+	 * @param email New email address
+	 * @return Updated Subscriber object if successful, error message String if failed
+	 * @throws SQLException if database update fails
 	 */
 	public static Object updateSubscriber(Connection conn, int subscriberId, String phoneNumber, String email) {
 		Subscriber s = findSubscriber(conn, subscriberId);
@@ -332,10 +438,13 @@ public class mysqlConnection {
 	
 
 	/**
-     * find a specific subscriber by id
-     * get - id(PK)
-     * return - true if exists in DB otherwise false
-     */
+	 * Finds a subscriber by their ID.
+	 * 
+	 * @param conn Active database connection
+	 * @param subscriberId ID of subscriber to find
+	 * @return Subscriber object if found, null if not found
+	 * @throws SQLException if database query fails
+	 */
 	public static Subscriber findSubscriber(Connection conn, int subscriberId) {
 		String query = "SELECT * FROM subscribers WHERE SubID = ?";
 		try (PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -363,6 +472,16 @@ public class mysqlConnection {
 		return null;
 	}
 
+	/**
+	 * Reactivates an In-Active subscriber account.
+	 * Sets status to 'Active' and extends expiration by 1 year.
+	 * 
+	 * @param conn Active database connection
+	 * @param subscriberId ID of subscriber to reactivate
+	 * @param libName Name of librarian performing reactivation
+	 * @return true if reactivation successful, false if failed
+	 * @throws SQLException if database update fails
+	 */
 	public static boolean reactivateSubscriber(Connection conn, int subscriberId, String libName) {
 		String query = "UPDATE subscribers SET Status = 'Active', Expiration = ? WHERE SubID = ?";
 		try (PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -376,6 +495,16 @@ public class mysqlConnection {
 			return false;
 		}
 	}
+
+	/**
+	 * Retrieves active borrow records for a subscriber.
+	 * Excludes returned and returned-late records.
+	 *
+	 * @param conn Active database connection
+	 * @param subId Subscriber ID to fetch records for
+	 * @return List of BorrowRecordDTO objects, empty list if none found
+	 * @throws SQLException if database query fails
+	 */
 
 	public static List<BorrowRecordDTO> getUserBorrows(Connection conn, int subId) {
 		List<BorrowRecordDTO> borrows = new ArrayList<>();
@@ -401,6 +530,17 @@ public class mysqlConnection {
 		}
 		return borrows;
 	}
+
+	/**
+	 * Retrieves order records for a user based on their role.
+	 * Excludes cancelled and completed records for subscribers.
+	 *
+	 * @param conn Active database connection
+	 * @param user User role ("librarian" or "subscriber")
+	 * @param subId Subscriber ID to fetch orders for
+	 * @return List of OrderRecordDTO objects, empty list if none found
+	 * @throws SQLException if database query fails
+	 */
 
 	public static List<OrderRecordDTO> getUserOrders(Connection conn, String user, int subId) {
 		List<OrderRecordDTO> orders = new ArrayList<>();
@@ -433,6 +573,22 @@ public class mysqlConnection {
 		}
 		return orders;
 	}
+
+	/**
+	 * Book Search and Management Methods
+	 */
+
+	/**
+	 * Searches for books based on specified criteria.
+	 * Returns a list of related Book, BookCopy, and BorrowingRecord objects.
+	 *
+	 * @param conn Active database connection
+	 * @param searchType Search field ('Title', 'Author', 'Genre')
+	 * @param searchText Text to search for
+	 * @return List of matching objects (Book, BookCopy, BorrowingRecord)
+	 * @throws SQLException if database query fails
+	 * @throws IllegalArgumentException if searchType is invalid
+	 */
 
 	public static List<Object> searchBooks(Connection conn, String searchType, String searchText) {
 		List<Object> results = new ArrayList<>();
@@ -502,6 +658,69 @@ public class mysqlConnection {
 		return results;
 	}
 
+	public static boolean markBookAsLost(Connection conn, int borrowId) {
+		String updateCopyQuery = "UPDATE bookcopies SET Status = 'Lost' " +
+							   "WHERE CopyID = (SELECT CopyID FROM borrowrecords WHERE BorrowID = ?)";
+		String updateBorrowQuery = "UPDATE borrowrecords SET Status = 'Lost' WHERE BorrowID = ?";
+		
+		try {
+			conn.setAutoCommit(false);
+			
+			try (PreparedStatement updateCopyStmt = conn.prepareStatement(updateCopyQuery);
+				 PreparedStatement updateBorrowStmt = conn.prepareStatement(updateBorrowQuery)) {
+				
+				updateCopyStmt.setInt(1, borrowId);
+				updateBorrowStmt.setInt(1, borrowId);
+				
+				int copyRows = updateCopyStmt.executeUpdate();
+				int borrowRows = updateBorrowStmt.executeUpdate();
+				
+				if (copyRows > 0 && borrowRows > 0) {
+					conn.commit();
+					return true;
+				} else {
+					conn.rollback();
+					return false;
+				}
+			}
+		} catch (SQLException e) {
+			try {
+				conn.rollback();
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			}
+			e.printStackTrace();
+			return false;
+		} finally {
+			try {
+				conn.setAutoCommit(true);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public static boolean reduceNumOfCopies(Connection conn, int bookId) {
+		String query = "UPDATE books SET NumOfCopies = NumOfCopies - 1 WHERE BookID = ?";
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setInt(1, bookId);
+			int affectedRows = stmt.executeUpdate();
+			return affectedRows > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	/**
+	 * Retrieves a book ID by its borrow ID.
+	 *
+	 * @param conn Active database connection
+	 * @param copyId ID of the book copy
+	 * @return book ID as int if found, -1 if not found
+	 * @throws SQLException if database query fails
+	 */
+
 	public static int getBookIdByBorrowId(Connection conn, int borrowId) {
 		String query = "SELECT BookID FROM bookcopies WHERE CopyID = (SELECT CopyID FROM borrowrecords WHERE BorrowID = ?)";
 		try (PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -515,6 +734,15 @@ public class mysqlConnection {
 		}
 		return -1;
 	}
+
+	/**
+	 * Retrieves a book by its copy ID.
+	 *
+	 * @param conn Active database connection
+	 * @param copyId ID of the book copy
+	 * @return Book object if found, null if not found
+	 * @throws SQLException if database query fails
+	 */
 
 	public static Book getBookByCopyId(Connection conn, int copyId) {
 		String query = "SELECT BookID FROM bookcopies WHERE CopyID = ?";
@@ -530,6 +758,15 @@ public class mysqlConnection {
 		}
 		return null;
 	}
+
+	/**
+	 * Retrieves a book by its ID.
+	 *
+	 * @param conn Active database connection
+	 * @param bookId ID of the book
+	 * @return Book object if found, null if not found
+	 * @throws SQLException if database query fails
+	 */
 	
 	public static Book getBookById(Connection conn, int bookId) {
 		String query = "SELECT * FROM books WHERE BookID = ?";
@@ -549,6 +786,17 @@ public class mysqlConnection {
 		}
 		return null;
 	}
+
+	/**
+	 * Retrieves the copy ID for a cancelled order.
+	 * Finds the first available copy of a book that was ordered by a specific subscriber.
+	 *
+	 * @param conn Active database connection
+	 * @param subId Subscriber ID who ordered the book
+	 * @param bookId ID of the book ordered
+	 * @return Copy ID if found, -1 if no matching copy exists
+	 * @throws SQLException if database query fails
+	 */
 
 	public static int getCopyIdByCancelledOrder(Connection conn, int subId, int bookId) {
 		String query = "SELECT CopyID FROM bookcopies WHERE BookID = ? AND Status = ? ORDER BY CopyID ASC LIMIT 1";
@@ -575,6 +823,16 @@ public class mysqlConnection {
 		return -1;
 	}
 
+	/**
+	 * Sets a book copy's status to Available.
+	 * Updates the copy status in the database.
+	 *
+	 * @param conn Active database connection
+	 * @param copyId ID of the copy to update
+	 * @return true if status updated successfully, false otherwise
+	 * @throws SQLException if database update fails
+	 */
+
 	public static boolean setBookCopyAvailable(Connection conn, int copyId) {
 		String query = "UPDATE bookcopies SET Status = 'Available' WHERE CopyID = ?";
 		try (PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -586,6 +844,17 @@ public class mysqlConnection {
 			return false;
 		}
 	}
+
+	/**
+	 * Sets a book copy's status to Ordered.
+	 * Updates the copy status with subscriber information.
+	 *
+	 * @param conn Active database connection
+	 * @param copyId ID of the copy to update
+	 * @param subId ID of the subscriber ordering the book
+	 * @return true if status updated successfully, false otherwise
+	 * @throws SQLException if database update fails
+	 */
 
 	public static boolean setBookCopyOrdered(Connection conn, int copyId, int subId) {
 		String query = "UPDATE bookcopies SET Status = ? WHERE CopyID = ?";
@@ -599,6 +868,15 @@ public class mysqlConnection {
 			return false;
 		}
 	}
+
+	/**
+	 * Finds a specific book copy by its ID.
+	 * 
+	 * @param conn Active database connection
+	 * @param bookCopyId ID of the copy to find
+	 * @return BookCopy object if found, null if not found
+	 * @throws SQLException if database query fails
+	 */
 
 	public static BookCopy findBookCopy(Connection conn, int bookCopyId) {
 		String query = "SELECT * FROM bookcopies WHERE CopyID = ?";
@@ -617,6 +895,16 @@ public class mysqlConnection {
 		}
 		return null;
 	}
+
+	/**
+	 * Creates a new borrowing record and updates copy status.
+	 * Automatically sets copy status to 'Borrowed'.
+	 * 
+	 * @param conn Active database connection
+	 * @param br BorrowingRecord object containing borrow details
+	 * @return true if record created successfully, false otherwise
+	 * @throws SQLException if database insert fails
+	 */
 
 	public static boolean addBorrowingRecord(Connection conn, BorrowingRecord br) {
 		String query = "INSERT INTO borrowrecords (SubID, CopyID, BorrowDate, ExpectedReturnDate, Status) VALUES (?, ?, ?, ?, ?)";
@@ -646,6 +934,18 @@ public class mysqlConnection {
 		return false;
 	}
 
+	/**
+	 * Extends a book borrowing period.
+	 * Uses stored procedure to handle extension logic.
+	 * 
+	 * @param conn Active database connection
+	 * @param subId Subscriber ID
+	 * @param borrowId Borrow record ID
+	 * @param extensionDate New expected return date
+	 * @return true if extension successful, false otherwise
+	 * @throws SQLException if procedure call fails
+	 */
+
 	public static boolean extendBorrow(Connection conn, int subId, int borrowId, LocalDate extensionDate) {
 		String query = "CALL handle_book_extension(?, ?, ?)";
 		try (CallableStatement stmt = conn.prepareCall(query)) {
@@ -660,6 +960,20 @@ public class mysqlConnection {
 		}
 	}
 
+	/**
+	 * Logging and Tracking Methods
+	 */
+
+	/**
+	 * Logs librarian actions in the system.
+	 * Records actions with timestamp for audit purposes.
+	 *
+	 * @param conn Active database connection
+	 * @param subId Subscriber ID related to the action
+	 * @param action Description of the action performed
+	 * @return true if log entry created successfully, false if failed
+	 */
+
 	public static boolean logLibrarianActions(Connection conn, int subId, String action) {
 		String query = "INSERT INTO datalogs (SubID, Action, Timestamp) VALUES (?, ?, ?)";
 		try (PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -673,6 +987,17 @@ public class mysqlConnection {
 			return false;
 		}
 	}
+
+	/**
+	 * Logs book extension actions by librarians.
+	 * Records book extension with librarian name and book details.
+	 *
+	 * @param conn Active database connection
+	 * @param subId Subscriber ID whose book was extended
+	 * @param bookId ID of the extended book
+	 * @param libName Name of librarian performing extension
+	 * @return true if log entry created successfully, false if failed
+	 */
 
 	public static boolean logExtensionByLibrarian(Connection conn, int subId, int bookId, String libName) {
 		String bookTitleQuery = "SELECT Title FROM books WHERE BookID = ?";
@@ -694,6 +1019,17 @@ public class mysqlConnection {
 			return false;
 		}
 	}
+
+	/**
+	 * Processes book return and updates related records.
+	 * Updates borrow status and handles waiting list if applicable.
+	 *
+	 * @param conn Active database connection
+	 * @param subId Subscriber ID returning the book
+	 * @param copyId Copy ID being returned
+	 * @param returnDate Date of return
+	 * @return true if return processed successfully, false if failed
+	 */
 
 	public static boolean returnBook(Connection conn, int subId, int copyId, LocalDate returnDate) {
 		String selectQuery = "SELECT ExpectedReturnDate FROM borrowrecords WHERE SubID = ? AND CopyID = ? AND (Status = 'Borrowed' OR Status = 'Late')";
@@ -746,6 +1082,16 @@ public class mysqlConnection {
 		}
 	}
 
+	/**
+     * Creates a new order record in the database.
+     * Sets initial status to 'Waiting'.
+     *
+     * @param conn Active database connection
+     * @param bookId ID of the book being ordered
+     * @param subId Subscriber ID placing the order
+     * @return true if order created successfully, false if failed
+     * @throws SQLException if database insert fails
+     */
     public static boolean addOrderRecord(Connection conn, int bookId, int subId) {
         String query = "INSERT INTO orderrecords (BookID, SubID, OrderDate, Status) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -761,6 +1107,15 @@ public class mysqlConnection {
         }
     }
 
+	/**
+     * Gets the ID of the first subscriber waiting for a book.
+     * Used for processing the waiting list when a book becomes available.
+     *
+     * @param conn Active database connection
+     * @param bookId ID of the book to check
+     * @return Subscriber ID if found, null if no waiting subscribers
+     * @throws SQLException if database query fails
+     */
 	public static Integer getFirstWaitingSubId(Connection conn, int bookId) {
 		String query = "SELECT SubID FROM orderrecords WHERE BookID = ? AND Status = 'Waiting'";
 		try (PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -775,6 +1130,16 @@ public class mysqlConnection {
 		return null;
 	}
 
+	/**
+     * Checks if a specific order exists for a subscriber.
+     * Validates status is either 'Waiting' or 'In-Progress'.
+     *
+     * @param conn Active database connection
+     * @param bookId ID of the book to check
+     * @param subId Subscriber ID to check
+     * @return true if active order exists, false otherwise
+     * @throws SQLException if database query fails
+     */
     public static boolean isOrderExists(Connection conn, int bookId, int subId) {
         String query = "SELECT 1 FROM orderrecords WHERE SubID = ? AND BookID = ? AND Status IN (?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -792,6 +1157,15 @@ public class mysqlConnection {
         return false;
     }
 
+	/**
+     * Checks if any active orders exist for a book.
+     * Verifies if book has any 'Waiting' or 'In-Progress' orders.
+     *
+     * @param conn Active database connection
+     * @param bookId ID of the book to check
+     * @return true if any active orders exist, false otherwise
+     * @throws SQLException if database query fails
+     */
 	public static boolean anyOrderExists(Connection conn, int bookId) {
         String query = "SELECT 1 FROM orderrecords WHERE BookID = ? AND Status IN (?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -808,6 +1182,15 @@ public class mysqlConnection {
         return false;
     }
 
+	/**
+     * Checks if orders for a book have reached capacity limit.
+     * Compares number of active orders against available copies.
+     *
+     * @param conn Active database connection
+     * @param bookId ID of the book to check
+     * @return true if orders equal or exceed copies, false otherwise
+     * @throws SQLException if database query fails
+     */
 	public static boolean areOrdersCapped(Connection conn, int bookId) {
 		String copiesQuery = "SELECT NumOfCopies FROM books WHERE BookID = ?";
 		String ordersCountQuery = "SELECT COUNT(*) AS orderCount FROM orderrecords WHERE BookID = ? AND Status IN ('Waiting', 'In-Progress')";
@@ -836,6 +1219,15 @@ public class mysqlConnection {
 		return false;
 	}
 
+	/**
+     * Cancels an existing order and updates related records.
+     * Changes order status to 'Cancelled'.
+     *
+     * @param conn Active database connection
+     * @param orderId ID of the order to cancel
+     * @return OrderRecord object if found and cancelled, null if not found
+     * @throws SQLException if database update fails
+     */
 	public static OrderRecord cancelOrder(Connection conn, int orderId) {
 		OrderRecord order = null;
 		int bookId = 0;
@@ -867,6 +1259,16 @@ public class mysqlConnection {
 		}
 	}
 
+	/**
+     * Notifies the next subscriber in the waiting list for a book.
+     * Sends notification and updates order status.
+     *
+     * @param conn Active database connection
+     * @param bookId ID of the book to notify
+     * @return Subscriber ID if notification sent, null if no waiting subscribers
+     * @throws SQLException if database query fails
+     */
+
 	public static Integer notifyNextOrder(Connection conn, int bookId) {
 		String query = "SELECT OrderID, BookID, SubID FROM orderrecords WHERE BookID = ? AND Status = 'Waiting' ORDER BY OrderID ASC LIMIT 1";
 		int orderId = 0;
@@ -891,7 +1293,16 @@ public class mysqlConnection {
 		return null;
 	}
 
-	// show to user all the logs in the DB
+	/**
+     * Retrieves all data logs for a specific subscriber.
+     * Returns list of logs sorted by timestamp.
+     *
+     * @param conn Active database connection
+     * @param subscriberId Subscriber ID to fetch logs for
+     * @return ArrayList of DataLogs objects
+     * @throws SQLException if database query fails
+     */
+
 	public static ArrayList<DataLogs> getDataLogs(Connection conn, int subscriberId) {
 		ArrayList<DataLogs> dataLogs = new ArrayList<>();
 		String query = "SELECT LogID, SubID, Action, CONVERT_TZ(Timestamp, '+00:00', '+03:00') AS Timestamp\n" + //
@@ -916,8 +1327,15 @@ public class mysqlConnection {
 		return dataLogs;
 	}
 
-	// Reports
-
+    /**
+     * Fetches borrow times report for a specific month.
+     * Calculates average borrow and late days for each book.
+     *
+     * @param conn Active database connection
+     * @param now Current date to determine the month
+     * @return List of BorrowTimeReport objects
+     * @throws SQLException if database query fails
+     */
 	public static List<BorrowTimeReport> fetchBorrowTimesReport(Connection conn, LocalDate now) {
         List<BorrowTimeReport> report = new ArrayList<>();
         String query = "SELECT b.Title, br.Status, br.BorrowDate, br.ExpectedReturnDate, br.ActualReturnDate " +
@@ -987,6 +1405,16 @@ public class mysqlConnection {
 
         return report;
     }
+
+	/**
+     * Fetches subscriber status report for a specific month.
+     * Counts subscribers by status for the given month.
+     *
+     * @param conn Active database connection
+     * @param now Current date to determine the month
+     * @return List of SubscriberStatusReport objects
+     * @throws SQLException if database query fails
+     */
 
     public static List<SubscriberStatusReport> fetchSubscriberStatusReport(Connection conn, LocalDate now) {
         List<SubscriberStatusReport> report = new ArrayList<>();

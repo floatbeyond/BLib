@@ -11,7 +11,7 @@
 .button {
     -fx-background-color: #0288d1; /* Blue button background */
     -fx-text-fill: white; /* White text color */
-    -fx-font-size: 14px;
+    -fx-font-size: 12px;
     -fx-font-weight: bold;
     -fx-background-radius: 5;
 }

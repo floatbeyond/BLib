@@ -133,6 +133,9 @@ public class ChatClient extends AbstractClient
                 case "ReturnStatus":
                     Logic.returnBookStatus((String) data);
                     break;
+                case "LostStatus": 
+                    Logic.lostBookStatus((String) data);
+                    break;
                 case "ExtendStatus":
                     Logic.extendBorrowStatus((String) data);
                     break;

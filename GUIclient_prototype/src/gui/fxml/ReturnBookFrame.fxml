@@ -8,15 +8,15 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="318.0" prefWidth="406.0" styleClass="anchor-pane" stylesheets="@../css/ReturnBookFrame.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.ReturnBookController">
    <children>
-      <Button fx:id="btnback" layoutX="27.0" layoutY="259.0" mnemonicParsing="false" onAction="#goBackBtn" prefHeight="30.0" prefWidth="49.0" text="Back" />
-      <Button fx:id="btnscanbook" layoutX="346.0" layoutY="14.0" mnemonicParsing="false" onAction="#showScanWindow" prefHeight="40.0" prefWidth="49.0" text="Scan" />
+      <Button fx:id="btnback" layoutX="27.0" layoutY="259.0" mnemonicParsing="false" onAction="#goBackBtn" prefHeight="30.0" prefWidth="59.0" text="Back" />
+      <Button fx:id="btnscanbook" layoutX="336.0" layoutY="14.0" mnemonicParsing="false" onAction="#showScanWindow" prefHeight="40.0" prefWidth="59.0" text="Scan" />
       <TextField fx:id="txtID" layoutX="160.0" layoutY="63.0" prefHeight="32.0" prefWidth="194.0" />
       <Label layoutX="51.0" layoutY="69.0" text="Subscriber ID:" />
       <Label layoutX="57.0" layoutY="163.0" text="Return Date" />
       <DatePicker fx:id="actualReturnDate" editable="false" layoutX="160.0" layoutY="157.0" />
       
-      <Label fx:id="messageLabel" layoutX="76.0" layoutY="197.0" prefHeight="48.0" prefWidth="280.0" />
-      <Button fx:id="btnreturnorfreeze" layoutX="272.0" layoutY="259.0" mnemonicParsing="false" onAction="#handleReturnDateSubmit" prefHeight="30.0" prefWidth="112.0" text="Submit" />
+      <Label fx:id="messageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="63.0" layoutY="197.0" prefHeight="48.0" prefWidth="293.0" />
+      <Button fx:id="btnreturnorfreeze" layoutX="295.0" layoutY="259.0" mnemonicParsing="false" onAction="#handleReturnDateSubmit" prefHeight="30.0" prefWidth="89.0" text="Submit" />
       <TextField fx:id="txtCopyId" layoutX="160.0" layoutY="109.0" prefHeight="32.0" prefWidth="194.0" />
       <Label layoutX="51.0" layoutY="115.0" text="Book Copy ID:" />
    </children>

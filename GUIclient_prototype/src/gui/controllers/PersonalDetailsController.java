@@ -45,19 +45,8 @@ public class PersonalDetailsController {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-	
-	public void loadSubscriber(Subscriber subscriber) {
-		this.s = subscriber;
-		this.txtID.setText(String.valueOf(s.getSub_id()));
-		this.txtID.setEditable(false);
-		this.txtName.setText(s.getSub_name());
-		this.txtPNumber.setText(s.getSub_phone_num());
-		this.txtEmail.setText(s.getSub_email());
-		this.txtJoinDate.setText(s.getSub_joined().format(DATE_FORMATTER));
-		this.txtExDate.setText(s.getSub_expiration().format(DATE_FORMATTER));
-		this.txtNumBookBorrowed.setText(String.valueOf(s.getCurrentlyBorrowed()));
-		this.txtNumBookOrdered.setText(String.valueOf(s.getCurrentlyOrdered()));
-
+	@FXML
+	private void initialize() {
 		// Set Uneditable
 		this.txtID.setEditable(false);
 		this.txtName.setEditable(false);
@@ -67,29 +56,22 @@ public class PersonalDetailsController {
 		this.txtNumBookOrdered.setEditable(false);
     }
 
-    public void goBackBtn(ActionEvent event) throws Exception {
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/SubscriberMainFrame.fxml"));
-		Pane root = loader.load();
-		
-		Stage primaryStage = new Stage();
-		Scene scene = new Scene(root);			
-		primaryStage.setTitle("Subscriber Main Frame");
-		primaryStage.setScene(scene);
-		primaryStage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
-            try {
-                if (ClientUI.chat != null) {
-                    MessageUtils.sendMessage(ClientUI.cc, "subscriber", "disconncet", null);
-                    ClientUI.chat.quit();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-		
-		((Node)event.getSource()).getScene().getWindow().hide();
-		primaryStage.setResizable(false);
-		primaryStage.show();
-		
+	public void setSubscriber(Subscriber subscriber) {
+        this.s = subscriber;
+        populateFields();
+    }
+
+	private void populateFields() {
+        if (s != null) {
+            this.txtID.setText(String.valueOf(s.getSub_id()));
+            this.txtName.setText(s.getSub_name());
+            this.txtPNumber.setText(s.getSub_phone_num());
+            this.txtEmail.setText(s.getSub_email());
+            this.txtJoinDate.setText(s.getSub_joined().format(DATE_FORMATTER));
+            this.txtExDate.setText(s.getSub_expiration().format(DATE_FORMATTER));
+            this.txtNumBookBorrowed.setText(String.valueOf(s.getCurrentlyBorrowed()));
+            this.txtNumBookOrdered.setText(String.valueOf(s.getCurrentlyOrdered()));
+        }
     }
     
     public void getSaveBtn(ActionEvent event) throws Exception {
@@ -141,6 +123,31 @@ public class PersonalDetailsController {
 	public void updateSubscriberStatus(String status) {
 		displayMessage(status);
 	}
+
+	public void goBackBtn(ActionEvent event) throws Exception {
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/SubscriberMainFrame.fxml"));
+		Pane root = loader.load();
+		
+		Stage primaryStage = new Stage();
+		Scene scene = new Scene(root);			
+		primaryStage.setTitle("Subscriber Main Frame");
+		primaryStage.setScene(scene);
+		primaryStage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
+            try {
+                if (ClientUI.chat != null) {
+                    MessageUtils.sendMessage(ClientUI.cc, "subscriber", "disconncet", null);
+                    ClientUI.chat.quit();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+		
+		((Node)event.getSource()).getScene().getWindow().hide();
+		primaryStage.setResizable(false);
+		primaryStage.show();
+		
+    }
 
     public void displayMessage(String message) {
         messageLabel.setText(message);

@@ -6,6 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.mysql.cj.protocol.Message;
+
 import javafx.application.Platform;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -160,6 +162,20 @@ public class Logic {
         MessageUtils.sendResponseToClient(user, "ReturnStatus", success ? "Book has been returned successfully" : "ERROR: Book does not match subscriber", client);
     }
 
+    public static void lostBook(String user, Object data, ConnectionToClient client) {
+        int borrowId = (int) data;
+        boolean success = mysqlConnection.markBookAsLost(conn, borrowId);
+        if (success) {
+            int bookId = mysqlConnection.getBookIdByBorrowId(conn, borrowId);
+            if (bookId != -1) {
+                success = mysqlConnection.reduceNumOfCopies(conn, bookId);
+            } else {
+                success = false;
+            }
+        }
+        MessageUtils.sendResponseToClient(user, "LostStatus", success ? "Book declared lost" : "ERROR: Couldn't find matching record", client);
+    }
+
     public static void newOrder(String user, Object newOrder, ConnectionToClient client) {
         String[] parts = ((String) newOrder).split(":", 2);
         int bookId = Integer.parseInt(parts[0]);
@@ -228,6 +244,11 @@ public class Logic {
             success = mysqlConnection.extendBorrow(conn, subId, borrowId, extensionDate);
             if (success == true && user.equals("librarian")) {
                 mysqlConnection.logExtensionByLibrarian(conn, subId, bookId, libName);
+            } else if (success == true && user.equals("subscriber")) {
+                for (int i = 1; i < 6; i++) {
+                    String msg = subId + " has extended the borrowing of book " + bookId + " to " + extensionDate;
+                    mysqlConnection.sendLibNotification(conn, i, msg);
+                }
             }
         }
         MessageUtils.sendResponseToClient(user, "ExtendStatus" , success ? "Borrowing extended" : "Cant extend, someone ordered the book", client);

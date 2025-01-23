@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javafx.application.Platform;
 
+import common.MessageUtils;
 import common.Notification;
 import common.Subscriber;
 import common.SubscriberStatusReport;
@@ -42,13 +43,13 @@ public class Logic {
         SharedController.logwc.setUserStatus(user);
     }
 
-    // public static void fetchNotifications(int subId) {
-    //     try {
-    //         MessageUtils.sendMessage(ClientUI.cc, "subscriber", "fetchNotifications", subId);
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //     }
-    // }
+    public static void fetchNotifications(int subId) {
+        try {
+            MessageUtils.sendMessage(ClientUI.cc, "subscriber", "fetchNotifications", subId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     // Handle received notifications
     public static void handleNotifications(List<Notification> notifications) {
@@ -197,6 +198,12 @@ public class Logic {
     public static void extendBorrowStatus(String status) {
         Platform.runLater(() -> {
             SharedController.ewc.successfulExtend(status);
+        });
+    }
+
+    public static void lostBookStatus(String status) {
+        Platform.runLater(() -> {
+            SharedController.rcc.lostMessage(status);
         });
     }
 

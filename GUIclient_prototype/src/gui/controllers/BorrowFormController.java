@@ -55,16 +55,18 @@ public class BorrowFormController implements ItemLoader {
         txtID.setEditable(false);
         txtCopyId.setEditable(false);
         dpReturnDate.setEditable(false);
-        dpReturnDate.setDayCellFactory(picker -> new DateCell() {
-            @Override
-            public void updateItem(LocalDate date, boolean empty) {
-                super.updateItem(date, empty);
-                if (date.isBefore(currentDate.plusDays(1)) || date.isAfter(currentDate.plusDays(14))) {
-                    setDisable(true);
-                    setStyle("-fx-background-color: #ffc0cb;");
-                }
+        dpReturnDate.setDayCellFactory(picker -> new BorrowDateCell());
+    }
+
+    private class BorrowDateCell extends DateCell {
+        @Override
+        public void updateItem(LocalDate date, boolean empty) {
+            super.updateItem(date, empty);
+            if (date.isBefore(currentDate.plusDays(1)) || date.isAfter(currentDate.plusDays(14))) {
+                setDisable(true);
+                setStyle("-fx-background-color: #ffc0cb;");
             }
-        });
+        }
     }
 
     @FXML
