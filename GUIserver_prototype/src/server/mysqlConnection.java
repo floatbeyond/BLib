@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import common.Subscriber;
 import common.SubscriberStatusReport;
@@ -27,23 +28,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.sql.Timestamp;
 
 public class mysqlConnection {
-	private static final String URL = "jdbc:mysql://localhost/blib?"
-	+ "autoReconnect=true"
-	+ "&useUnicode=true"
-	+ "&characterEncoding=UTF-8"
-	+ "&useJDBCCompliantTimezoneShift=true"
-	+ "&useLegacyDatetimeCode=false"
-	+ "&serverTimezone=IST"
-	+ "&connectTimeout=30000"
-	+ "&socketTimeout=30000"
-	+ "&maxReconnects=10"
-	+ "&initialTimeout=2"
-	+ "&testOnBorrow=true"
-	+ "&validationQuery=SELECT 1";
     
 	public static Connection connectToDB(String ip, String user, String password) 
 	{		
@@ -60,7 +49,7 @@ public class mysqlConnection {
 											+ "&characterEncoding=UTF-8"
 											+ "&useJDBCCompliantTimezoneShift=true"
 											+ "&useLegacyDatetimeCode=false"
-											+ "&serverTimezone=IST"
+											+ "&serverTimezone=Asia/Jerusalem"
 											+ "&connectTimeout=30000"
 											+ "&socketTimeout=30000"
 											+ "&maxReconnects=10"
@@ -69,6 +58,31 @@ public class mysqlConnection {
 											+ "&validationQuery=SELECT 1", ip);
             Connection conn = DriverManager.getConnection(url, user, password);
 			InstanceManager.setDbConnection(conn);
+			// Log timezone information
+			System.out.println("JVM Timezone: " + TimeZone.getDefault().getID());
+			System.out.println("Database URL Timezone: IST");
+			// Verify database timezone settings
+			try (Statement stmt = conn.createStatement()) {
+				ResultSet rs = stmt.executeQuery(
+					"SELECT " +
+					"NOW(), " +  // Current timestamp
+					"CURRENT_TIMESTAMP(), " +  // Server timestamp
+					"UTC_TIMESTAMP(), " +  // UTC timestamp
+					"UNIX_TIMESTAMP(), " +  // Unix timestamp
+					"@@system_time_zone"
+				);
+				if (rs.next()) {
+					System.out.println("NOW(): " + rs.getTimestamp(1));
+					System.out.println("CURRENT_TIMESTAMP: " + rs.getTimestamp(2));
+					System.out.println("UTC_TIMESTAMP: " + rs.getTimestamp(3));
+					System.out.println("UNIX_TIMESTAMP: " + rs.getLong(4));
+					System.out.println("System TZ: " + rs.getString(5));
+					
+					// Compare with Java time
+					System.out.println("Java Current Time: " + new Timestamp(System.currentTimeMillis()));
+					System.out.println("Java LocalDateTime: " + LocalDateTime.now());
+				}
+			}
             System.out.println("SQL connection succeed");
             return conn;
      	} catch (SQLException ex) {
