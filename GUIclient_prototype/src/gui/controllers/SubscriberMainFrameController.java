@@ -1,7 +1,6 @@
 package gui.controllers;
 
 import client.ClientUI;
-import client.NotificationScheduler;
 import client.SharedController;
 import common.Book;
 import common.BookCopy;
@@ -79,6 +78,8 @@ public class SubscriberMainFrameController implements Initializable {
 
     @FXML private Label messageLabel;
 
+    private static Stage activeOrdersStage = null;
+    private static Stage activeBorrowsStage = null; // Add implementation
     private Map<Integer, Stage> openDialogs = new HashMap<>(); // Track open dialogs
     private Subscriber s;
     private List<OrderRecordDTO> orderRecords = new ArrayList<>();
@@ -157,6 +158,10 @@ public class SubscriberMainFrameController implements Initializable {
         loadUserOrders();
     }
 
+    public static void setActiveOrdersStage(Stage stage) {
+        activeOrdersStage = stage;
+    }
+
     private void loadUserOrders() {
         List<String> orderedBookTitles = new ArrayList<>();
         for (OrderRecordDTO order : orderRecords) {
@@ -192,6 +197,7 @@ public class SubscriberMainFrameController implements Initializable {
             adjustMenuButtonWidth(newVal);
         });
     }
+
     private void setupSearch() {
         searchButton.setOnAction(e -> handleSearchAction(e));
         searchField.setOnKeyPressed(e -> {
@@ -402,7 +408,14 @@ public class SubscriberMainFrameController implements Initializable {
         }        
     }
 
+    public void noBooksFound() {
+        bookTable.setVisible(false);
+        displayMessage("No books found");
+    }
+
     public void logoutBtn(ActionEvent event) throws Exception {
+        closeActiveOrders(); // Add this line
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/LandingWindow.fxml"));
         Pane root = loader.load();
         // NotificationScheduler.stop();
@@ -510,6 +523,10 @@ public class SubscriberMainFrameController implements Initializable {
                         displayMessage("No active orders");
                         return;
                     }
+                    if (activeOrdersStage != null && activeOrdersStage.isShowing()) {
+                        activeOrdersStage.toFront();
+                        return;
+                    }        
 
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/ActiveOrders.fxml"));
                     AnchorPane pane = loader.load();
@@ -518,20 +535,25 @@ public class SubscriberMainFrameController implements Initializable {
                     SharedController.setActiveOrdersController(controller);
                     controller.setOrdersData(FXCollections.observableArrayList(orderRecords));
 
-
-                    Stage view = new Stage();
+                    activeOrdersStage = new Stage();
                     Scene scene = new Scene(pane);
-                    view.setScene(scene);
-                    view.setTitle("Orders");
-                    view.setResizable(false);
-
-                    view.show();
+                    activeOrdersStage.setScene(scene);
+                    activeOrdersStage.setTitle("Orders");
+                    activeOrdersStage.setResizable(false);
+                    activeOrdersStage.show();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             });
         } else {
             displayMessage("No server connection");
+        }
+    }
+
+    private void closeActiveOrders() {
+        if (activeOrdersStage != null && activeOrdersStage.isShowing()) {
+            activeOrdersStage.close();
+            activeOrdersStage = null;
         }
     }
     

@@ -18,6 +18,7 @@ import common.DateUtils;
 import common.OrderRecordDTO;
 import common.DataLogs;
 import common.Notification;
+import common.OrderRecord;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -513,16 +514,37 @@ public class mysqlConnection {
 		String query = "SELECT CopyID FROM bookcopies WHERE BookID = ? AND Status = ? ORDER BY CopyID ASC LIMIT 1";
 		try (PreparedStatement stmt = conn.prepareStatement(query)) {
 			stmt.setInt(1, bookId);
-			stmt.setString(2, "Ordered by " + subId);
+			String status = "Ordered by " + subId;
+			stmt.setString(2, status);
+
+			// Debug prints
+			System.out.println("Searching for:");
+			System.out.println("BookID: " + bookId);
+			System.out.println("Status: " + status);
+
 			ResultSet rs = stmt.executeQuery();
 			if (rs.next()) {
 				int copyId = rs.getInt("CopyID");
 				return copyId;
-			}
+			} else {
+            System.out.println("No matching copy found");
+        	}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return -1;
+	}
+
+	public static boolean setBookCopyAvailable(Connection conn, int copyId) {
+		String query = "UPDATE bookcopies SET Status = 'Available' WHERE CopyID = ?";
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setInt(1, copyId);
+			int affectedRows = stmt.executeUpdate();
+			return affectedRows > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	public static boolean setBookCopyOrdered(Connection conn, int copyId, int subId) {
@@ -778,27 +800,34 @@ public class mysqlConnection {
 		return false;
 	}
 
-	public static int cancelOrder(Connection conn, int orderId) {
+	public static OrderRecord cancelOrder(Connection conn, int orderId) {
+		OrderRecord order = null;
 		int bookId = 0;
-		String checkStatusQuery = "SELECT BookID, Status FROM orderrecords WHERE OrderID = ?";
+		String checkStatusQuery = "SELECT * FROM orderrecords WHERE OrderID = ?";
 		String updateQuery = "UPDATE orderrecords SET Status = 'Cancelled' WHERE OrderID = ?";
 		try (PreparedStatement checkStatusStmt = conn.prepareStatement(checkStatusQuery);
 		PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
 			checkStatusStmt.setInt(1, orderId);
 			ResultSet rs = checkStatusStmt.executeQuery();
 			if (rs.next()) {
+				int returned_orderId = rs.getInt("OrderID");
 				bookId = rs.getInt("BookID");
-				String currentStatus = rs.getString("Status");
-				if ("Cancelled".equals(currentStatus)) {
-					return 0; // Already cancelled
-				}
+				int subId = rs.getInt("SubID");
+				LocalDate orderDate = rs.getDate("OrderDate").toLocalDate();
+				String status = rs.getString("Status");
+				LocalDate notificationStamp = null;
+				java.sql.Date notifDate = rs.getDate("NotificationTimestamp");
+				if (notifDate != null) {
+					notificationStamp = notifDate.toLocalDate();
+				}				
+				order = new OrderRecord(returned_orderId, bookId, subId, orderDate, status, notificationStamp);
 			}
 			updateStmt.setInt(1, orderId);
 			updateStmt.executeUpdate();
-			return bookId;
+			return order;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return -1;
+			return null;
 		}
 	}
 

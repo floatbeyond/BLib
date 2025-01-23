@@ -32,6 +32,7 @@ public class LibrarianMainFrameController {
     @FXML
     public void initialize() {
         librarian = SharedController.getLibrarian();
+        SharedController.setLibrarianMainFrameController(this);
     }
 
     @FXML
@@ -245,6 +246,9 @@ public class LibrarianMainFrameController {
     @FXML
     private void goLogOut(ActionEvent event) {
         try {
+            if (SharedController.getSubscribersTableController() != null) {
+                SharedController.getSubscribersTableController().closeAllReaderCards();
+            } else System.out.println("SubscribersTableController is null");
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/LandingWindow.fxml"));
             Pane root = loader.load();
             

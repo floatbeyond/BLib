@@ -10,6 +10,7 @@ import client.ClientUI;
 import client.SharedController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ListView;
@@ -32,6 +33,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ReaderCardController {
 
@@ -47,6 +49,7 @@ public class ReaderCardController {
 
     @FXML private Label messageLabel;
     @FXML private Button btnReactivate;
+    @FXML private Button closeButton;
 
     @FXML private TabPane tabPane;
     @FXML private Tab tabLogs;
@@ -159,7 +162,7 @@ public class ReaderCardController {
         try {
             MessageUtils.sendMessage(ClientUI.cc, "librarian", "connect", null);
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
-                MessageUtils.sendMessage(ClientUI.cc, "librarian", "reactivate", s.getSub_id() + ":" + SharedController.getLibrarian().getLibrarian_name());
+                MessageUtils.sendMessage(ClientUI.cc, "librarian", "reactivateSubscriber", s.getSub_id() + ":" + SharedController.getLibrarian().getLibrarian_name());
             } else {
                 displayMessage("Failed to connect to server");
             }
@@ -169,7 +172,7 @@ public class ReaderCardController {
     }
 
     public void subscriberReactivated(String status) {
-        if (status.contains("Reactivated")) {
+        if (status.contains("reactivated")) {
             displayMessage("Subscriber reactivated successfully");
             btnReactivate.setVisible(false);
             lblStatus.setText("Active");
@@ -215,37 +218,57 @@ public class ReaderCardController {
     }
 
     public void showUserBorrows() {
-        ObservableList<BorrowRecordDTO> borrowsData = FXCollections.observableArrayList(borrowRecords);
+        ObservableList<BorrowRecordDTO> borrowsData = FXCollections.observableArrayList(
+            borrowRecords.stream()
+                .filter(record -> "Borrowed".equals(record.getStatus()) || 
+                                 "Late".equals(record.getStatus()))
+                .collect(Collectors.toList())
+        );
         tableViewBorrows.setItems(borrowsData);
     }
 
 
 
     public void showUserOrders() {
-        ObservableList<OrderRecordDTO> ordersData = FXCollections.observableArrayList(orderRecords);
+        ObservableList<OrderRecordDTO> ordersData = FXCollections.observableArrayList(
+            orderRecords.stream()
+                .filter(record -> "Waiting".equals(record.getStatus()) ||
+                                 "In-Progress".equals(record.getStatus()))
+                .collect(Collectors.toList())
+        );
         tableViewOrders.setItems(ordersData);
         tableViewOrders.refresh();
     }
 
     private void openExtendWindow(BorrowRecordDTO borrowRecord) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/ExtendWindow.fxml"));
-            Pane root = loader.load();            
-            ExtendWindowController controller = loader.getController();
-            controller.setBorrowRecord(borrowRecord);
-            controller.setSubscriberId(s.getSub_id());
-
-            Stage stage = new Stage();
-            controller.setStage(stage);
-
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.setTitle("Extend Return Date");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.show();
+            MessageUtils.sendMessage(ClientUI.cc, "librarian", "connect", null);
+            if (ClientUI.cc.getConnectionStatusFlag() == 1) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/ExtendWindow.fxml"));
+                Pane root = loader.load();            
+                ExtendWindowController controller = loader.getController();
+                controller.setBorrowRecord(borrowRecord);
+                controller.setSubscriberId(s.getSub_id());
+    
+                Stage stage = new Stage();
+                controller.setStage(stage);
+    
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+                stage.setTitle("Extend Return Date");
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.show();
+            } else {
+                displayMessage("Failed to connect to server");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    private void handleClose(ActionEvent event) {
+        SharedController.getSubscribersTableController().closeReaderCard(s.getSub_id());
     }
 
     public void displayMessage(String message) {

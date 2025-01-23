@@ -2,6 +2,8 @@ package gui.controllers;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import client.ClientUI;
@@ -42,6 +44,10 @@ public class SubscribersTableController implements Initializable {
 
     @FXML private Button btnBack = null;
     @FXML private Button btnRefresh;
+    
+
+    private Map<Integer, Stage> readerCardStages = new HashMap<>();
+
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -101,6 +107,15 @@ public class SubscribersTableController implements Initializable {
 
     private void showReaderCard(Subscriber subscriber) {
         try {
+            // Check if window for this subscriber exists
+            Stage existingStage = readerCardStages.get(subscriber.getSub_id());
+            if (existingStage != null && existingStage.isShowing()) {
+                SharedController.setSubscriber(subscriber);
+                // SharedController.getReaderCardController().updateSubscriberInfo(subscriber);
+                existingStage.toFront();
+                return;
+            }
+
             SharedController.setSubscriber(subscriber);
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/ReaderCard.fxml"));
             Pane root = loader.load();
@@ -112,6 +127,12 @@ public class SubscribersTableController implements Initializable {
             Scene scene = new Scene(root);
             stage.setTitle("Subscriber Details");
             stage.setScene(scene);
+            // Add to map before showing
+            readerCardStages.put(subscriber.getSub_id(), stage);            
+            stage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
+                readerCardStages.remove(subscriber.getSub_id());
+            });
+            stage.setResizable(false);
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
@@ -119,8 +140,23 @@ public class SubscribersTableController implements Initializable {
     }
 
     public void handleRefresh(ActionEvent event) {
-        System.out.println("Refresh button clicked");
+        closeAllReaderCards();
+        subscriberTable.getItems().clear();
         MessageUtils.sendMessage(ClientUI.cc, "librarian", "showSubscribersTable", null);
+        subscriberTable.refresh();
+    }
+
+    public void closeAllReaderCards() {
+        readerCardStages.values().forEach(Stage::close);
+        readerCardStages.clear();
+    }
+
+    public void closeReaderCard(int subId) {
+        Stage stage = readerCardStages.get(subId);
+        if (stage != null) {
+            stage.close();
+            readerCardStages.remove(subId);
+        }
     }
 
     public void goBackBtn(ActionEvent event) throws Exception {

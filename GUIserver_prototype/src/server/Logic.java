@@ -9,7 +9,7 @@ import java.util.Map;
 import javafx.application.Platform;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-
+import common.OrderRecord;
 import common.Notification;
 import common.BorrowingRecord;
 import common.DataLogs;
@@ -186,18 +186,27 @@ public class Logic {
     public static void cancelOrder(String user, Object order, ConnectionToClient client) {
         int orderId = (int) order;
         String cancelStatus = "ERROR: Order not found";
-        int bookId = mysqlConnection.cancelOrder(conn, orderId);
-        if (bookId > 0) { 
+        OrderRecord cancelledOrder = mysqlConnection.cancelOrder(conn, orderId);
+        if (cancelledOrder != null) {
             cancelStatus = "Order cancelled";
-            Integer subId = mysqlConnection.notifyNextOrder(conn, bookId);
-            if (subId != null) {
-                int copyId = mysqlConnection.getCopyIdByCancelledOrder(conn, subId, bookId);
-                mysqlConnection.setBookCopyOrdered(conn, copyId, subId);
+            if (cancelledOrder.getStatus().equals("In-Progress")) {
+                Integer subId = mysqlConnection.notifyNextOrder(conn, cancelledOrder.getBookId());
+                
+                // print sub id
+                System.out.println("Next order SubID: " + subId);
+                int copyId = mysqlConnection.getCopyIdByCancelledOrder(conn, cancelledOrder.getSubId(), cancelledOrder.getBookId());
+
+                if (subId != null) {
+                    // print copy id
+                    System.out.println("Cancelled order: " + cancelledOrder);
+                    System.out.println("Copy ID: " + copyId);
+                    mysqlConnection.setBookCopyOrdered(conn, copyId, subId);
+                } else { 
+                    mysqlConnection.setBookCopyAvailable(conn, copyId);
+                }
             }
         } else {
-            if (bookId == -1) {
-                System.out.println("Order not found");
-            }
+            System.out.println("Order not found");
         }
         MessageUtils.sendResponseToClient(user, "CancelStatus", cancelStatus, client);
     }

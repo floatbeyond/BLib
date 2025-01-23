@@ -7,6 +7,7 @@ import gui.controllers.ClientPortController;
 import gui.controllers.DataReportsController;
 import gui.controllers.ExtendWindowController;
 import gui.controllers.LandingWindowController;
+import gui.controllers.LibrarianMainFrameController;
 import gui.controllers.LoginWindowController;
 import gui.controllers.PersonalDetailsController;
 import gui.controllers.ReturnBookController;
@@ -35,6 +36,7 @@ public class SharedController {
     public static PersonalDetailsController pdc;
     public static SubscriberLogsController slc;
     public static ActiveOrdersController aoc;
+    public static LibrarianMainFrameController lmfc;
     public static BorrowFormController bfc;
     public static ReturnBookController rbc;
     public static AddSubscriberController asc;
@@ -75,6 +77,9 @@ public class SharedController {
 
     public static void setActiveOrdersController(ActiveOrdersController controller) { aoc = controller; }
     public static ActiveOrdersController getActiveOrdersController() { return aoc; }
+
+    public static void setLibrarianMainFrameController(LibrarianMainFrameController controller) { lmfc = controller; }
+    public static LibrarianMainFrameController getLibrarianMainFrameController() { return lmfc; }
 
     public static void setBorrowFormController(BorrowFormController controller) { bfc = controller; }
     public static BorrowFormController getBorrowFormController() { return bfc; }

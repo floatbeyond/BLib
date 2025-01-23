@@ -5,10 +5,11 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="120.0" prefWidth="354.0" stylesheets="@../css/ExtendWindow.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.ExtendWindowController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="113.0" prefWidth="354.0" stylesheets="@../css/ExtendWindow.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.ExtendWindowController">
    <children>
-      <Label fx:id="messageLabel" layoutX="20.0" layoutY="63.0" prefHeight="43.0" prefWidth="319.0" />
+      <Label fx:id="messageLabel" layoutX="72.0" layoutY="69.0" prefHeight="37.0" prefWidth="267.0" />
       <Button fx:id="btnSubmit" layoutX="277.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleSubmit" prefHeight="45.0" prefWidth="62.0" text="Extend" />
       <DatePicker fx:id="datePicker" layoutX="20.0" layoutY="14.0" prefHeight="43.0" prefWidth="246.0" promptText="Pick a date" />
+      <Button fx:id="closeButton" layoutX="14.0" layoutY="74.0" mnemonicParsing="false" onAction="#handleClose" prefHeight="28.0" prefWidth="49.0" text="Close" />
    </children>
 </AnchorPane>
