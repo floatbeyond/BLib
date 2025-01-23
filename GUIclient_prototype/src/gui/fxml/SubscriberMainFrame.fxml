@@ -32,7 +32,7 @@
             </ImageView>
          </graphic>
       </Button>
-      <Button fx:id="btnLogs" layoutX="801.0" layoutY="638.0" mnemonicParsing="false" onAction="#logsBtn" prefHeight="38.0" prefWidth="77.0" text="Logs" />
+      <Button fx:id="btnLogs" layoutX="628.0" layoutY="638.0" mnemonicParsing="false" onAction="#logsBtn" prefHeight="38.0" prefWidth="77.0" text="Logs" />
       <TableView fx:id="bookTable" layoutX="13.0" layoutY="167.0" prefHeight="452.0" prefWidth="1065.0" visible="false">
         <columns>
             <TableColumn fx:id="bookNameColumn" editable="false" prefWidth="180.0" resizable="false" text="Title" />
@@ -45,7 +45,7 @@
       </TableView>
       <Label fx:id="messageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="368.0" layoutY="118.0" prefHeight="46.0" prefWidth="376.0" />
       <Button fx:id="btnLogOut" layoutX="40.0" layoutY="638.0" mnemonicParsing="false" onAction="#logoutBtn" prefHeight="38.0" prefWidth="67.0" text="Log Out" />
-      <Button fx:id="btnPersonalDetails" layoutX="624.0" layoutY="638.0" mnemonicParsing="false" onAction="#personalDetailsBtn" prefHeight="38.0" prefWidth="120.0" text="Personal Detalis" />
+      <Button fx:id="btnPersonalDetails" layoutX="456.0" layoutY="638.0" mnemonicParsing="false" onAction="#personalDetailsBtn" prefHeight="38.0" prefWidth="120.0" text="Personal Detalis" />
       <Button fx:id="btnActiveOrders" layoutX="929.0" layoutY="638.0" mnemonicParsing="false" onAction="#handleActiveOrders" prefHeight="38.0" prefWidth="120.0" text="Active Orders" />
       <Button fx:id="btnNotifications" layoutX="1001.0" layoutY="14.0" mnemonicParsing="false" onAction="#showNotifications" prefHeight="46.0" prefWidth="48.0">
          <graphic>
@@ -74,5 +74,6 @@
             <ListView fx:id="notificationListView" prefHeight="275.0" prefWidth="316.0" />
         </items>
       </SplitPane>
+      <Button fx:id="btnActiveBorrows" layoutX="763.0" layoutY="638.0" mnemonicParsing="false" onAction="#handleActiveBorrows" prefHeight="38.0" prefWidth="120.0" text="Active Borrows" />
    </children>
 </AnchorPane>

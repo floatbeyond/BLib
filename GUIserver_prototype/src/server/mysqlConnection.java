@@ -1,5 +1,6 @@
 package server;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +31,19 @@ import java.time.temporal.ChronoUnit;
 import java.sql.Timestamp;
 
 public class mysqlConnection {
+	private static final String URL = "jdbc:mysql://localhost/blib?"
+	+ "autoReconnect=true"
+	+ "&useUnicode=true"
+	+ "&characterEncoding=UTF-8"
+	+ "&useJDBCCompliantTimezoneShift=true"
+	+ "&useLegacyDatetimeCode=false"
+	+ "&serverTimezone=IST"
+	+ "&connectTimeout=30000"
+	+ "&socketTimeout=30000"
+	+ "&maxReconnects=10"
+	+ "&initialTimeout=2"
+	+ "&testOnBorrow=true"
+	+ "&validationQuery=SELECT 1";
     
 	public static Connection connectToDB(String ip, String user, String password) 
 	{		
@@ -40,7 +54,19 @@ public class mysqlConnection {
         	 System.out.println("Driver definition failed");
         	 }
         try {
-			String url = String.format("jdbc:mysql://%s/blib?serverTimezone=IST", ip);
+			String url = String.format("jdbc:mysql://%s/blib?"
+											+ "autoReconnect=true"
+											+ "&useUnicode=true"
+											+ "&characterEncoding=UTF-8"
+											+ "&useJDBCCompliantTimezoneShift=true"
+											+ "&useLegacyDatetimeCode=false"
+											+ "&serverTimezone=IST"
+											+ "&connectTimeout=30000"
+											+ "&socketTimeout=30000"
+											+ "&maxReconnects=10"
+											+ "&initialTimeout=2"
+											+ "&testOnBorrow=true"
+											+ "&validationQuery=SELECT 1", ip);
             Connection conn = DriverManager.getConnection(url, user, password);
 			InstanceManager.setDbConnection(conn);
             System.out.println("SQL connection succeed");
@@ -343,7 +369,7 @@ public class mysqlConnection {
 						"FROM borrowrecords br " +
 						"JOIN bookcopies bc ON br.CopyID = bc.CopyID " +
 						"JOIN books b ON bc.BookID = b.BookID " +
-						"WHERE br.SubID = ? AND br.Status != 'Returned'";
+						"WHERE br.SubID = ? AND br.Status NOT IN ('Returned', 'ReturnedLate')";
 		try (PreparedStatement stmt = conn.prepareStatement(query)) {
 			stmt.setInt(1, subId);
 			ResultSet rs = stmt.executeQuery();
@@ -607,16 +633,12 @@ public class mysqlConnection {
 	}
 
 	public static boolean extendBorrow(Connection conn, int subId, int borrowId, LocalDate extensionDate) {
-		String query = "UPDATE borrowrecords SET ExpectedReturnDate = ? WHERE SubID = ? AND BorrowID = ?";
-		try (PreparedStatement stmt = conn.prepareStatement(query)) {
-			stmt.setDate(1, DateUtils.toSqlDate(extensionDate));
-			stmt.setInt(2, subId);
-			stmt.setInt(3, borrowId);
-			int affectedRows = stmt.executeUpdate();
-			if (affectedRows == 0) {
-				System.out.println("No matching records found to update.");
-				return false;
-			}
+		String query = "CALL handle_book_extension(?, ?, ?)";
+		try (CallableStatement stmt = conn.prepareCall(query)) {
+			stmt.setInt(1, subId);
+			stmt.setInt(2, borrowId);
+			stmt.setDate(3, DateUtils.toSqlDate(extensionDate));
+			stmt.execute();
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -4,6 +4,7 @@ import client.ClientUI;
 import client.SharedController;
 import common.Book;
 import common.BookCopy;
+import common.BorrowRecordDTO;
 import common.BorrowingRecord;
 import common.MessageUtils;
 import common.OrderRecordDTO;
@@ -62,6 +63,7 @@ public class SubscriberMainFrameController implements Initializable {
     @FXML private Button btnLogs = null;
     @FXML private Button btnPersonalDetails = null;
     @FXML private Button btnActiveOrders = null;
+    @FXML private Button btnActiveBorrows = null;
     @FXML private Button btnNotifications = null;
     @FXML private Button btnCloseNotifications = null;
 
@@ -82,6 +84,7 @@ public class SubscriberMainFrameController implements Initializable {
     private static Stage activeBorrowsStage = null; // Add implementation
     private Map<Integer, Stage> openDialogs = new HashMap<>(); // Track open dialogs
     private Subscriber s;
+    private List<BorrowRecordDTO> borrowRecords = new ArrayList<>();
     private List<OrderRecordDTO> orderRecords = new ArrayList<>();
     private ObservableList<String> notifications = FXCollections.observableArrayList();
 
@@ -96,7 +99,7 @@ public class SubscriberMainFrameController implements Initializable {
         SharedController.setSubscriberMainFrameController(this);
         s = SharedController.getSubscriber();
         // NotificationScheduler.start(s.getSub_id());
-        MessageUtils.sendMessage(ClientUI.cc, "subscriber", "userOrders", s.getSub_id());
+        // MessageUtils.sendMessage(ClientUI.cc, "subscriber", "userOrders", s.getSub_id());
         MessageUtils.sendMessage(ClientUI.cc, "subscriber", "fetchNotifications", s.getSub_id());
     }
 
@@ -158,8 +161,9 @@ public class SubscriberMainFrameController implements Initializable {
         loadUserOrders();
     }
 
-    public static void setActiveOrdersStage(Stage stage) {
-        activeOrdersStage = stage;
+    public void setBorrowRecords(List<BorrowRecordDTO> list) {
+        this.borrowRecords = list;
+        loadUserBorrows();
     }
 
     private void loadUserOrders() {
@@ -173,6 +177,22 @@ public class SubscriberMainFrameController implements Initializable {
             }
         }
         bookTable.refresh();
+    }
+
+    private void loadUserBorrows() {
+        List<String> borrowedBookTitles = new ArrayList<>();
+        for (BorrowRecordDTO borrow : borrowRecords) {
+            borrowedBookTitles.add(borrow.getBookTitle());
+        }
+        bookTable.refresh();
+    }
+
+    public static void setActiveOrdersStage(Stage stage) {
+        activeOrdersStage = stage;
+    }
+
+    public static void setActiveBorrowsStage(Stage stage) {
+        activeBorrowsStage = stage;
     }
 
     private void setupButtonWidth() {
@@ -414,7 +434,8 @@ public class SubscriberMainFrameController implements Initializable {
     }
 
     public void logoutBtn(ActionEvent event) throws Exception {
-        closeActiveOrders(); // Add this line
+        closeActiveOrders();
+        closeActiveBorrows();
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/LandingWindow.fxml"));
         Pane root = loader.load();
@@ -554,6 +575,51 @@ public class SubscriberMainFrameController implements Initializable {
         if (activeOrdersStage != null && activeOrdersStage.isShowing()) {
             activeOrdersStage.close();
             activeOrdersStage = null;
+        }
+    }
+
+    
+    public void handleActiveBorrows(ActionEvent event) throws Exception {
+        MessageUtils.sendMessage(ClientUI.cc, "subscriber", "connect", null);
+        if (ClientUI.cc.getConnectionStatusFlag() == 1) {
+            MessageUtils.sendMessage(ClientUI.cc, "subscriber", "userBorrows", s.getSub_id());
+            Platform.runLater(() -> {
+                try {
+                    if (borrowRecords.size() == 0) {
+                        displayMessage("No active borrows");
+                        return;
+                    }
+                    if (activeBorrowsStage != null && activeBorrowsStage.isShowing()) {
+                        activeBorrowsStage.toFront();
+                        return;
+                    }        
+
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/ActiveBorrows.fxml"));
+                    AnchorPane pane = loader.load();
+
+                    ActiveBorrowsController controller = loader.getController();
+                    // SharedController.setActiveBorrowsController(controller);
+                    controller.setTableData(FXCollections.observableArrayList(borrowRecords));
+
+                    activeBorrowsStage = new Stage();
+                    Scene scene = new Scene(pane);
+                    activeBorrowsStage.setScene(scene);
+                    activeBorrowsStage.setTitle("Borrows");
+                    activeBorrowsStage.setResizable(false);
+                    activeBorrowsStage.show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        } else {
+            displayMessage("No server connection");
+        }
+    }
+
+    private void closeActiveBorrows() {
+        if (activeBorrowsStage != null && activeBorrowsStage.isShowing()) {
+            activeBorrowsStage.close();
+            activeBorrowsStage = null;
         }
     }
     

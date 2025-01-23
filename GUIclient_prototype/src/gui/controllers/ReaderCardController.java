@@ -249,6 +249,7 @@ public class ReaderCardController {
                 ExtendWindowController controller = loader.getController();
                 controller.setBorrowRecord(borrowRecord);
                 controller.setSubscriberId(s.getSub_id());
+                controller.setUser("librarian");
     
                 Stage stage = new Stage();
                 controller.setStage(stage);

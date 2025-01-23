@@ -170,11 +170,25 @@ public class Logic {
             if (!list.isEmpty() && list.stream().allMatch(item -> item instanceof BorrowRecordDTO)) {
                 System.out.println("Loading borrows");
                 // Handle the user borrows list
-                if (SharedController.rcc != null) {
-                    System.out.println("ReaderCardController is initialized");
-                    SharedController.rcc.setBorrowRecords(list);
-                } else {
-                    System.out.println("ReaderCardController is null");
+                if (user.equals("librarian")) {
+                    if (SharedController.rcc != null) {
+                        System.out.println("ReaderCardController is initialized");
+                        SharedController.rcc.setBorrowRecords(list);
+                    } else {
+                        System.out.println("ReaderCardController is null");
+                    }
+                } else if (user.equals("subscriber")) {
+                    if (SharedController.smfc != null) {
+                        System.out.println("SubscriberMainFrame is initialized");
+                        SharedController.smfc.setBorrowRecords(list);
+                    } else {
+                        System.out.println("SubscriberMainFrame is null");
+                    }
+                }
+            } else {
+                System.out.println("No orders found");
+                if (user.equals("subscriber") && SharedController.smfc != null) {
+                    SharedController.smfc.setBorrowRecords(FXCollections.observableArrayList());
                 }
             }
         });

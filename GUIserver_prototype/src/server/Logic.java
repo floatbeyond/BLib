@@ -212,17 +212,21 @@ public class Logic {
     }
 
     public static void checkOrder(String user, Object data, ConnectionToClient client) {
+        String libName = null;
         String[] parts = ((String) data).split(":", 4);
         int subId = Integer.parseInt(parts[0]);
         int borrowId = Integer.parseInt(parts[1]);
         LocalDate extensionDate = LocalDate.parse(parts[2]);
-        int bookId = mysqlConnection.getBookIdByBorrowId(conn, borrowId);
-        String libName = parts[3];
+        if (user.equals("librarian")) { 
+            libName = parts[3]; 
+        }
+
         boolean success = false;
+        int bookId = mysqlConnection.getBookIdByBorrowId(conn, borrowId);
         boolean orderExists = mysqlConnection.anyOrderExists(conn, bookId);
         if (orderExists == false) {
             success = mysqlConnection.extendBorrow(conn, subId, borrowId, extensionDate);
-            if (success == true) {
+            if (success == true && user.equals("librarian")) {
                 mysqlConnection.logExtensionByLibrarian(conn, subId, bookId, libName);
             }
         }
