@@ -8,7 +8,7 @@ public class NotificationScheduler {
     private static final long FETCH_INTERVAL = 60000; // 1 minute
     private static Timer timer;
 
-    public static void start(int subId) {
+    public static void start(String user, int userId) {
         if (timer != null) {
             timer.cancel();
         }
@@ -16,7 +16,7 @@ public class NotificationScheduler {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                Logic.fetchNotifications(subId);
+                Logic.fetchNotifications(user, userId);
             }
         }, 0, FETCH_INTERVAL);
     }

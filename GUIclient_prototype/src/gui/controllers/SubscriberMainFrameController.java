@@ -9,6 +9,7 @@ import common.BorrowingRecord;
 import common.MessageUtils;
 import common.OrderRecordDTO;
 import common.Subscriber;
+import client.NotificationScheduler;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -98,14 +99,14 @@ public class SubscriberMainFrameController implements Initializable {
         setupSearch();
         SharedController.setSubscriberMainFrameController(this);
         s = SharedController.getSubscriber();
-        // NotificationScheduler.start(s.getSub_id());
+        NotificationScheduler.start("subscriber", s.getSub_id());
         // MessageUtils.sendMessage(ClientUI.cc, "subscriber", "userOrders", s.getSub_id());
-        MessageUtils.sendMessage(ClientUI.cc, "subscriber", "fetchNotifications", s.getSub_id());
+        // MessageUtils.sendMessage(ClientUI.cc, "subscriber", "fetchNotifications", s.getSub_id());
     }
 
     public void addNotifications(List<Notification> newNotifications) {
-        for (Notification notification : newNotifications) {
-            notifications.add(notification.getMessage());
+        for (int i = newNotifications.size() - 1; i >= 0; i--) {
+            notifications.add(0, newNotifications.get(i).getMessage());
         }
     }
 

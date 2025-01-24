@@ -25,6 +25,11 @@
     -fx-cursor: hand;
 }
 
+#btnNotifications, #btnCloseNotifications {
+    -fx-background-color: transparent;
+    -fx-effect: none;
+}
+
 .button:hover {
     -fx-background-color: #0277bd;
 }

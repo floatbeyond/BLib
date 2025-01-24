@@ -204,21 +204,25 @@ public class mysqlConnection {
      * @return List of new Notification objects, empty list if none found
      * @throws SQLException if database access error occurs
      */
-	public static List<Notification> getNewNotifications(Connection conn, int subId) {
+	public static List<Notification> getNewNotifications(Connection conn, int userId, String userType) {
 		List<Notification> notifications = new ArrayList<>();
-		String query = "SELECT * FROM notifications WHERE SubID = ? AND Timestamp > (SELECT LastFetched FROM subscribers WHERE SubID = ?) ORDER BY Timestamp DESC";
+		String query = "SELECT * FROM notifications WHERE " +
+						"(? = 'subscriber' AND SubID = ?) OR " +
+						"(? = 'librarian' AND LibID = ?) " +
+						"ORDER BY Timestamp DESC";
 		try (PreparedStatement stmt = conn.prepareStatement(query)) {
-			stmt.setInt(1, subId);
-			stmt.setInt(2, subId);
+			stmt.setString(1, userType);
+			stmt.setInt(2, userId);
+			stmt.setString(3, userType);
+			stmt.setInt(4, userId);
+			
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
 				int notificationId = rs.getInt("NotificationID");
 				String message = rs.getString("Message");
 				Timestamp timestamp = rs.getTimestamp("Timestamp");
-				notifications.add(new Notification(notificationId, subId, message, timestamp));
+				notifications.add(new Notification(notificationId, userId, message, timestamp));
 			}
-			// Update the last fetched timestamp
-			updateLastFetched(conn, subId);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -694,7 +698,7 @@ public class mysqlConnection {
 			
 			// Proceed with marking as lost if not already lost
 			conn.setAutoCommit(false);
-			String query = "CALL handle_book_lost(?)";
+			String query = "CALL handle_book_declared_lost(?)";
 			
 			try (CallableStatement stmt = conn.prepareCall(query)) {
 				stmt.setInt(1, borrowId);
@@ -1102,6 +1106,46 @@ public class mysqlConnection {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
+		}
+	}
+
+	/**
+	 * Processes return of a lost book and updates related records.
+	 * Handles subscriber freeze period and penalties based on return timing.
+	 *
+	 * @param conn Active database connection
+	 * @param subId Subscriber ID returning the book
+	 * @param copyId Copy ID being returned
+	 * @param returnDate Date of return
+	 * @return true if return processed successfully, false if failed
+	 */
+	public static boolean returnLostBook(Connection conn, int subId, int copyId, LocalDate returnDate) {
+		try {
+			conn.setAutoCommit(false);
+			String query = "CALL handle_lost_book_return(?, ?, ?)";
+			
+			try (CallableStatement stmt = conn.prepareCall(query)) {
+				stmt.setInt(1, subId);
+				stmt.setInt(2, copyId);
+				stmt.setDate(3, DateUtils.toSqlDate(returnDate));
+				stmt.execute();
+				conn.commit();
+				return true;
+			}
+		} catch (SQLException e) {
+			try {
+				conn.rollback();
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			}
+			e.printStackTrace();
+			return false;
+		} finally {
+			try {
+				conn.setAutoCommit(true);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

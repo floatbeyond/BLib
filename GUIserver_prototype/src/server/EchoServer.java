@@ -109,6 +109,9 @@ public class EchoServer extends AbstractServer
             } case "returnBook": {
               Logic.returnBook(user, data, client);
               break;
+            } case "returnLostBook": {
+              Logic.returnLostBook(user, data, client);
+              break;
             } case "markLost": {
               Logic.lostBook(user, data, client);
             } case "newOrder": {

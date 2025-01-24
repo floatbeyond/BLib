@@ -88,6 +88,8 @@ public class ReturnBookController implements ItemLoader {
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
                 if (bc.getStatus().equals("Returned")) {
                     displayMessage("Book has been returned already");
+                } else if (bc.getStatus().equals("Lost")) {
+                    MessageUtils.sendMessage(ClientUI.cc, "librarian", "returnLostBook", subId + ":" + copyId + ":" + returnDate);
                 } else {
                     MessageUtils.sendMessage(ClientUI.cc, "librarian", "returnBook", subId + ":" + copyId + ":" + returnDate);
                 }

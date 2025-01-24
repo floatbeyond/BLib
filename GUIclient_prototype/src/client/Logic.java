@@ -43,9 +43,9 @@ public class Logic {
         SharedController.logwc.setUserStatus(user);
     }
 
-    public static void fetchNotifications(int subId) {
+    public static void fetchNotifications(String user, int subId) {
         try {
-            MessageUtils.sendMessage(ClientUI.cc, "subscriber", "fetchNotifications", subId);
+            MessageUtils.sendMessage(ClientUI.cc, user, "fetchNotifications", subId);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -63,7 +63,7 @@ public class Logic {
             return;
         }
 
-        int subId = notifications.get(0).getSubId();
+        int subId = notifications.get(0).getUserId();
         notificationsMap.putIfAbsent(subId, new ArrayList<>());
         notificationsMap.get(subId).addAll(notifications);
         // Display notifications to the user
@@ -75,6 +75,9 @@ public class Logic {
         Platform.runLater(() -> {
             if (SharedController.smfc != null) {
                 SharedController.smfc.addNotifications(notifications);
+            }
+            if (SharedController.lmfc != null) {
+                SharedController.lmfc.addNotifications(notifications);
             }
         });
     }
@@ -351,12 +354,10 @@ public class Logic {
 
     public static void printError(String errorMessage) {
         if (errorMessage.equals("Subscriber ID Not Found")) {
-            System.out.println("Subscriber not found");
             SharedController.setSubscriber(null);
-        } else if (errorMessage.equals("Invalid command")) {
-            System.out.println("Invalid command");
+        } else {
+            System.out.println("Error: " + errorMessage);
         }
-        System.out.println("Received error message: " + errorMessage);
     }
 
 

@@ -6,13 +6,13 @@ import java.sql.Timestamp;
 public class Notification implements Serializable {
     private static final long serialVersionUID = 1L;
     private int notificationId;
-    private int subId;
+    private int userId;
     private String message;
     private Timestamp timestamp;
 
-    public Notification(int notificationId, int subId, String message, Timestamp timestamp) {
+    public Notification(int notificationId, int userId, String message, Timestamp timestamp) {
         this.notificationId = notificationId;
-        this.subId = subId;
+        this.userId = userId;
         this.message = message;
         this.timestamp = timestamp;
     }
@@ -21,8 +21,8 @@ public class Notification implements Serializable {
     public int getNotificationId() { return notificationId; }
     public void setNotificationId(int notificationId) { this.notificationId = notificationId; }
 
-    public int getSubId() { return subId; }
-    public void setSubId(int subId) { this.subId = subId; }
+    public int getUserId() { return userId; }
+    public void setUserId(int userId) { this.userId = userId; }
 
     public String getMessage() { return message; }
     public void setMessage(String message) { this.message = message; }
@@ -34,7 +34,7 @@ public class Notification implements Serializable {
     public String toString() {
         return "Notification{" +
                 "notificationId=" + notificationId +
-                ", subId=" + subId +
+                ", userId=" + userId +
                 ", message='" + message + '\'' +
                 ", timestamp=" + timestamp +
                 '}';

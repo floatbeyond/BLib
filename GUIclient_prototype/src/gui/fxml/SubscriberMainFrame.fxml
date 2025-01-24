@@ -55,12 +55,12 @@
                </image></ImageView>
          </graphic>
       </Button>
-      <SplitPane fx:id="notificationSplitPane" dividerPositions="0.1575091575091575" layoutX="705.0" layoutY="62.0" orientation="VERTICAL" prefHeight="275.0" prefWidth="344.0" visible="false">
+      <SplitPane fx:id="notificationSplitPane" dividerPositions="0.1575091575091575" layoutX="633.0" layoutY="62.0" orientation="VERTICAL" prefHeight="304.0" prefWidth="416.0">
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                <children>
-                  <Label fx:id="labelNotifications" alignment="CENTER" prefHeight="38.0" prefWidth="253.0" text="Notifications" />
-                  <Button fx:id="btnCloseNotifications" layoutX="286.0" layoutY="2.0" mnemonicParsing="false" onAction="#closeNotifications" prefHeight="31.0" prefWidth="42.0">
+                  <Label fx:id="labelNotifications" alignment="CENTER" layoutX="14.0" layoutY="4.0" prefHeight="38.0" prefWidth="253.0" text="Notifications" />
+                  <Button fx:id="btnCloseNotifications" layoutX="358.0" layoutY="6.0" mnemonicParsing="false" onAction="#closeNotifications" prefHeight="31.0" prefWidth="42.0">
                      <graphic>
                         <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                            <image>

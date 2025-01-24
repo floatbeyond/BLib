@@ -10,11 +10,19 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.Button;
 
+import java.util.List;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import client.ClientUI;
+import client.NotificationScheduler;
 import common.Librarian;
 import common.MessageUtils;
+import common.Notification;
 import client.SharedController;
 
 public class LibrarianMainFrameController {
@@ -27,12 +35,39 @@ public class LibrarianMainFrameController {
 
     @FXML private Label messageLabel;
 
+    @FXML private Button btnNotifications = null;
+    @FXML private Button btnCloseNotifications = null;
+    @FXML private SplitPane notificationSplitPane;
+    @FXML private ListView<String> notificationListView;
+    private ObservableList<String> notifications = FXCollections.observableArrayList();
+
     private Librarian librarian;
 
     @FXML
     public void initialize() {
         librarian = SharedController.getLibrarian();
         SharedController.setLibrarianMainFrameController(this);
+        notificationSplitPane.setVisible(false);
+        notificationListView.setItems(notifications);
+        notificationListView.setItems(notifications);
+        NotificationScheduler.start("librarian", librarian.getLibrarian_id());
+    }
+
+
+    public void addNotifications(List<Notification> newNotifications) {
+        for (int i = newNotifications.size() - 1; i >= 0; i--) {
+            notifications.add(0, newNotifications.get(i).getMessage());
+        }
+    }
+
+    @FXML
+    private void showNotifications(ActionEvent event) {
+        notificationSplitPane.setVisible(true);
+    }
+
+    @FXML
+    private void closeNotifications(ActionEvent event) {
+        notificationSplitPane.setVisible(false);
     }
 
     @FXML
@@ -115,7 +150,7 @@ public class LibrarianMainFrameController {
                 Parent root = fxmlLoader.load();
 
                 SharedController.setBorrowFormController(fxmlLoader.getController());
-
+                NotificationScheduler.stop();
                 Stage stage = new Stage();
                 stage.setTitle("Borrow");
                 Scene scene = new Scene(root);

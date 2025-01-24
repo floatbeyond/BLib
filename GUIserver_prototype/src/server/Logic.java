@@ -48,8 +48,8 @@ public class Logic {
     // Notifications
 
     public static void fetchNotifications(String user, Object data, ConnectionToClient client) {
-        int subId = (int) data;
-        List<Notification> notifications = mysqlConnection.getNewNotifications(conn, subId);
+        int sentId = (int) data;
+        List<Notification> notifications = mysqlConnection.getNewNotifications(conn, sentId, user);
         try {
             MessageUtils.sendResponseToClient(user, "NewNotifications", notifications, client);
         } catch (Exception e) {
@@ -147,6 +147,29 @@ public class Logic {
             MessageUtils.sendResponseToClient(user, "Error", "Invalid borrow record", client);
             return;
         }        
+    }
+
+    public static void returnLostBook(String user, Object data, ConnectionToClient client) {
+        try {
+            String[] parts = ((String) data).split(":", 3);
+            int subId = Integer.parseInt(parts[0]);
+            int copyId = Integer.parseInt(parts[1]);
+            LocalDate returnDate = LocalDate.parse(parts[2]);
+            boolean success = mysqlConnection.returnLostBook(conn, subId, copyId, returnDate);
+            if (success) {
+                Book returnedBook = mysqlConnection.getBookByCopyId(conn, copyId);
+                mysqlConnection.notifyNextOrder(conn, returnedBook.getBookId());
+                MessageUtils.sendResponseToClient(user, "ReturnStatus",
+                "Lost book has been returned successfully", client);
+            } else {
+                MessageUtils.sendResponseToClient(user, "Error", 
+                "Failed to return lost book", client);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            MessageUtils.sendResponseToClient(user, "Error", 
+            "Error processing lost book return", client);
+        }
     }
 
     public static void returnBook(String user, Object data, ConnectionToClient client) {
