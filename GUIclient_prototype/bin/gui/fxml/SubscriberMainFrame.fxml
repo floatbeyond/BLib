@@ -55,7 +55,7 @@
                </image></ImageView>
          </graphic>
       </Button>
-      <SplitPane fx:id="notificationSplitPane" dividerPositions="0.1575091575091575" layoutX="633.0" layoutY="62.0" orientation="VERTICAL" prefHeight="304.0" prefWidth="416.0">
+      <SplitPane fx:id="notificationSplitPane" dividerPositions="0.1575091575091575" layoutX="633.0" layoutY="62.0" orientation="VERTICAL" prefHeight="304.0" prefWidth="416.0" visible="false">
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                <children>
