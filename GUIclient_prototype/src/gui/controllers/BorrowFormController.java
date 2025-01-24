@@ -127,6 +127,12 @@ public class BorrowFormController implements ItemLoader {
                 } else if (bc.getStatus().equals("Borrowed")) {
                     displayMessage("Book is already borrowed, scan another");
                     return;
+                } else if (bc.getStatus().equals("Lost")) {
+                    displayMessage("Book is lost, scan another");
+                    return;
+                } else if (bc.getStatus().equals("Ordered")) {
+                    displayMessage("Book is ordered, scan another");
+                    return;
                 } else if (returnDate == null || returnDate.isAfter(currentDate.plusDays(14))) {
                     displayMessage("Please select a valid return date");
                     return;

@@ -64,7 +64,7 @@ public class Book implements Serializable {
                 return "None available until " + earliestCopy.getBorrowingRecord().getExpectedReturnDate();
             }
         } else {
-            return available + " available out of " + copies.size();
+            return available + " available out of " + numOfCopies;
         }
         return "No copies available";
     }

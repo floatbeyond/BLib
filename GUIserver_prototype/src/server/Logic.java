@@ -165,14 +165,7 @@ public class Logic {
     public static void lostBook(String user, Object data, ConnectionToClient client) {
         int borrowId = (int) data;
         boolean success = mysqlConnection.markBookAsLost(conn, borrowId);
-        if (success) {
-            int bookId = mysqlConnection.getBookIdByBorrowId(conn, borrowId);
-            if (bookId != -1) {
-                success = mysqlConnection.reduceNumOfCopies(conn, bookId);
-            } else {
-                success = false;
-            }
-        }
+
         MessageUtils.sendResponseToClient(user, "LostStatus", success ? "Book declared lost" : "ERROR: Couldn't find matching record", client);
     }
 
@@ -251,7 +244,7 @@ public class Logic {
                 }
             }
         }
-        MessageUtils.sendResponseToClient(user, "ExtendStatus" , success ? "Borrowing extended" : "Cant extend, someone ordered the book", client);
+        MessageUtils.sendResponseToClient(user, "ExtendStatus" , success ? "Borrowing extended" : "ERROR: Couldn't process extension", client);
     }
 
     // Scan

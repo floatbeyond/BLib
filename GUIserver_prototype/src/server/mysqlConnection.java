@@ -658,30 +658,49 @@ public class mysqlConnection {
 		return results;
 	}
 
+
+	/**
+	 * Marks a book as lost in the system and applies penalties.
+	 * Verifies current status before processing and executes actions in a single transaction.
+	 * 
+	 * Actions performed:
+	 * - Checks if book is already marked as lost
+	 * - Updates borrow record status to 'Lost'
+	 * - Updates book copy status to 'Lost'
+	 * - Decrements total copies count
+	 * - Adds penalty to subscriber
+	 * - Freezes subscriber account for 30 days
+	 * - Logs the action
+	 *
+	 * @param conn Active database connection
+	 * @param borrowId ID of the borrowing record to mark as lost
+	 * @return true if book marked as lost successfully, false if:
+	 *         - Book is already marked as lost
+	 *         - Invalid borrow ID
+	 *         - Database error occurs
+	 *         - Transaction rollback occurs
+	 * @throws SQLException if database operation fails
+	 */
 	public static boolean markBookAsLost(Connection conn, int borrowId) {
-		String updateCopyQuery = "UPDATE bookcopies SET Status = 'Lost' " +
-							   "WHERE CopyID = (SELECT CopyID FROM borrowrecords WHERE BorrowID = ?)";
-		String updateBorrowQuery = "UPDATE borrowrecords SET Status = 'Lost' WHERE BorrowID = ?";
-		
-		try {
-			conn.setAutoCommit(false);
+		// First check if book is already lost
+		String checkQuery = "SELECT Status FROM borrowrecords WHERE BorrowID = ?";
+		try (PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
+			checkStmt.setInt(1, borrowId);
+			ResultSet rs = checkStmt.executeQuery();
 			
-			try (PreparedStatement updateCopyStmt = conn.prepareStatement(updateCopyQuery);
-				 PreparedStatement updateBorrowStmt = conn.prepareStatement(updateBorrowQuery)) {
-				
-				updateCopyStmt.setInt(1, borrowId);
-				updateBorrowStmt.setInt(1, borrowId);
-				
-				int copyRows = updateCopyStmt.executeUpdate();
-				int borrowRows = updateBorrowStmt.executeUpdate();
-				
-				if (copyRows > 0 && borrowRows > 0) {
-					conn.commit();
-					return true;
-				} else {
-					conn.rollback();
-					return false;
-				}
+			if (rs.next() && rs.getString("Status").equals("Lost")) {
+				return false; // Book already marked as lost
+			}
+			
+			// Proceed with marking as lost if not already lost
+			conn.setAutoCommit(false);
+			String query = "CALL handle_book_lost(?)";
+			
+			try (CallableStatement stmt = conn.prepareCall(query)) {
+				stmt.setInt(1, borrowId);
+				stmt.execute();
+				conn.commit();
+				return true;
 			}
 		} catch (SQLException e) {
 			try {
@@ -698,18 +717,7 @@ public class mysqlConnection {
 				e.printStackTrace();
 			}
 		}
-	}
 
-	public static boolean reduceNumOfCopies(Connection conn, int bookId) {
-		String query = "UPDATE books SET NumOfCopies = NumOfCopies - 1 WHERE BookID = ?";
-		try (PreparedStatement stmt = conn.prepareStatement(query)) {
-			stmt.setInt(1, bookId);
-			int affectedRows = stmt.executeUpdate();
-			return affectedRows > 0;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
 	}
 
 	/**
@@ -935,25 +943,40 @@ public class mysqlConnection {
 	}
 
 	/**
-	 * Extends a book borrowing period.
+	 * Extends a book borrowing period if conditions are met.
+	 * Verifies book is not lost before allowing extension.
 	 * Uses stored procedure to handle extension logic.
 	 * 
 	 * @param conn Active database connection
-	 * @param subId Subscriber ID
-	 * @param borrowId Borrow record ID
+	 * @param subId Subscriber ID requesting extension
+	 * @param borrowId Borrow record ID to extend
 	 * @param extensionDate New expected return date
-	 * @return true if extension successful, false otherwise
+	 * @return true if extension successful, false if:
+	 *         - Book is marked as lost
+	 *         - Invalid borrow record
+	 *         - Database error occurs
 	 * @throws SQLException if procedure call fails
 	 */
-
-	public static boolean extendBorrow(Connection conn, int subId, int borrowId, LocalDate extensionDate) {
-		String query = "CALL handle_book_extension(?, ?, ?)";
-		try (CallableStatement stmt = conn.prepareCall(query)) {
-			stmt.setInt(1, subId);
-			stmt.setInt(2, borrowId);
-			stmt.setDate(3, DateUtils.toSqlDate(extensionDate));
-			stmt.execute();
-			return true;
+	 public static boolean extendBorrow(Connection conn, int subId, int borrowId, LocalDate extensionDate) {
+		// First check if book is lost
+		String checkQuery = "SELECT Status FROM borrowrecords WHERE BorrowID = ?";
+		try (PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
+			checkStmt.setInt(1, borrowId);
+			ResultSet rs = checkStmt.executeQuery();
+			
+			if (rs.next() && rs.getString("Status").equals("Lost")) {
+				return false;
+			}
+			
+			// Proceed with extension if not lost
+			String query = "CALL handle_book_extension(?, ?, ?)";
+			try (CallableStatement stmt = conn.prepareCall(query)) {
+				stmt.setInt(1, subId);
+				stmt.setInt(2, borrowId);
+				stmt.setDate(3, DateUtils.toSqlDate(extensionDate));
+				stmt.execute();
+				return true;
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
