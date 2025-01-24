@@ -2,148 +2,115 @@ package gui.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.chart.*;
+import javafx.scene.control.TabPane;
+import common.BorrowReport;
+import common.SubscriberReport;
 import java.util.List;
-import common.BorrowTimeReport;
-import common.SubscriberStatusReport;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ReportWindowController {
-
-    @FXML private StackedBarChart<String, Number> borrowTimesChart;
-    @FXML private BarChart<String, Number> subscriberStatusChart;
-    @FXML private BarChart<String, Number> returnedBooksChart;
-    @FXML private BarChart<String, Number> UnreturnedBooksChart;
-
-    public void setReports(List<BorrowTimeReport> borrowReports, List<SubscriberStatusReport> subscriberReports) {
-        updateSubscriberStatusChart(subscriberReports);
-        updateReturnedBooksChart(borrowReports);
-        updateUnreturnedBooksChart(borrowReports);
-        updateBorrowTimesChart(borrowReports);
+    @FXML private TabPane reportTabPane;
+    
+    // Borrow Charts
+    @FXML private BarChart<String, Number> genreBorrowChart;
+    @FXML private BarChart<String, Number> lateReturnChart;
+    
+    // Subscriber Charts
+    @FXML private PieChart subscriberStatusChart;
+    // @FXML private BarChart<String, Number> penaltyChart;
+    
+    @FXML
+    public void initialize() {
+        setupCharts();
+    }
+    
+    private void setupCharts() {
+        genreBorrowChart.setTitle("Monthly Borrows by Genre");
+        lateReturnChart.setTitle("Late Returns and Lost Books");
+        subscriberStatusChart.setTitle("Subscriber Status Distribution");
+        // penaltyChart.setTitle("Penalties and Freezes by Status");
     }
 
-    private void updateSubscriberStatusChart(List<SubscriberStatusReport> reportData) {
+    public void setReports(List<BorrowReport> borrowReports, List<SubscriberReport> subscriberReports) {
+        updateCharts(borrowReports, subscriberReports);
+    }
+    
+    
+    public void updateCharts(List<BorrowReport> borrowReport, 
+                           List<SubscriberReport> subscriberReport) {
+        updateBorrowCharts(borrowReport);
+        updateSubscriberCharts(subscriberReport);
+    }
+
+    private void updateBorrowCharts(List<BorrowReport> reports) {
+        genreBorrowChart.getData().clear();
+        lateReturnChart.getData().clear();
+        
+        // Total borrows by genre
+        XYChart.Series<String, Number> totalSeries = new XYChart.Series<>();
+        totalSeries.setName("Total Borrows");
+        
+        // Return status by genre
+        XYChart.Series<String, Number> onTimeSeries = new XYChart.Series<>();
+        XYChart.Series<String, Number> lateNoPenaltySeries = new XYChart.Series<>();
+        XYChart.Series<String, Number> lateWithPenaltySeries = new XYChart.Series<>();
+        
+        onTimeSeries.setName("On Time Returns");
+        lateNoPenaltySeries.setName("Late (No Penalty)");
+        lateWithPenaltySeries.setName("Late with Penalty/Lost");
+        
+        for (BorrowReport report : reports) {
+            // Add total borrows data
+            totalSeries.getData().add(
+                new XYChart.Data<>(report.getGenre(), report.getTotalBorrows())
+            );
+            
+            // Add return status data
+            onTimeSeries.getData().add(
+                new XYChart.Data<>(report.getGenre(), report.getOnTimeReturns())
+            );
+            lateNoPenaltySeries.getData().add(
+                new XYChart.Data<>(report.getGenre(), report.getLateNoPenalty())
+            );
+            lateWithPenaltySeries.getData().add(
+                new XYChart.Data<>(report.getGenre(), report.getLateWithPenaltyOrLost())
+            );
+        }
+        
+        genreBorrowChart.getData().add(totalSeries);
+        lateReturnChart.getData().addAll(
+            onTimeSeries, 
+            lateNoPenaltySeries, 
+            lateWithPenaltySeries
+        );
+    }
+    
+    private void updateSubscriberCharts(List<SubscriberReport> reports) {
         subscriberStatusChart.getData().clear();
-        CategoryAxis xAxis = (CategoryAxis) subscriberStatusChart.getXAxis();
-        NumberAxis yAxis = (NumberAxis) subscriberStatusChart.getYAxis();
-
-        xAxis.setLabel("Status");
-        yAxis.setLabel("Number of Subscribers");
-
-        XYChart.Series<String, Number> activeSeries = new XYChart.Series<>();
-        activeSeries.setName("Active");
-        XYChart.Series<String, Number> inactiveSeries = new XYChart.Series<>();
-        inactiveSeries.setName("In-Active");
-        XYChart.Series<String, Number> frozenSeries = new XYChart.Series<>();
-        frozenSeries.setName("Frozen");
-
-        Map<String, Integer> statusCounts = new HashMap<>();
-        for (SubscriberStatusReport data : reportData) {
-            statusCounts.put(data.getStatus(), statusCounts.getOrDefault(data.getStatus(), 0) + data.getCount());
-        }
-
-        activeSeries.getData().add(new XYChart.Data<>("Active", statusCounts.getOrDefault("Active", 0)));
-        inactiveSeries.getData().add(new XYChart.Data<>("In-Active", statusCounts.getOrDefault("In-Active", 0)));
-        frozenSeries.getData().add(new XYChart.Data<>("Frozen", statusCounts.getOrDefault("Frozen", 0)));
-
-        subscriberStatusChart.getData().addAll(activeSeries, inactiveSeries, frozenSeries);
-    }
-
-    private void updateReturnedBooksChart(List<BorrowTimeReport> reportData) {
-        returnedBooksChart.getData().clear();
-        CategoryAxis xAxis = (CategoryAxis) returnedBooksChart.getXAxis();
-        NumberAxis yAxis = (NumberAxis) returnedBooksChart.getYAxis();
-
-        xAxis.setLabel("Book");
-        yAxis.setLabel("Average Days Held");
-
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName("Returned Books");
-
-        for (BorrowTimeReport data : reportData) {
-            if (data.getStatus().equals("Returned")) {
-                series.getData().add(new XYChart.Data<>(data.getBookTitle(), data.getValue()));
-            }
-        }
-
-        returnedBooksChart.getData().add(series);
-    }
-
-    private void updateUnreturnedBooksChart(List<BorrowTimeReport> reportData) {
-        UnreturnedBooksChart.getData().clear();
-        CategoryAxis xAxis = (CategoryAxis) UnreturnedBooksChart.getXAxis();
-        NumberAxis yAxis = (NumberAxis) UnreturnedBooksChart.getYAxis();
-
-        xAxis.setLabel("Book");
-        yAxis.setLabel("Average Days Late");
-
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName("Late Books");
-
-        for (BorrowTimeReport data : reportData) {
-            if (data.getStatus().equals("Late")) {
-                series.getData().add(new XYChart.Data<>(data.getBookTitle(), data.getValue()));
-            }
-        }
-
-        UnreturnedBooksChart.getData().add(series);
-    }
-
-    private void updateBorrowTimesChart(List<BorrowTimeReport> reportData) {
-        borrowTimesChart.getData().clear();
-        CategoryAxis xAxis = (CategoryAxis) borrowTimesChart.getXAxis();
-        NumberAxis yAxis = (NumberAxis) borrowTimesChart.getYAxis();
     
-        xAxis.setLabel("Book");
-        yAxis.setLabel("Count");
-    
-        XYChart.Series<String, Number> borrowedSeries = new XYChart.Series<>();
-        borrowedSeries.setName("Borrowed");
-        XYChart.Series<String, Number> returnedSeries = new XYChart.Series<>();
-        returnedSeries.setName("Returned");
-        XYChart.Series<String, Number> lateSeries = new XYChart.Series<>();
-        lateSeries.setName("Late");
-        XYChart.Series<String, Number> returnedLateSeries = new XYChart.Series<>();
-        returnedLateSeries.setName("Returned Late");
-    
-        Map<String, Integer> borrowedCounts = new HashMap<>();
-        Map<String, Integer> returnedCounts = new HashMap<>();
-        Map<String, Integer> lateCounts = new HashMap<>();
-        Map<String, Integer> returnedLateCounts = new HashMap<>();
-    
-        for (BorrowTimeReport data : reportData) {
-            String bookTitle = data.getBookTitle();
-            String status = data.getStatus();
-    
-            switch (status) {
-                case "BorrowedThisMonth":
-                    borrowedCounts.put(bookTitle, borrowedCounts.getOrDefault(bookTitle, 0) + 1);
-                    break;
-                case "Returned":
-                    returnedCounts.put(bookTitle, returnedCounts.getOrDefault(bookTitle, 0) + 1);
-                    break;
-                case "Late":
-                    lateCounts.put(bookTitle, lateCounts.getOrDefault(bookTitle, 0) + 1);
-                    break;
-                case "ReturnedLate":
-                    returnedLateCounts.put(bookTitle, returnedLateCounts.getOrDefault(bookTitle, 0) + 1);
-                    break;
-            }
+        // Calculate total for percentages
+        int total = reports.stream()
+                .mapToInt(SubscriberReport::getStatusCount)
+                .sum();
+                
+        for (SubscriberReport report : reports) {
+            double percentage = (report.getStatusCount() * 100.0) / total;
+            String label = String.format("%s: %d (%.1f%%)", 
+                report.getStatus(), 
+                report.getStatusCount(),
+                percentage);
+                
+            PieChart.Data slice = new PieChart.Data(label, report.getStatusCount());
+            subscriberStatusChart.getData().add(slice);
         }
-    
-        for (String bookTitle : borrowedCounts.keySet()) {
-            borrowedSeries.getData().add(new XYChart.Data<>(bookTitle, borrowedCounts.get(bookTitle)));
+        
+        // Add hover effect for exact numbers
+        for (PieChart.Data data : subscriberStatusChart.getData()) {
+            data.getNode().setOnMouseEntered(e -> {
+                data.getNode().setStyle("-fx-pie-color: derive(" + data.getNode().getStyle() + ", 20%);");
+            });
+            data.getNode().setOnMouseExited(e -> {
+                data.getNode().setStyle("");
+            });
         }
-        for (String bookTitle : returnedCounts.keySet()) {
-            returnedSeries.getData().add(new XYChart.Data<>(bookTitle, returnedCounts.get(bookTitle)));
-        }
-        for (String bookTitle : lateCounts.keySet()) {
-            lateSeries.getData().add(new XYChart.Data<>(bookTitle, lateCounts.get(bookTitle)));
-        }
-        for (String bookTitle : returnedLateCounts.keySet()) {
-            returnedLateSeries.getData().add(new XYChart.Data<>(bookTitle, returnedLateCounts.get(bookTitle)));
-        }
-    
-        borrowTimesChart.getData().addAll(borrowedSeries, returnedSeries, lateSeries, returnedLateSeries);
     }
 }

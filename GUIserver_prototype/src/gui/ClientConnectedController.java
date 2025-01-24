@@ -13,6 +13,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import server.InstanceManager;
+import server.ReportScheduler;
 import javafx.scene.control.Button;
 
 
@@ -66,6 +67,7 @@ public class ClientConnectedController {
     public void disconnectBtn(ActionEvent event) throws Exception {
         InstanceManager.getInstance().close();
         InstanceManager.getInstance().stopListening();
+        InstanceManager.getReportScheduler().stopScheduler();
         ((Node)event.getSource()).getScene().getWindow().hide();
         // Load and display ServerPort GUI
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/ServerPort.fxml"));

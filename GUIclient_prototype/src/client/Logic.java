@@ -13,12 +13,12 @@ import javafx.application.Platform;
 import common.MessageUtils;
 import common.Notification;
 import common.Subscriber;
-import common.SubscriberStatusReport;
+import common.SubscriberReport;
 import gui.controllers.LandingWindowController;
 import gui.controllers.SubscriberMainFrameController;
 import common.BookCopy;
 import common.BorrowRecordDTO;
-import common.BorrowTimeReport;
+import common.BorrowReport;
 import common.Librarian;
 import common.OrderRecordDTO;
 import common.OrderResponse;
@@ -322,11 +322,11 @@ public class Logic {
 
     // Monthyly reports
 
-    public static void parseAllBorrowTimesReports(Map<String, List<BorrowTimeReport>> reports) {
+    public static void parseAllBorrowReports(Map<String, List<BorrowReport>> reports) {
         System.out.println("Received all borrow times reports");
         Platform.runLater(() -> {
             if (SharedController.drc != null) {
-                SharedController.drc.setAllBorrowTimesReports(reports);
+                SharedController.drc.setAllBorrowReports(reports);
             } else {
                 // print its null
                 System.out.println("DataReportsController is null");
@@ -334,11 +334,11 @@ public class Logic {
         });
     }
 
-    public static void parseAllSubscriberStatusReports(Map<String, List<SubscriberStatusReport>> reports) {
+    public static void parseAllSubscriberReports(Map<String, List<SubscriberReport>> reports) {
         System.out.println("Received all subscriber status reports");
         Platform.runLater(() -> {
             if (SharedController.drc != null) {
-                SharedController.drc.setAllSubscriberStatusReports(reports);
+                SharedController.drc.setAllSubscriberReports(reports);
             } else {
                 // print its null
                 System.out.println("DataReportsController is null");
