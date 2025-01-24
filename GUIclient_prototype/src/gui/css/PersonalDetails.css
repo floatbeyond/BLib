@@ -1,0 +1,33 @@
+.anchor-pane {
+    -fx-background-color: #e0f7fa; /* Light blue background */
+    -fx-padding: 10;
+}
+
+.label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+}
+
+.text-field {
+    -fx-background-color: white;
+    -fx-border-color: #0288d1;
+    -fx-border-width: 2;
+    -fx-font-family: "Arial";
+    -fx-font-size: 14px;
+    -fx-text-fill: #01579b;
+    -fx-padding: 5;
+}
+
+.button {
+    -fx-background-color: #0288d1;
+    -fx-text-fill: white;
+    -fx-font-family: "Arial";
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 5 10;
+}
+
+.button:hover {
+    -fx-background-color: #0277bd;
+}

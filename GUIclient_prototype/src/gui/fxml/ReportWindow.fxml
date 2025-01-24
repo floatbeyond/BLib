@@ -8,9 +8,9 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="768.0" prefWidth="1138.0" stylesheets="@../css/ReportWindow.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.ReportWindowController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="610.0" prefWidth="1131.0" stylesheets="@../css/ReportWindow.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.ReportWindowController">
     <children>
-        <BarChart fx:id="subscriberStatusChart" layoutX="14.0" layoutY="41.0" prefHeight="325.0" prefWidth="553.0">
+        <BarChart fx:id="subscriberStatusChart" layoutX="14.0" prefHeight="304.0" prefWidth="562.0">
             <xAxis>
                 <CategoryAxis side="BOTTOM" />
             </xAxis>
@@ -18,7 +18,7 @@
                 <NumberAxis side="LEFT" />
             </yAxis>
         </BarChart>
-        <BarChart fx:id="UnreturnedBooksChart" layoutX="569.0" layoutY="404.0" prefHeight="331.0" prefWidth="553.0">
+        <BarChart fx:id="UnreturnedBooksChart" layoutX="608.0" layoutY="327.0" prefHeight="278.0" prefWidth="521.0">
             <xAxis>
                 <CategoryAxis side="BOTTOM" />
             </xAxis>
@@ -26,7 +26,7 @@
                 <NumberAxis side="LEFT" />
             </yAxis>
         </BarChart>
-        <BarChart fx:id="returnedBooksChart" layoutX="14.0" layoutY="414.0" prefHeight="331.0" prefWidth="553.0">
+        <BarChart fx:id="returnedBooksChart" layoutX="5.0" layoutY="324.0" prefHeight="278.0" prefWidth="562.0">
             <xAxis>
                 <CategoryAxis side="BOTTOM" />
             </xAxis>
@@ -34,12 +34,12 @@
                 <NumberAxis side="LEFT" />
             </yAxis>
         </BarChart>
-        <Separator layoutX="44.0" layoutY="388.0" prefHeight="6.0" prefWidth="1050.0" />
-        <Label alignment="CENTER" layoutX="44.0" layoutY="11.0" prefHeight="30.0" prefWidth="440.0" text="Subscriber Status" />
-        <Label alignment="CENTER" layoutX="27.0" layoutY="361.0" prefHeight="30.0" prefWidth="475.0" text="Returned Books" />
-        <Label alignment="CENTER" layoutX="572.0" layoutY="361.0" prefHeight="30.0" prefWidth="500.0" text="Unreturned Books" />
-      <Label alignment="CENTER" layoutX="572.0" layoutY="11.0" prefHeight="30.0" prefWidth="500.0" text="Borrow Status" />
-      <StackedBarChart fx:id="borrowTimesChart" layoutX="569.0" layoutY="41.0" prefHeight="315.0" prefWidth="553.0">
+        <Separator layoutX="67.0" layoutY="321.0" prefHeight="6.0" prefWidth="1050.0" />
+        <Label alignment="CENTER" layoutX="66.0" layoutY="-1.0" prefHeight="30.0" prefWidth="440.0" text="Subscriber Status" />
+        <Label alignment="CENTER" layoutX="26.0" layoutY="297.0" prefHeight="30.0" prefWidth="475.0" text="Returned Books" />
+        <Label alignment="CENTER" layoutX="619.0" layoutY="321.0" prefHeight="30.0" prefWidth="500.0" text="Unreturned Books" />
+      <Label alignment="CENTER" layoutX="619.0" layoutY="7.0" prefHeight="30.0" prefWidth="500.0" text="Borrow Status" />
+      <StackedBarChart fx:id="borrowTimesChart" layoutX="586.0" layoutY="14.0" prefHeight="304.0" prefWidth="521.0">
         <xAxis>
           <CategoryAxis side="BOTTOM" />
         </xAxis>

@@ -1,0 +1,67 @@
+.anchor-pane {
+    -fx-background-color: #e0f7fa; /* Light blue background */
+
+}
+
+.label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+}
+
+.text-field {
+    -fx-background-color: white;
+    -fx-border-color: #0288d1;
+    -fx-border-width: 2;
+    -fx-font-family: "Arial";
+    -fx-font-size: 14px;
+    -fx-text-fill: #01579b;
+    -fx-padding: 5;
+}
+
+.button {
+    -fx-background-color: #0288d1;
+    -fx-text-fill: white;
+    -fx-font-family: "Arial";
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 5 10;
+}
+
+.button:hover {
+    -fx-background-color: #0277bd;
+}
+
+.combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #0288d1;
+    -fx-border-width: 2;
+    -fx-font-family: "Arial";
+    -fx-font-size: 14px;
+    -fx-text-fill: #01579b;
+}
+
+.list-view {
+    -fx-background-color: white;
+    -fx-border-color: #0288d1;
+    -fx-border-width: 2;
+    -fx-font-family: "Arial";
+    -fx-font-size: 14px;
+    -fx-text-fill: #01579b;
+}
+
+.list-view .list-cell {
+    -fx-background-color: white;
+    -fx-border-color: #ddd;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 10;
+}
+
+.list-view .list-cell:odd {
+    -fx-background-color: #f9f9f9;
+}
+
+.list-view .list-cell:selected {
+    -fx-background-color: #0288d1;
+    -fx-text-fill: white;
+}

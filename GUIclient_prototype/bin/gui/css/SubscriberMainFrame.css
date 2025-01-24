@@ -2,7 +2,7 @@
     -fx-background-color: #e0f7fa; /* Light blue background */
 }
 
-#btnLogOut, #btnPersonalDetails, #btnActiveOrders, #searchButton, #btnLogs { 
+#btnLogOut, #btnPersonalDetails, #btnActiveOrders, #searchButton, #btnLogs, .button { 
     -fx-font-size: 14px;
     -fx-font-family: "Arial";
     -fx-background-color: #bbdefb; /* Light blue button background */
@@ -16,8 +16,8 @@
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 0, 1);
 }
 
-#btnLogOut:hover, #btnPersonalDetails:hover, #btnActiveOrders:hover, #searchButton:hover, #btnLogs:hover {
-    -fx-background-color: #90caf9; /* Slightly darker blue on hover */
+#btnLogOut:hover, #btnPersonalDetails:hover, #btnActiveOrders:hover, #searchButton:hover, #btnLogs:hover, .button:hover {
+    -fx-background-color: #90caf9; /* Lighter blue on hover */
 }
 
 MenuButton {
@@ -99,4 +99,47 @@ TableView:focused {
     -fx-table-cell-border-color: #838383; /* Ensure column dividers retain the desired color */
     -fx-background-insets: 0; /* Remove the default padding */
     -fx-text-fill: #000000
+}
+
+/* Additional styles for the table and Active Borrow button */
+.table-view {
+    -fx-background-color: #fff;
+    -fx-border-color: #ccc;
+    -fx-border-radius: 5;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #0288d1; /* Blue header background */
+}
+
+.table-view .column-header, .table-view .filler {
+    -fx-background-color: #0288d1; /* Blue header background */
+    -fx-text-fill: white;
+}
+
+.table-view .cell {
+    -fx-background-color: #f9f9f9;
+    -fx-border-color: #ddd;
+}
+
+.table-view .cell:selected {
+    -fx-background-color: #0288d1; /* Blue selected cell background */
+    -fx-text-fill: white;
+}
+
+#activeBorrowButton {
+    -fx-background-color: #bbdefb; /* Light blue button background */
+    -fx-text-fill: #01579b; /* Dark blue text color */
+    -fx-font-size: 14px;
+    -fx-font-family: "Arial";
+    -fx-border-color: #0288d1; /* Blue border color */
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 5px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 0, 1);
+}
+
+#activeBorrowButton:hover {
+    -fx-background-color: #90caf9; /* Lighter blue on hover */
 }

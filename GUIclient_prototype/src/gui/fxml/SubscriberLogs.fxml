@@ -6,12 +6,12 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="430.0" prefWidth="634.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.SubscriberLogsController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="430.0" prefWidth="634.0" styleClass="anchor-pane" stylesheets="@../css/SubscriberLogs.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.SubscriberLogsController">
    <children>
-      <Button fx:id="backButton" layoutX="26.0" layoutY="383.0" mnemonicParsing="false" onAction="#goBackBtn" text="Back" />
-      <ListView fx:id="listViewLogs" layoutX="25.0" layoutY="63.0" prefHeight="306.0" prefWidth="593.0" />
-      <ComboBox fx:id="monthComboBox" layoutX="47.0" layoutY="27.0" onAction="#filterLogsByMonth" prefHeight="25.0" prefWidth="116.0" promptText="Month" />
-      <ComboBox fx:id="yearComboBox" layoutX="201.0" layoutY="27.0" onAction="#filterLogsByMonth" prefHeight="25.0" prefWidth="71.0" promptText="Year" />
-      <Label fx:id="currentDate" layoutX="374.0" layoutY="27.0" prefHeight="25.0" prefWidth="173.0" text="Current Date:" />
+      <Button fx:id="backButton" layoutX="26.0" layoutY="383.0" mnemonicParsing="false" onAction="#goBackBtn" styleClass="button" text="Back" />
+      <ListView fx:id="listViewLogs" layoutX="25.0" layoutY="63.0" prefHeight="306.0" prefWidth="593.0" styleClass="list-view" />
+      <ComboBox fx:id="monthComboBox" layoutX="47.0" layoutY="27.0" onAction="#filterLogsByMonth" prefHeight="25.0" prefWidth="116.0" promptText="Month" styleClass="combo-box" />
+      <ComboBox fx:id="yearComboBox" layoutX="201.0" layoutY="27.0" onAction="#filterLogsByMonth" prefHeight="29.0" prefWidth="93.0" promptText="Year" styleClass="combo-box" />
+      <Label fx:id="currentDate" layoutX="374.0" layoutY="27.0" prefHeight="25.0" prefWidth="173.0" styleClass="label" text="Current Date:" />
    </children>
 </AnchorPane>

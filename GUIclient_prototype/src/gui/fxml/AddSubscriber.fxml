@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="356.0" prefWidth="417.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.AddSubscriberController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="356.0" prefWidth="417.0" styleClass="anchor-pane" stylesheets="@../css/AddSubscriber.css"  xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.AddSubscriberController">
    <children>
       <Label id="lblName" fx:id="lblName" layoutX="81.0" layoutY="48.0" styleClass="label" text="Full Name:" />
       <TextField id="lblID" fx:id="txtFName" layoutX="173.0" layoutY="44.0" prefWidth="180.0" styleClass="text-field" />
