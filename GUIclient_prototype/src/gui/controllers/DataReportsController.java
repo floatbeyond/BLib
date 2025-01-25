@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.Map;
 
 import client.ClientUI;
-import common.BorrowTimeReport;
+import common.BorrowReport;
 import common.MessageUtils;
-import common.SubscriberStatusReport;
+import common.SubscriberReport;
 
 public class DataReportsController {
 
@@ -32,8 +32,8 @@ public class DataReportsController {
     @FXML private Button showButton;
     @FXML private Button backButton;
 
-    private Map<String, List<BorrowTimeReport>> allBorrowTimesReports = new HashMap<>();
-    private Map<String, List<SubscriberStatusReport>> allSubscriberStatusReports = new HashMap<>();
+    private Map<String, List<BorrowReport>> allBorrowReports = new HashMap<>();
+    private Map<String, List<SubscriberReport>> allSubscriberReports = new HashMap<>();
 
     @FXML
     public void initialize() {
@@ -65,15 +65,17 @@ public class DataReportsController {
         Month selectedMonth = monthComboBox.getValue();
         Integer selectedYear = yearComboBox.getValue();
         if (selectedMonth != null && selectedYear != null) {
-            String monthYear = String.format("%02d-%d", selectedMonth.getValue(), selectedYear);
-            List<BorrowTimeReport> filteredBorrowTimesReports = allBorrowTimesReports.getOrDefault(monthYear, List.of());
-            List<SubscriberStatusReport> filteredSubscriberStatusReports = allSubscriberStatusReports.getOrDefault(monthYear, List.of());
-
+            String monthYear = String.format("%d-%02d", selectedYear, selectedMonth.getValue());
+            List<BorrowReport> filteredBorrowTimesReports = allBorrowReports.getOrDefault(monthYear, List.of());
+            List<SubscriberReport> filteredSubscriberStatusReports = allSubscriberReports.getOrDefault(monthYear, List.of());
+            // print size of reports and all reports too
+            System.out.println("Borrow Reports: " + filteredBorrowTimesReports.size());
+            System.out.println("Subscriber Reports: " + filteredSubscriberStatusReports.size());
             openReportWindow(monthYear, filteredBorrowTimesReports, filteredSubscriberStatusReports);
         }
     }
 
-    private void openReportWindow(String monthYear, List<BorrowTimeReport> borrowReports, List<SubscriberStatusReport> subscriberReports) {
+    private void openReportWindow(String monthYear, List<BorrowReport> borrowReports, List<SubscriberReport> subscriberReports) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gui/fxml/ReportWindow.fxml"));
             Parent root = fxmlLoader.load();
@@ -94,14 +96,14 @@ public class DataReportsController {
         }
     }
 
-    public void setAllBorrowTimesReports(Map<String, List<BorrowTimeReport>> reports) {
+    public void setAllBorrowReports(Map<String, List<BorrowReport>> reports) {
         System.out.println("Setting all borrow times reports: " + reports);
-        this.allBorrowTimesReports = reports;
+        this.allBorrowReports = reports;
     }
 
-    public void setAllSubscriberStatusReports(Map<String, List<SubscriberStatusReport>> reports) {
+    public void setAllSubscriberReports(Map<String, List<SubscriberReport>> reports) {
         System.out.println("Setting all subscriber status reports: " + reports);
-        this.allSubscriberStatusReports = reports;
+        this.allSubscriberReports = reports;
     }
 
     public void goBackBtn(ActionEvent event) throws Exception {

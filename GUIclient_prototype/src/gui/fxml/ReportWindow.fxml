@@ -1,53 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
-<?import javafx.scene.chart.StackedBarChart?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="610.0" prefWidth="1131.0" stylesheets="@../css/ReportWindow.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.ReportWindowController">
-    <children>
-        <BarChart fx:id="subscriberStatusChart" layoutX="14.0" prefHeight="304.0" prefWidth="562.0">
-            <xAxis>
-                <CategoryAxis side="BOTTOM" />
-            </xAxis>
-            <yAxis>
-                <NumberAxis side="LEFT" />
-            </yAxis>
-        </BarChart>
-        <BarChart fx:id="UnreturnedBooksChart" layoutX="608.0" layoutY="327.0" prefHeight="278.0" prefWidth="521.0">
-            <xAxis>
-                <CategoryAxis side="BOTTOM" />
-            </xAxis>
-            <yAxis>
-                <NumberAxis side="LEFT" />
-            </yAxis>
-        </BarChart>
-        <BarChart fx:id="returnedBooksChart" layoutX="5.0" layoutY="324.0" prefHeight="278.0" prefWidth="562.0">
-            <xAxis>
-                <CategoryAxis side="BOTTOM" />
-            </xAxis>
-            <yAxis>
-                <NumberAxis side="LEFT" />
-            </yAxis>
-        </BarChart>
-        <Separator layoutX="67.0" layoutY="321.0" prefHeight="6.0" prefWidth="1050.0" />
-        <Label alignment="CENTER" layoutX="66.0" layoutY="-1.0" prefHeight="30.0" prefWidth="440.0" text="Subscriber Status" />
-        <Label alignment="CENTER" layoutX="26.0" layoutY="297.0" prefHeight="30.0" prefWidth="475.0" text="Returned Books" />
-        <Label alignment="CENTER" layoutX="619.0" layoutY="321.0" prefHeight="30.0" prefWidth="500.0" text="Unreturned Books" />
-      <Label alignment="CENTER" layoutX="619.0" layoutY="7.0" prefHeight="30.0" prefWidth="500.0" text="Borrow Status" />
-      <StackedBarChart fx:id="borrowTimesChart" layoutX="586.0" layoutY="14.0" prefHeight="304.0" prefWidth="521.0">
-        <xAxis>
-          <CategoryAxis side="BOTTOM" />
-        </xAxis>
-        <yAxis>
-          <NumberAxis side="LEFT" />
-        </yAxis>
-      </StackedBarChart>
-      <Separator layoutX="572.0" layoutY="28.0" orientation="VERTICAL" prefHeight="342.0" prefWidth="6.0" />
-      <Separator layoutX="572.0" layoutY="404.0" orientation="VERTICAL" prefHeight="315.0" prefWidth="6.0" />
-    </children>
-</AnchorPane>
+<VBox spacing="10" styleClass="report-window" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/22" fx:controller="gui.controllers.ReportWindowController">
+    
+        <TabPane fx:id="reportTabPane">
+        <Tab closable="false" text="Borrow Reports">
+            <VBox spacing="20">
+                <padding>
+                    <Insets bottom="10" left="10" right="10" top="10" />
+                </padding>
+                
+                <BarChart fx:id="genreBorrowChart" legendVisible="true" title="Total Borrows by Genre">
+                    <xAxis>
+                        <CategoryAxis label="Genre" />
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis label="Total Borrows" />
+                    </yAxis>
+                </BarChart>
+                
+                <BarChart fx:id="lateReturnChart" legendVisible="true" title="Return Status by Genre">
+                    <xAxis>
+                        <CategoryAxis label="Genre" />
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis label="Number of Returns" />
+                    </yAxis>
+                </BarChart>
+            </VBox>
+        </Tab>
+        
+        <Tab closable="false" text="Subscriber Reports">
+            <VBox spacing="20">
+                <padding>
+                    <Insets bottom="10" left="10" right="10" top="10" />
+                </padding>
+                
+                <PieChart fx:id="subscriberStatusChart" 
+                    legendSide="RIGHT"
+                    legendVisible="true" 
+                    labelsVisible="true"
+                    prefHeight="500" 
+                    prefWidth="800"
+                    VBox.vgrow="ALWAYS" />
+            </VBox>
+        </Tab>
+    </TabPane>
+</VBox>

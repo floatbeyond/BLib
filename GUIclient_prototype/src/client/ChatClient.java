@@ -7,11 +7,11 @@ package client;
 import ocsf.client.*;
 import common.ChatIF;
 import common.Subscriber;
-import common.SubscriberStatusReport;
+import common.SubscriberReport;
 import common.ServerMessage;
 import common.BookCopy;
 import common.BorrowRecordDTO;
-import common.BorrowTimeReport;
+import common.BorrowReport;
 import common.OrderRecordDTO;
 import common.Notification;
 
@@ -146,10 +146,10 @@ public class ChatClient extends AbstractClient
                     Logic.cancelOrderStatus((String) data);
                     break;
                 case "AllBorrowReports":
-                    Logic.parseAllBorrowTimesReports((Map<String, List<BorrowTimeReport>>) data);
+                    Logic.parseAllBorrowReports((Map<String, List<BorrowReport>>) data);
                     break;
                 case "AllSubscriberReports":
-                    Logic.parseAllSubscriberStatusReports((Map<String, List<SubscriberStatusReport>>) data);
+                    Logic.parseAllSubscriberReports((Map<String, List<SubscriberReport>>) data);
                     break;
                 case "Print":
                     Logic.print((String) data);
@@ -180,19 +180,21 @@ public class ChatClient extends AbstractClient
       System.out.println("ChatClient: Sending message, Case: " + type + " | data: " + data);
       
 	    try {
-        openConnection();
-        connectionStatusFlag = 1; // Set flag to 1 for success
-        // print client connected
-        System.out.println("ChatClient: Connection successful");
+            if (!isConnected()) {
+                openConnection();
+                connectionStatusFlag = 1; // Set flag to 1 for success
+                // print client connected
+                System.out.println("ChatClient: Connection successful");
+            }
 
         sendToServer(serverMessage);
 
-        if (type == "disconnect" || type == "quit") {
-          closeConnection();
-          connectionStatusFlag = 0; // Set flag to 0 for failure
-          // print client disconnected
-          System.out.println("ChatClient: Connection closed");
-          awaitResponse = false;
+        if (type.equals("disconnect") || type.equals("quit")) {
+            closeConnection();
+            connectionStatusFlag = 0; // Set flag to 0 for failure
+            // print client disconnected
+            System.out.println("ChatClient: Connection closed");
+            awaitResponse = false;
           
         } else {
           System.out.println("ChatClient: Setting awaitResponse to true");
@@ -232,18 +234,6 @@ public class ChatClient extends AbstractClient
   /**
    * This method terminates the client.
    */
-
-  // public void setupConnection() {
-  //   try {
-
-  //   } catch (IOException e) {
-  //     System.err.println("Error: Can't connect to server! Terminating client.");
-  //     System.exit(1);
-  //   }
-  // }
-
-
-
   public void quit()
   {
     try
@@ -252,6 +242,21 @@ public class ChatClient extends AbstractClient
     }
     catch(IOException e) {}
     System.exit(0);
+  }
+
+  @Override
+  protected void connectionClosed() {
+      System.out.println("Connection closed");
+  }
+
+  @Override
+  protected void connectionException(Exception exception) {
+      System.out.println("Connection exception: " + exception.getMessage());
+  }
+
+  @Override
+  protected void connectionEstablished() {
+      System.out.println("Connection established");
   }
 
 

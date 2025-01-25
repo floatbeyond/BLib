@@ -1,10 +1,14 @@
 package server;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import com.mysql.cj.protocol.Message;
 
@@ -17,10 +21,12 @@ import common.BorrowingRecord;
 import common.DataLogs;
 import common.MessageUtils;
 import common.Subscriber;
+import common.SubscriberReport;
 import common.SubscriberStatusReport;
 import common.Book;
 import common.BookCopy;
 import common.BorrowRecordDTO;
+import common.BorrowReport;
 import common.BorrowTimeReport;
 import common.OrderRecordDTO;
 import ocsf.server.ConnectionToClient;
@@ -29,6 +35,7 @@ import common.OrderResponse;
 
 
 public class Logic {
+    private static final Logger logger = Logger.getLogger(Logic.class.getName());
     private static Connection conn = InstanceManager.getDbConnection();
     private static ClientConnectedController ccc;
     private static Subscriber s;
@@ -284,76 +291,94 @@ public class Logic {
 
     // Monthly reports
 
+    public static void generateMonthlyReports(LocalDate reportDate) {
+        try {
+            mysqlConnection.generateMonthlyReports(conn, reportDate);
+        } catch (Exception e) {
+            logger.severe("Failed to generate monthly reports: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void fetchMonthlyReports(String user, ConnectionToClient client) {
-        Map<String, List<BorrowTimeReport>> allBorrowTimesReports = new LinkedHashMap<>();
-        Map<String, List<SubscriberStatusReport>> allSubscriberStatusReports = new LinkedHashMap<>();
-
-        List<String> reportMonths = ReportSaver.getReportMonths();
-        for (String monthYear : reportMonths) {
-            List<BorrowTimeReport> borrowTimesReports = ReportSaver.loadBorrowTimesReport(monthYear);
-            List<SubscriberStatusReport> subscriberStatusReports = ReportSaver.loadSubscriberStatusReport(monthYear);
-
-            allBorrowTimesReports.put(monthYear, borrowTimesReports);
-            allSubscriberStatusReports.put(monthYear, subscriberStatusReports);
-        }
-
-        MessageUtils.sendResponseToClient(user, "AllBorrowReports", allBorrowTimesReports, client);
-        MessageUtils.sendResponseToClient(user, "AllSubscriberReports", allSubscriberStatusReports, client);
-    }
-
-    public static void generateMonthlyReports() {
-        // Get the current month and year
-        LocalDate now = LocalDate.now();
-        // print local date now
-        System.out.println("CURRENT TIME: " + now);
-        String monthYear = now.format(DateTimeFormatter.ofPattern("MM-yyyy"));
-
-        // Check if reports for the current month already exist
-        List<String> existingReportMonths = ReportSaver.getReportMonths();
-        if (existingReportMonths.contains(monthYear)) {
-            System.out.println("Reports for " + monthYear + " already exist. Skipping generation.");
-            return;
-        }
-
-        // Generate borrow times report
-        borrowTimesReport = mysqlConnection.fetchBorrowTimesReport(conn, now);
-
-        // Generate subscriber status report
-        subscriberStatusReport = mysqlConnection.fetchSubscriberStatusReport(conn, now);
-
-        // Save the reports
-        ReportSaver.saveReports(borrowTimesReport, subscriberStatusReport, monthYear);
-    }
-
-    public static void generateMissingReports() {
-        // Get the current date
-        LocalDate now = LocalDate.now();
-        System.out.println("CURRENT TIME: " + now);
-        LocalDate startDate = LocalDate.of(2024, 1, 1); // Assuming data starts from January 2024
-
-        // Get existing report months
-        List<String> existingReportMonths = ReportSaver.getReportMonths();
-
-        // Generate reports for all missing months up to the previous month
-        while (startDate.isBefore(now.withDayOfMonth(1))) {
-            String monthYear = startDate.format(DateTimeFormatter.ofPattern("MM-yyyy"));
-            if (!existingReportMonths.contains(monthYear)) {
-                System.out.println("Generating reports for " + monthYear);
-
-                // Generate borrow times report
-                List<BorrowTimeReport> borrowTimesReport = mysqlConnection.fetchBorrowTimesReport(conn, startDate);
-
-                // Generate subscriber status report
-                List<SubscriberStatusReport> subscriberStatusReport = mysqlConnection.fetchSubscriberStatusReport(conn, startDate);
-
-                // Save the reports
-                ReportSaver.saveReports(borrowTimesReport, subscriberStatusReport, monthYear);
-            } else {
-                System.out.println("Reports for " + monthYear + " already exist. Skipping generation.");
+        try {
+            List<String> reportMonths = ReportSaver.getReportMonths();
+            System.out.println("Processing " + reportMonths.size() + " months");
+            
+            // Send total count first
+            MessageUtils.sendResponseToClient(user, "ReportCount", reportMonths.size(), client);
+            
+            // Collect all borrow reports and subscriber reports
+            Map<String, List<BorrowReport>> allBorrowReports = new HashMap<>();
+            Map<String, List<SubscriberReport>> allSubscriberReports = new HashMap<>();
+            
+            for (String monthYear : reportMonths) {
+                if (!client.isAlive()) {
+                    System.out.println("Client connection lost during processing");
+                    return;
+                }
+                
+                try {
+                    System.out.println("Loading reports for month: " + monthYear);
+                    
+                    // Load reports for this month
+                    List<BorrowReport> borrowReports = ReportSaver.loadBorrowReport(monthYear);
+                    List<SubscriberReport> subscriberReports = ReportSaver.loadSubscriberReport(monthYear);
+                    
+                    // Add reports to the collections
+                    allBorrowReports.put(monthYear, borrowReports);
+                    allSubscriberReports.put(monthYear, subscriberReports);
+                    
+                    System.out.println("Loaded reports for month: " + monthYear);
+                    
+                } catch (Exception e) {
+                    System.out.println("Error processing month " + monthYear + ": " + e.getMessage());
+                }
             }
-            startDate = startDate.plusMonths(1);
+            
+            // Send all borrow reports if still connected
+            if (client.isAlive()) {
+                System.out.println("Sending all borrow reports to client");
+                MessageUtils.sendResponseToClient(user, "AllBorrowReports", allBorrowReports, client);
+            }
+            
+            // Send all subscriber reports if still connected
+            if (client.isAlive()) {
+                System.out.println("Sending all subscriber reports to client");
+                MessageUtils.sendResponseToClient(user, "AllSubscriberReports", allSubscriberReports, client);
+            }
+            
+        } catch (Exception e) {
+            System.out.println("Error in fetchMonthlyReports: " + e.getMessage());
         }
     }
+
+    // public static void generateMissingReports() {
+    //     LocalDate now = LocalDate.now();
+    //     System.out.println("CURRENT TIME: " + now);
+    //     LocalDate startDate = LocalDate.of(2024, 1, 1);
+    
+    //     List<String> existingReportMonths = ReportSaver.getReportMonths();
+    
+    //     while (startDate.isBefore(now.withDayOfMonth(1))) {
+    //         String monthYear = startDate.format(DateTimeFormatter.ofPattern("MM-yyyy"));
+    //         if (!existingReportMonths.contains(monthYear)) {
+    //             System.out.println("Generating reports for " + monthYear);
+    
+    //             // Generate borrow report
+    //             List<BorrowReport> borrowReport = mysqlConnection.fetchBorrowReport(conn, startDate);
+    
+    //             // Generate subscriber report
+    //             List<SubscriberReport> subscriberReport = mysqlConnection.fetchSubscriberReport(conn, startDate);
+    
+    //             // Save the reports
+    //             ReportSaver.saveReports(borrowReport, subscriberReport, monthYear);
+    //         } else {
+    //             System.out.println("Reports for " + monthYear + " already exist. Skipping generation.");
+    //         }
+    //         startDate = startDate.plusMonths(1);
+    //     }
+    // }
 
 
 

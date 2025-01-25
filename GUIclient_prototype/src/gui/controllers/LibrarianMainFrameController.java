@@ -50,7 +50,7 @@ public class LibrarianMainFrameController {
         notificationSplitPane.setVisible(false);
         notificationListView.setItems(notifications);
         notificationListView.setItems(notifications);
-        NotificationScheduler.start("librarian", librarian.getLibrarian_id());
+        // NotificationScheduler.start("librarian", librarian.getLibrarian_id());
     }
 
 
@@ -73,7 +73,7 @@ public class LibrarianMainFrameController {
     @FXML
     private void goShowSubscribers(ActionEvent event) {
         try {
-            MessageUtils.sendMessage(ClientUI.cc,"user", "connect" , null);
+            MessageUtils.sendMessage(ClientUI.cc,"librarian", "connect" , null);
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gui/fxml/SubscribersTableForm.fxml"));
                 Parent root = fxmlLoader.load();
@@ -107,7 +107,7 @@ public class LibrarianMainFrameController {
     @FXML
     private void goDataReports(ActionEvent event) {
         try {
-            MessageUtils.sendMessage(ClientUI.cc,"user", "connect" , null);
+            MessageUtils.sendMessage(ClientUI.cc,"librarian", "connect" , null);
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gui/fxml/DataReports.fxml"));
                 Parent root = fxmlLoader.load();
@@ -144,7 +144,7 @@ public class LibrarianMainFrameController {
     @FXML
     private void goBorrow(ActionEvent event) {
         try {
-            MessageUtils.sendMessage(ClientUI.cc,"user", "connect" , null);
+            MessageUtils.sendMessage(ClientUI.cc,"librarian", "connect" , null);
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gui/fxml/BorrowForm.fxml"));
                 Parent root = fxmlLoader.load();
@@ -179,7 +179,7 @@ public class LibrarianMainFrameController {
     @FXML
     private void goReaderCard(ActionEvent event) {
         try {
-            MessageUtils.sendMessage(ClientUI.cc,"user", "connect" , null);
+            MessageUtils.sendMessage(ClientUI.cc,"librarian", "connect" , null);
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gui/fxml/ReaderCard.fxml"));
                 Parent root = fxmlLoader.load();
@@ -213,7 +213,7 @@ public class LibrarianMainFrameController {
     @FXML
     private void goReturnBook(ActionEvent event) {
         try {
-            MessageUtils.sendMessage(ClientUI.cc,"user", "connect" , null);
+            MessageUtils.sendMessage(ClientUI.cc,"librarian", "connect" , null);
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gui/fxml/ReturnBookFrame.fxml"));
                 Parent root = fxmlLoader.load();
@@ -247,7 +247,7 @@ public class LibrarianMainFrameController {
     @FXML
     private void goAddSubscriber(ActionEvent event) {
         try {
-            MessageUtils.sendMessage(ClientUI.cc,"user", "connect" , null);
+            MessageUtils.sendMessage(ClientUI.cc,"librarian", "connect" , null);
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gui/fxml/AddSubscriber.fxml"));
                 Parent root = fxmlLoader.load();
@@ -284,6 +284,7 @@ public class LibrarianMainFrameController {
             if (SharedController.getSubscribersTableController() != null) {
                 SharedController.getSubscribersTableController().closeAllReaderCards();
             } else System.out.println("SubscribersTableController is null");
+            NotificationScheduler.stop();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/LandingWindow.fxml"));
             Pane root = loader.load();
             

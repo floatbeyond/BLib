@@ -9,11 +9,13 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import common.Subscriber;
+import common.SubscriberReport;
 import common.SubscriberStatusReport;
 import common.Librarian;
 import common.Book;
 import common.BookCopy;
 import common.BorrowRecordDTO;
+import common.BorrowReport;
 import common.BorrowTimeReport;
 import common.BorrowingRecord;
 import common.DateUtils;
@@ -29,6 +31,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.sql.Timestamp;
 
@@ -1394,84 +1397,67 @@ public class mysqlConnection {
 		return dataLogs;
 	}
 
+	/**
+	 * Sets the month to generate reports for.
+	 * Calls the stored procedure to generate reports.
+	 * 
+	 * @param conn Active database connection
+	 * @param reportDate Date to set for the report
+	 * @return -- 
+	 * @throws SQLException if database update fails
+	 */
+	public static void generateMonthlyReports(Connection conn, LocalDate reportDate) throws SQLException {
+		// First call the stored procedure
+		try (CallableStatement call = conn.prepareCall("{CALL GenerateMonthlyReports(?)}")) {
+			call.setDate(1, java.sql.Date.valueOf(reportDate));
+			call.execute();
+			
+			// After procedure executes, fetch reports from temp tables
+			List<BorrowReport> borrowReports = fetchBorrowReport(conn, reportDate);
+			List<SubscriberReport> subscriberReports = fetchSubscriberReport(conn, reportDate);
+			
+			// Save to files using ReportSaver
+			String monthYear = reportDate.format(DateTimeFormatter.ofPattern("MM-yyyy"));
+			ReportSaver.saveReports(borrowReports, subscriberReports, monthYear);
+			
+		} catch (SQLException e) {
+			throw new SQLException("Failed to generate/save monthly reports", e);
+		}
+	}
+
     /**
-     * Fetches borrow times report for a specific month.
-     * Calculates average borrow and late days for each book.
-     *
-     * @param conn Active database connection
-     * @param now Current date to determine the month
-     * @return List of BorrowTimeReport objects
-     * @throws SQLException if database query fails
-     */
-	public static List<BorrowTimeReport> fetchBorrowTimesReport(Connection conn, LocalDate now) {
-        List<BorrowTimeReport> report = new ArrayList<>();
-        String query = "SELECT b.Title, br.Status, br.BorrowDate, br.ExpectedReturnDate, br.ActualReturnDate " +
-                       "FROM borrowrecords br " +
-                       "JOIN bookcopies bc ON br.CopyID = bc.CopyID " +
-                       "JOIN books b ON bc.BookID = b.BookID " +
-                       "WHERE (MONTH(br.BorrowDate) = ? AND YEAR(br.BorrowDate) = ?) " +
-                       "OR (MONTH(br.ActualReturnDate) = ? AND YEAR(br.ActualReturnDate) = ?)";
-
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, now.getMonthValue());
-            stmt.setInt(2, now.getYear());
-            stmt.setInt(3, now.getMonthValue());
-            stmt.setInt(4, now.getYear());
-            try (ResultSet rs = stmt.executeQuery()) {
-                Map<String, List<Integer>> heldDaysMap = new HashMap<>();
-                Map<String, List<Integer>> lateDaysMap = new HashMap<>();
-                Map<String, Integer> borrowCountMap = new HashMap<>();
-
-                while (rs.next()) {
-                    String bookTitle = rs.getString("Title");
-                    String status = rs.getString("Status");
-                    LocalDate borrowDate = rs.getDate("BorrowDate").toLocalDate();
-                    LocalDate expectedReturnDate = rs.getDate("ExpectedReturnDate").toLocalDate();
-                    LocalDate actualReturnDate = rs.getDate("ActualReturnDate") != null ? rs.getDate("ActualReturnDate").toLocalDate() : null;
-
-					// Calculate days held for returned books
-					if (status.equals("Returned")) {
-						int daysHeld = (int) ChronoUnit.DAYS.between(borrowDate, actualReturnDate);
-						heldDaysMap.computeIfAbsent(bookTitle, k -> new ArrayList<>()).add(daysHeld);
-					}
-
-					// Calculate days late for late or lost books
-					if (status.equals("ReturnedLate") || status.equals("Late") || status.equals("Lost")) {
-						int daysLate = (int) ChronoUnit.DAYS.between(expectedReturnDate, actualReturnDate != null ? actualReturnDate : now);
-						daysLate = Math.abs(daysLate); // Ensure the value is positive
-						lateDaysMap.computeIfAbsent(bookTitle, k -> new ArrayList<>()).add(daysLate);
-					}
-
-					// Count total books borrowed this month
-					if (borrowDate.getMonthValue() == now.getMonthValue() && borrowDate.getYear() == now.getYear()) {
-						borrowCountMap.put(bookTitle, borrowCountMap.getOrDefault(bookTitle, 0) + 1);
-					}
-				}
-
-				// Calculate averages and create report entries
-				for (String bookTitle : heldDaysMap.keySet()) {
-					List<Integer> heldDays = heldDaysMap.get(bookTitle);
-					double averageHeldDays = heldDays.stream().mapToInt(Integer::intValue).average().orElse(0.0);
-					report.add(new BorrowTimeReport(bookTitle, "Returned", averageHeldDays));
-				}
-
-				for (String bookTitle : lateDaysMap.keySet()) {
-					List<Integer> lateDays = lateDaysMap.get(bookTitle);
-					double averageLateDays = lateDays.stream().mapToInt(Integer::intValue).average().orElse(0.0);
-					report.add(new BorrowTimeReport(bookTitle, "Late", averageLateDays));
-				}
-
-				for (String bookTitle : borrowCountMap.keySet()) {
-					int borrowCount = borrowCountMap.get(bookTitle);
-					report.add(new BorrowTimeReport(bookTitle, "BorrowedThisMonth", borrowCount));
-				}
+	 * Fetches monthly borrow statistics by genre including:
+	 * - Total borrows per genre
+	 * - Average borrow duration
+	 * - Return status categories (on-time, late no penalty, late with penalty/lost)
+	 *
+	 * @param conn Active database connection
+	 * @param now Current date to determine the month
+	 * @return List of BorrowReport objects containing monthly statistics
+	 * @throws SQLException if database query fails
+	 */
+	private static List<BorrowReport> fetchBorrowReport(Connection conn, LocalDate date) throws SQLException {
+		List<BorrowReport> reports = new ArrayList<>();
+		String query = "SELECT * FROM temp_borrow_report WHERE ReportMonth = ? AND ReportYear = ?";
+		
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setInt(1, date.getMonthValue());
+			stmt.setInt(2, date.getYear());
+			ResultSet rs = stmt.executeQuery();
+			
+			while (rs.next()) {
+				reports.add(new BorrowReport(
+					rs.getString("Genre"),
+					rs.getInt("TotalBorrows"),
+					rs.getDouble("AvgBorrowDays"),
+					rs.getInt("OnTimeReturns"),
+					rs.getInt("LateNoPenalty"),
+					rs.getInt("LateWithPenaltyOrLost")
+				));
 			}
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return report;
-    }
+		}
+		return reports;
+	}
 
 	/**
      * Fetches subscriber status report for a specific month.
@@ -1482,30 +1468,28 @@ public class mysqlConnection {
      * @return List of SubscriberStatusReport objects
      * @throws SQLException if database query fails
      */
-
-    public static List<SubscriberStatusReport> fetchSubscriberStatusReport(Connection conn, LocalDate now) {
-        List<SubscriberStatusReport> report = new ArrayList<>();
-        String query = "SELECT Status, COUNT(SubID) AS Count " +
-                       "FROM subscribers " +
-                       "WHERE MONTH(Joined) = ? AND YEAR(Joined) = ? " +
-                       "GROUP BY Status";
-
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, now.getMonthValue());
-            stmt.setInt(2, now.getYear());
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    String status = rs.getString("Status");
-                    int count = rs.getInt("Count");
-                    report.add(new SubscriberStatusReport(status, count));
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return report;
-    }
+	private static List<SubscriberReport> fetchSubscriberReport(Connection conn, LocalDate date) throws SQLException {
+		List<SubscriberReport> reports = new ArrayList<>();
+		String query = "SELECT * FROM temp_subscriber_report WHERE ReportMonth = ? AND ReportYear = ?";
+		
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setInt(1, date.getMonthValue());
+			stmt.setInt(2, date.getYear());
+			ResultSet rs = stmt.executeQuery();
+			
+			while (rs.next()) {
+				reports.add(new SubscriberReport(
+					rs.getString("SubStatus"),
+					rs.getInt("StatusCount"),
+					rs.getInt("WithPenalties"),
+					rs.getDouble("AvgPenalties"),
+					rs.getInt("ReportMonth"),
+					rs.getInt("ReportYear")
+				));
+			}
+		}
+		return reports;
+	}
 }
 
 
