@@ -1,20 +1,14 @@
 package server;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import com.mysql.cj.protocol.Message;
-
 import javafx.application.Platform;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import common.OrderRecord;
 import common.Notification;
 import common.BorrowingRecord;
@@ -22,12 +16,10 @@ import common.DataLogs;
 import common.MessageUtils;
 import common.Subscriber;
 import common.SubscriberReport;
-import common.SubscriberStatusReport;
 import common.Book;
 import common.BookCopy;
 import common.BorrowRecordDTO;
 import common.BorrowReport;
-import common.BorrowTimeReport;
 import common.OrderRecordDTO;
 import ocsf.server.ConnectionToClient;
 import gui.ClientConnectedController;
@@ -41,9 +33,6 @@ public class Logic {
     private static Subscriber s;
     private static BookCopy bc;
     private static BorrowingRecord br;
-    private static List<BorrowTimeReport> borrowTimesReport;
-    private static List<SubscriberStatusReport> subscriberStatusReport;
-
 
     // Login
 

@@ -3,20 +3,16 @@ package server;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TimeZone;
 
 import common.Subscriber;
 import common.SubscriberReport;
-import common.SubscriberStatusReport;
 import common.Librarian;
 import common.Book;
 import common.BookCopy;
 import common.BorrowRecordDTO;
 import common.BorrowReport;
-import common.BorrowTimeReport;
 import common.BorrowingRecord;
 import common.DateUtils;
 import common.OrderRecordDTO;
@@ -32,7 +28,6 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.sql.Timestamp;
 
 /**
@@ -225,6 +220,9 @@ public class mysqlConnection {
 				String message = rs.getString("Message");
 				Timestamp timestamp = rs.getTimestamp("Timestamp");
 				notifications.add(new Notification(notificationId, userId, message, timestamp));
+				if (userType.equals("subscriber")) {
+					updateLastFetched(conn, userId);
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -11,17 +11,17 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="657.0" prefWidth="1090.0" styleClass="anchor-pane" stylesheets="@../css/LandingWindow.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.LandingWindowController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="657.0" prefWidth="1121.0" styleClass="anchor-pane" stylesheets="@../css/LandingWindow.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.LandingWindowController">
    <children>
-      <TextField fx:id="searchField" layoutX="369.0" layoutY="72.0" prefHeight="46.0" prefWidth="416.0" promptText="Search..." />
-      <MenuButton fx:id="menuButton" layoutX="292.0" layoutY="72.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="77.0" text="Title">
+      <TextField fx:id="searchField" layoutX="408.0" layoutY="71.0" prefHeight="46.0" prefWidth="416.0" promptText="Search..." />
+      <MenuButton fx:id="menuButton" layoutX="331.0" layoutY="71.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="77.0" text="Title">
         <items>
             <MenuItem onAction="#handleMenuItemAction" text="Title" />
             <MenuItem onAction="#handleMenuItemAction" text="Genre" />
             <MenuItem onAction="#handleMenuItemAction" text="Description" />
         </items>
       </MenuButton>
-      <Button fx:id="searchButton" graphicTextGap="0.0" layoutX="743.0" layoutY="72.0" mnemonicParsing="false" onAction="#handleSearchAction" prefHeight="46.0" prefWidth="42.0">
+      <Button fx:id="searchButton" graphicTextGap="0.0" layoutX="782.0" layoutY="71.0" mnemonicParsing="false" onAction="#handleSearchAction" prefHeight="46.0" prefWidth="42.0">
          <graphic>
             <ImageView fx:id="searchIcon" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -30,17 +30,19 @@
             </ImageView>
          </graphic>
       </Button>
-      <Button fx:id="loginButton" layoutX="978.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleLoginAction" prefHeight="38.0" prefWidth="67.0" text="Login" />
-      <TableView fx:id="bookTable" layoutX="13.0" layoutY="167.0" prefHeight="452.0" prefWidth="1065.0" visible="false">
+      <Button fx:id="loginButton" layoutX="1024.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleLoginAction" prefHeight="38.0" prefWidth="67.0" text="Login" />
+      <TableView fx:id="bookTable" layoutX="13.0" layoutY="167.0" prefHeight="426.0" prefWidth="1096.0" visible="false">
         <columns>
             <TableColumn fx:id="bookNameColumn" editable="false" prefWidth="180.0" resizable="false" text="Title" />
             <TableColumn fx:id="authorColumn" editable="false" prefWidth="130.0" resizable="false" text="Author" />
             <TableColumn fx:id="genreColumn" editable="false" prefWidth="100.0" resizable="false" text="Genre" />
-            <TableColumn fx:id="descriptionColumn" editable="false" prefWidth="360.0" resizable="false" text="Description" />
+            <TableColumn fx:id="descriptionColumn" editable="false" prefWidth="380.0" resizable="false" text="Description" />
             <TableColumn fx:id="copiesColumn" editable="false" prefWidth="180.0" resizable="false" text="Copies" />
-            <TableColumn fx:id="actionColumn" editable="false" prefWidth="110.0" resizable="false" text="Actions" />
+            <TableColumn fx:id="actionColumn" editable="false" prefWidth="105.0" resizable="false" text="Actions" />
          </columns>
       </TableView>
-      <Label fx:id="messageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="379.0" layoutY="130.0" prefHeight="46.0" prefWidth="396.0" />
+      <Label fx:id="messageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="277.0" layoutY="130.0" prefHeight="46.0" prefWidth="551.0" />
+      <Button fx:id="exitButton" layoutX="20.0" layoutY="605.0" mnemonicParsing="false" onAction="#handleExitAction" prefHeight="38.0" prefWidth="67.0" text="Exit" />
+      <Label fx:id="windowTitle" layoutX="469.0" layoutY="17.0" text="Welcome to BLib!" />
    </children>
 </AnchorPane>

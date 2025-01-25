@@ -5,14 +5,14 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="300.0" prefWidth="597.0" styleClass="anchor-pane" stylesheets="@../css/CopiesDialog.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.ActiveOrdersController">
-    <TableView fx:id="activeOrdersTable" layoutX="13.0" layoutY="12.0" prefHeight="278.0" prefWidth="564.0">
+<AnchorPane prefHeight="351.0" prefWidth="607.0" styleClass="anchor-pane" stylesheets="@../css/ActiveOrders.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.ActiveOrdersController">
+    <TableView fx:id="activeOrdersTable" layoutX="13.0" layoutY="12.0" prefHeight="278.0" prefWidth="600.0">
         <columns>
             <TableColumn fx:id="bookTitleCol" prefWidth="182.0" text="Title" />
             <TableColumn fx:id="orderDateCol" prefWidth="84.0" text="Date" />
             <TableColumn fx:id="statusCol" prefWidth="83.0" text="Status" />
-            <TableColumn fx:id="notificationStampCol" prefWidth="124.0" text="Notify" />
-            <TableColumn fx:id="actionCol" prefWidth="85.0" text="Action" />
+            <TableColumn fx:id="notificationStampCol" prefWidth="150.0" text="Notify" />
+            <TableColumn fx:id="actionCol" prefWidth="75.0" text="Action" />
         </columns>
     </TableView>
    <Button fx:id="closeButton" layoutX="14.0" layoutY="308.0" mnemonicParsing="false" onAction="#handleClose" text="Close" />

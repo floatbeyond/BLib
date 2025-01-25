@@ -263,14 +263,14 @@ public class Logic {
                         } else {
                             System.out.println("LandingWindowController is null");
                         }
-                    // } else if (user.equals("librarian")) {
-                    //     System.out.println("Loading librarian table");
-                    //     if (SharedController.lmfc != null) {
-                    //         System.out.println("LibrarianMainFrameController is initialized");
-                    //         SharedController.lmfc.loadBookDetails(list);
-                    //     } else {
-                    //         System.out.println("LibrarianMainFrameController is null");
-                    //     }
+                    } else if (user.equals("librarian")) {
+                        System.out.println("Loading librarian table");
+                        if (SharedController.lmfc != null) {
+                            System.out.println("LibrarianMainFrameController is initialized");
+                            SharedController.lmfc.loadBookDetails(list);
+                        } else {
+                            System.out.println("LibrarianMainFrameController is null");
+                        }
                     } else if (user.equals("subscriber")) {
                         SubscriberMainFrameController controller = SharedController.smfc;
                         System.out.println("Loading subscriber table");
@@ -287,6 +287,8 @@ public class Logic {
                     SharedController.lwc.noBooksFound();
                 } else if (user.equals("subscriber")) {
                     SharedController.smfc.noBooksFound();
+                } else if (user.equals("librarian")) {
+                    SharedController.lmfc.noBooksFound();
                 }
             }
         });

@@ -1,4 +1,5 @@
-#searchHome {
+.root {
+    -fx-font-family: 'Segoe UI', sans-serif;
     -fx-background-color: #e0f7fa;
 }
 

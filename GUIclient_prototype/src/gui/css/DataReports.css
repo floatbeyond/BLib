@@ -1,10 +1,10 @@
-.anchor-pane {
-    -fx-background-color: #e0f7fa; /* Background color from BorrowForm */
-    -fx-padding: 10;
+.root {
+    -fx-font-family: "Arial";
+    -fx-background-color: #e0f7fa;
+    padding : 10;
 }
 
 .label {
-    -fx-font-family: "Arial";
     -fx-font-size: 14px;
     -fx-text-fill: #01579b;
     -fx-font-weight: bold;
@@ -21,23 +21,33 @@
 }
 
 .button {
-    -fx-background-color: linear-gradient(to bottom, #64b5f6, #42a5f5);
-    -fx-text-fill: white;
-    -fx-font-family: "Arial";
     -fx-font-size: 14px;
-    -fx-font-weight: bold;
+    -fx-background-color: #bbdefb;
+    -fx-text-fill: #01579b;
+    -fx-border-color: #0288d1;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
     -fx-padding: 5 10;
-    -fx-border-radius: 5;
-    -fx-background-radius: 5;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 5, 0, 0, 1);
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 1);
 }
 
 .button:hover {
-    -fx-background-color: linear-gradient(to bottom, #42a5f5, #2196f3);
+    -fx-background-color: #90caf9;
+}
+
+.button:pressed {
+    -fx-background-color: #64b5f6;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 3, 0, 0, 1);
+}
+
+.button:focused {
+    -fx-border-color: #0288d1;
+    -fx-background-color: #bbdefb;
 }
 
 .message-label {
-    -fx-font-family: "Arial";
     -fx-font-size: 14px;
     -fx-text-fill: #d32f2f;
     -fx-font-weight: bold;
@@ -45,7 +55,58 @@
 }
 
 .combo-box {
-    -fx-font-family: "Arial";
     -fx-font-size: 14px;
+    -fx-background-color: white;
+    -fx-border-color: #0288d1;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 3;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 1);
+}
+
+.combo-box:hover {
+    -fx-border-color: #039be5;
+}
+
+.combo-box:focused {
+    -fx-border-color: #0288d1;
+    -fx-background-color: white;
+}
+
+.combo-box .arrow-button {
+    -fx-background-color: #bbdefb;
+}
+
+.combo-box .arrow-button:hover {
+    -fx-background-color: #90caf9;
+}
+
+.combo-box .arrow {
+    -fx-background-color: #01579b;
+}
+
+.combo-box .list-cell {
     -fx-text-fill: #01579b;
+    -fx-padding: 3 6;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: white;
+    -fx-border-color: #0288d1;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 1);
+}
+
+.combo-box-popup .list-cell {
+    -fx-background-color: white;
+    -fx-text-fill: #01579b;
+}
+
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: #e3f2fd;
+}
+
+.combo-box-popup .list-cell:selected {
+    -fx-background-color: #bbdefb;
 }

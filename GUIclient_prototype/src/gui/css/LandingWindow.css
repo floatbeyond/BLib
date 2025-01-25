@@ -1,10 +1,16 @@
-AnchorPane {
-    -fx-background-color: #e0f7fa; /* Light blue background */
+.root {
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-background-color: #e0f7fa;
+}
+
+#windowTitle {
+    -fx-text-fill: #01579b;
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
 }
 
 Button, MenuButton, #loginButton, #disconnectButton, #copiesButton { 
     -fx-font-size: 14px;
-    -fx-font-family: "Arial";
     -fx-background-color: #bbdefb; /* Light blue button background */
     -fx-text-fill: #01579b; /* Dark blue text color */
     -fx-prompt-text-fill: #a0a0a0;
@@ -17,7 +23,11 @@ Button, MenuButton, #loginButton, #disconnectButton, #copiesButton {
 }
 
 #loginButton, #disconnectButton, #searchButton, #copiesButton {
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 0, 1);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 5, 0, 0, 1);
+}
+
+#searchButton {
+    -fx-background-color: transparent;
 }
 
 #loginButton:hover, #disconnectButton:hover {
@@ -25,48 +35,78 @@ Button, MenuButton, #loginButton, #disconnectButton, #copiesButton {
 }
 
 TextField {
-    -fx-font-size: 14px;
-    -fx-font-family: "Arial";
+    -fx-font-size: 18px;
     -fx-background-color: white;
-    -fx-border-color: #0288d1; /* Blue border color */
-    -fx-border-width: 2px;
+    -fx-border-color: #0288d1 !important;  /* Blue border color */
+    -fx-border-width: 1px;
     -fx-text-fill: #01579b; /* Dark blue text color */
     -fx-prompt-text-fill: #a0a0a0;
-    -fx-padding: 5px;
+    -fx-padding: 5px 45px 5px 10px; /* top right bottom left */
+
 }
 
-TextField:focused {
-    -fx-border-color: #ccc; /* Remove blue focus border */
-    -fx-background-color: #fff; /* Ensure background color remains white */
+.text-field:focused {
+    -fx-border-color: #0288d1 !important;
+    -fx-background-color: white !important;
+    -fx-effect: dropshadow(gaussian, rgba(2,136,209,0.3), 10, 0, 0, 0) !important;
 }
 
-#searchButton {
-    -fx-background-color: transparent;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 5, 0, 0, 1);
-}
+
 
 #messageLabel {
     -fx-text-fill: #a30303;
     -fx-font-size: 16px;
-    -fx-font-family: "Arial";
     -fx-padding: 2px;
 }
 
 TableView {
     -fx-font-size: 14px;
-    -fx-font-family: "Arial";
-    -fx-background-color: #F2F0E8;
-    -fx-border-color: #ccc;
+    -fx-background-color: white;
+    -fx-border-color: #0288d1;
     -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 1);
 }
 
-TableView:focused {
-    -fx-border-color: #ccc;
+.table-view .column-header {
+    -fx-background-color: #bbdefb;
+    -fx-text-fill: #01579b;
+    -fx-font-weight: bold;
+    -fx-padding: 5px;
+}
+
+.table-row-cell {
+    -fx-background-color: white;
+    -fx-text-fill: #01579b;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #e3f2fd;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: #90caf9;
 }
 
 .table-row-cell:selected {
-    -fx-background-color: #838383; /* Change background color when row is clicked */
-    -fx-table-cell-border-color: #838383; /* Ensure column dividers retain the desired color */
-    -fx-background-insets: 0; /* Remove the default padding */
-    -fx-text-fill: #000000
+    -fx-background-color: #64b5f6;
+    -fx-text-fill: white;
+    -fx-table-cell-border-color: #0288d1;
+}
+
+.table-view:focused {
+    -fx-border-color: #0288d1;
+    -fx-background-color: white;
+}
+
+.table-view .scroll-bar {
+    -fx-background-color: white;
+}
+
+.table-view .scroll-bar .thumb {
+    -fx-background-color: #bbdefb;
+}
+
+.table-view .scroll-bar .thumb:hover {
+    -fx-background-color: #90caf9;
 }

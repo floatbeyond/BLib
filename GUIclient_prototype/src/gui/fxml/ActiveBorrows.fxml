@@ -5,10 +5,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="300.0" prefWidth="550.0" 
-            xmlns="http://javafx.com/javafx/22" 
-            xmlns:fx="http://javafx.com/fxml/1" 
-            fx:controller="gui.controllers.ActiveBorrowsController">
+<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="346.0" prefWidth="556.0" stylesheets="@../css/ActiveBorrows.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.ActiveBorrowsController">
     <children>
         <TableView fx:id="tableViewBorrows" layoutX="10.0" layoutY="10.0" prefHeight="283.0" prefWidth="531.0">
             <columns>
@@ -19,6 +16,6 @@
                 <TableColumn fx:id="colExtend" prefWidth="89.0" text="Extend" />
             </columns>
         </TableView>
+        <Button fx:id="closeButton" layoutX="14.0" layoutY="308.0" mnemonicParsing="false" onAction="#handleClose" prefHeight="30.0" prefWidth="57.0" text="Close" />
     </children>
-    <Button fx:id="closeButton" layoutX="14.0" layoutY="308.0" mnemonicParsing="false" onAction="#handleClose" text="Close" />
 </AnchorPane>

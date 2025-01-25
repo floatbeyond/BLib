@@ -1,34 +1,145 @@
-.anchor-pane {
-    -fx-background-color: #e0f7fa; /* Light blue background */
-    -fx-padding: 10;
-}
-
-.label {
-    -fx-font-family: "Arial";
+/* Main container */
+.root {
+    -fx-font-family: 'Segoe UI', sans-serif;
     -fx-font-size: 14px;
-    -fx-text-fill: #01579b; /* Dark blue text color */
-    -fx-font-weight: bold;
+    -fx-background-color: #e0f7fa;
 }
 
-.bar-chart {
+/* VBox styling */
+.VBox {
     -fx-background-color: white;
-    -fx-border-color: #0288d1; /* Blue border color */
-    -fx-border-width: 2px;
+    -fx-padding: 15;
+    -fx-spacing: 15;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);
+}
+
+/* Tab styling */
+.tab-pane {
+    -fx-background-color: transparent;
+}
+
+.tab-pane .tab-header-area {
+    -fx-background-color: transparent;
+}
+
+.tab-pane .tab-header-background {
+    -fx-background-color: #bbdefb;
+}
+
+.tab {
+    -fx-background-color: #bbdefb;
+    -fx-text-fill: #01579b;
+}
+
+.tab:selected {
+    -fx-background-color: #64b5f6;
+}
+
+.tab:selected .tab-label {
+    -fx-text-fill: white;
+}
+
+
+/* Chart styling */
+.chart {
+    -fx-padding: 20;
+    -fx-background-color: #f5f5f5;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0);
+}
+
+.chart-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #01579b;
+}
+
+.chart-legend {
+    -fx-background-color: transparent;
     -fx-padding: 10;
 }
 
 .axis-label {
-    -fx-font-family: "Arial";
-    -fx-font-size: 14px;
-    -fx-text-fill: #01579b; /* Dark blue text color */
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
 }
 
-.chart-legend-item-symbol {
-    -fx-background-color: #64b5f6, #42a5f5; /* Gradient background */
+.chart-plot-background {
+    -fx-background-color: #e9e9e9;
 }
 
-.chart-legend-item {
-    -fx-font-family: "Arial";
-    -fx-font-size: 14px;
-    -fx-text-fill: #01579b; /* Dark blue text color */
+.chart-vertical-grid-lines {
+    -fx-stroke: #ffffff;
+    -fx-stroke-width: 1;
+}
+
+.chart-horizontal-grid-lines {
+    -fx-stroke: #ffffff;
+    -fx-stroke-width: 1;
+}
+
+/* Bar Chart specific */
+.bar-chart {
+    -fx-background-radius: 5;
+}
+
+.bar-chart .chart-bar {
+    -fx-background-radius: 3;
+}
+
+/* Genre Borrow Chart Colors */
+.bar-chart .series0 .chart-bar { -fx-bar-fill: #2196F3; } /* Total Borrows - Blue */
+.bar-chart .series1 .chart-bar { -fx-bar-fill: #4CAF50; } /* Avg Days - Green */
+
+/* Late Return Chart Colors */
+.bar-chart .series2 .chart-bar { -fx-bar-fill: #4CAF50; } /* On Time - Green */
+.bar-chart .series3 .chart-bar { -fx-bar-fill: #FFC107; } /* Late No Penalty - Yellow */
+.bar-chart .series4 .chart-bar { -fx-bar-fill: #F44336; } /* Late with Penalty - Red */
+
+/* Hover States */
+.bar-chart .series0 .chart-bar:hover { -fx-bar-fill: derive(#2196F3, 30%); }
+.bar-chart .series1 .chart-bar:hover { -fx-bar-fill: derive(#4CAF50, 30%); }
+.bar-chart .series2 .chart-bar:hover { -fx-bar-fill: derive(#4CAF50, 30%); }
+.bar-chart .series3 .chart-bar:hover { -fx-bar-fill: derive(#FFC107, 30%); }
+.bar-chart .series4 .chart-bar:hover { -fx-bar-fill: derive(#F44336, 30%); }
+
+/* Pie Chart Colors */
+.default-color0.chart-pie { -fx-pie-color: #2196F3; } /* Active */
+.default-color1.chart-pie { -fx-pie-color: #F44336; } /* Frozen */
+.default-color2.chart-pie { -fx-pie-color: #9E9E9E; } /* In-Active */
+
+/* Hover Effects */
+.chart-bar:hover {
+    -fx-opacity: 0.8;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0);
+}
+
+.chart-pie:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 0);
+}
+
+/* Pie Chart specific */
+.pie-chart {
+    -fx-border-radius: 5;
+}
+
+.pie-chart .chart-pie {
+    -fx-border-width: 1;
+}
+
+.pie-chart .chart-pie:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 0);
+}
+
+/* Legend styling */
+.legend {
+    -fx-background-color: transparent;
+    -fx-padding: 10;
+}
+
+.legend-item {
+    -fx-padding: 5;
+}
+
+.legend-item-symbol {
+    -fx-padding: 5;
 }

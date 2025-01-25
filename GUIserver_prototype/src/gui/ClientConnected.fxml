@@ -16,7 +16,7 @@
             <Font size="18.0" />
          </font>
       </Label>
-      <Button fx:id="btnExit" layoutX="270.0" layoutY="190.0" minHeight="24.0" minWidth="54.0" mnemonicParsing="false" onAction="#disconnectBtn" prefHeight="31.0" prefWidth="54.0" text="Disconnect" />
+      <Button fx:id="btnExit" layoutX="20.0" layoutY="196.0" minHeight="24.0" minWidth="54.0" mnemonicParsing="false" onAction="#disconnectBtn" prefHeight="31.0" prefWidth="54.0" text="Disconnect" />
       <Label fx:id="infoLabel" layoutX="82.0" layoutY="20.0" prefHeight="48.0" prefWidth="268.0" />
       <Label fx:id="statusLabel" layoutX="82.0" layoutY="90.0" prefHeight="48.0" prefWidth="268.0" />
    </children>

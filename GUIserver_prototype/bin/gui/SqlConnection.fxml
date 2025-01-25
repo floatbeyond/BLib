@@ -26,7 +26,7 @@
       </Label>
       <TextField fx:id="pwtxt" layoutX="26.0" layoutY="184.0" prefHeight="34.0" prefWidth="210.0" />
       <Label fx:id="messageLabel" layoutX="29.0" layoutY="234.0" prefHeight="34.0" prefWidth="261.0" />
-      <Button fx:id="btnExit" layoutX="204.0" layoutY="288.0" minHeight="24.0" minWidth="54.0" mnemonicParsing="false" onAction="#getExitBtn" prefHeight="31.0" prefWidth="54.0" text="Exit" />
-      <Button fx:id="btnDone" layoutX="25.0" layoutY="288.0" mnemonicParsing="false" onAction="#Done" text="Connect" />
+      <Button fx:id="btnExit" layoutX="13.0" layoutY="297.0" minHeight="24.0" minWidth="54.0" mnemonicParsing="false" onAction="#getExitBtn" prefHeight="31.0" prefWidth="54.0" text="Exit" />
+      <Button fx:id="btnDone" layoutX="210.0" layoutY="297.0" mnemonicParsing="false" onAction="#Done" text="Connect" />
    </children>
 </Pane>

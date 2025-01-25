@@ -9,7 +9,7 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox spacing="10" styleClass="report-window" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/22" fx:controller="gui.controllers.ReportWindowController">
+<VBox fx:id="root" spacing="10" styleClass="report-window" stylesheets="@../css/ReportWindow.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.ReportWindowController">
     
         <TabPane fx:id="reportTabPane">
         <Tab closable="false" text="Borrow Reports">
@@ -18,18 +18,18 @@
                     <Insets bottom="10" left="10" right="10" top="10" />
                 </padding>
                 
-                <BarChart fx:id="genreBorrowChart" legendVisible="true" title="Total Borrows by Genre">
+                <BarChart fx:id="genreBorrowChart" animated="false" legendVisible="true" title="Total Borrows by Genre">
                     <xAxis>
-                        <CategoryAxis label="Genre" />
+                        <CategoryAxis fx:id="borrowGenreAxis" label="Genre" />
                     </xAxis>
                     <yAxis>
-                        <NumberAxis label="Total Borrows" />
+                        <NumberAxis label="Number of Borrows" />
                     </yAxis>
                 </BarChart>
                 
-                <BarChart fx:id="lateReturnChart" legendVisible="true" title="Return Status by Genre">
+                <BarChart fx:id="lateReturnChart" animated="false" legendVisible="true" title="Return Status by Genre">
                     <xAxis>
-                        <CategoryAxis label="Genre" />
+                        <CategoryAxis fx:id="returnGenreAxis" label="Genre" />
                     </xAxis>
                     <yAxis>
                         <NumberAxis label="Number of Returns" />
@@ -44,13 +44,7 @@
                     <Insets bottom="10" left="10" right="10" top="10" />
                 </padding>
                 
-                <PieChart fx:id="subscriberStatusChart" 
-                    legendSide="RIGHT"
-                    legendVisible="true" 
-                    labelsVisible="true"
-                    prefHeight="500" 
-                    prefWidth="800"
-                    VBox.vgrow="ALWAYS" />
+                <PieChart fx:id="subscriberStatusChart" labelsVisible="true" legendSide="RIGHT" legendVisible="true" prefHeight="500" prefWidth="800" VBox.vgrow="ALWAYS" />
             </VBox>
         </Tab>
     </TabPane>

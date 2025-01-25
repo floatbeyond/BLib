@@ -4,9 +4,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import javafx.scene.control.Button;
-import javafx.scene.Node;
+
 
 import client.ClientUI;
 import client.SharedController;
@@ -27,7 +28,16 @@ public class ScanWindowController {
         return txtScan.getText();
     }
 
-    public void handleScanAction(ActionEvent event) {
+    @FXML
+    public void initialize() {
+        txtScan.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                handleScanAction();
+            }
+        });
+    }
+
+    public void handleScanAction() {
         String scanText = getScanText();
         if (scanText.isEmpty()) {
             displayMessage("No scan text found");
@@ -41,19 +51,25 @@ public class ScanWindowController {
             BookCopy foundBookCopy = SharedController.getBookCopy();
             if (foundBookCopy != null) {
                 itemLoader.loadBookCopy(foundBookCopy);
-                closeScanWindow(event);
+                closeScanWindow();
             } else if (foundSubscriber != null) {
                 itemLoader.loadSubscriber(foundSubscriber);
-                closeScanWindow(event);
+                closeScanWindow();
             } else {
                 displayMessage("Couldnt find a matching item");
             }
         }
     }
 
-    private void closeScanWindow(ActionEvent event) {
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+    private void closeScanWindow() {
+        Stage stage = (Stage) txtScan.getScene().getWindow();
         stage.close();
+    }
+
+    // Keep ActionEvent version for button
+    @FXML
+    public void handleScanButtonAction(ActionEvent event) {
+        handleScanAction();
     }
 
     public void setCommand(String msg) {

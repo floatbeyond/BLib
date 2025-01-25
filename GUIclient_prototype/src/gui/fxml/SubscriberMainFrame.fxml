@@ -5,6 +5,7 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -13,17 +14,10 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane fx:id="mainPanel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="690.0" prefWidth="1090.0" styleClass="anchor-pane" stylesheets="@../css/SubscriberMainFrame.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.SubscriberMainFrameController">
+<AnchorPane fx:id="mainPanel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="673.0" prefWidth="1111.0" styleClass="anchor-pane" stylesheets="@../css/SubscriberMainFrame.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.SubscriberMainFrameController">
    <children>
-      <TextField fx:id="searchField" layoutX="368.0" layoutY="15.0" prefHeight="46.0" prefWidth="416.0" promptText="Search..." />
-      <MenuButton fx:id="menuButton" layoutX="291.0" layoutY="15.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="77.0" text="Title">
-        <items>
-            <MenuItem onAction="#handleMenuItemAction" text="Title" />
-            <MenuItem onAction="#handleMenuItemAction" text="Genre" />
-            <MenuItem onAction="#handleMenuItemAction" text="Description" />
-        </items>
-      </MenuButton>
-      <Button fx:id="searchButton" graphicTextGap="0.0" layoutX="742.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleSearchAction" prefHeight="46.0" prefWidth="42.0">
+      <TextField fx:id="searchField" layoutX="330.0" layoutY="15.0" prefHeight="46.0" prefWidth="416.0" promptText="Search..." />
+      <Button fx:id="searchButton" graphicTextGap="0.0" layoutX="704.0" layoutY="16.0" mnemonicParsing="false" onAction="#handleSearchAction" prefHeight="46.0" prefWidth="42.0">
          <graphic>
             <ImageView fx:id="searchIcon" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -32,21 +26,21 @@
             </ImageView>
          </graphic>
       </Button>
-      <Button fx:id="btnLogs" layoutX="628.0" layoutY="638.0" mnemonicParsing="false" onAction="#logsBtn" prefHeight="38.0" prefWidth="77.0" text="Logs" />
-      <TableView fx:id="bookTable" layoutX="13.0" layoutY="167.0" prefHeight="452.0" prefWidth="1065.0" visible="false">
+      <Button fx:id="btnLogs" layoutX="686.0" layoutY="611.0" mnemonicParsing="false" onAction="#logsBtn" prefHeight="38.0" prefWidth="77.0" text="Logs" />
+      <TableView fx:id="bookTable" layoutX="8.0" layoutY="133.0" prefHeight="452.0" prefWidth="1096.0" visible="false">
         <columns>
             <TableColumn fx:id="bookNameColumn" editable="false" prefWidth="180.0" resizable="false" text="Title" />
             <TableColumn fx:id="authorColumn" editable="false" prefWidth="130.0" resizable="false" text="Author" />
             <TableColumn fx:id="genreColumn" editable="false" prefWidth="100.0" resizable="false" text="Genre" />
-            <TableColumn fx:id="descriptionColumn" editable="false" prefWidth="360.0" resizable="false" text="Description" />
+            <TableColumn fx:id="descriptionColumn" editable="false" prefWidth="380.0" resizable="false" text="Description" />
             <TableColumn fx:id="copiesColumn" editable="false" prefWidth="180.0" resizable="false" text="Copies" />
-            <TableColumn fx:id="actionColumn" editable="false" prefWidth="110.0" resizable="false" text="Actions" />
+            <TableColumn fx:id="actionColumn" editable="false" prefWidth="105.0" resizable="false" text="Actions" />
          </columns>
       </TableView>
-      <Label fx:id="messageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="368.0" layoutY="118.0" prefHeight="46.0" prefWidth="376.0" />
-      <Button fx:id="btnLogOut" layoutX="40.0" layoutY="638.0" mnemonicParsing="false" onAction="#logoutBtn" prefHeight="38.0" prefWidth="67.0" text="Log Out" />
-      <Button fx:id="btnPersonalDetails" layoutX="456.0" layoutY="638.0" mnemonicParsing="false" onAction="#personalDetailsBtn" prefHeight="38.0" prefWidth="120.0" text="Personal Detalis" />
-      <Button fx:id="btnActiveOrders" layoutX="929.0" layoutY="638.0" mnemonicParsing="false" onAction="#handleActiveOrders" prefHeight="38.0" prefWidth="120.0" text="Active Orders" />
+      <Label fx:id="messageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="310.0" layoutY="72.0" prefHeight="46.0" prefWidth="453.0" />
+      <Button fx:id="btnLogOut" layoutX="33.0" layoutY="611.0" mnemonicParsing="false" onAction="#logoutBtn" prefHeight="38.0" prefWidth="67.0" text="Log Out" />
+      <Button fx:id="btnPersonalDetails" layoutX="538.0" layoutY="611.0" mnemonicParsing="false" onAction="#personalDetailsBtn" prefHeight="38.0" prefWidth="120.0" text="Personal Detalis" />
+      <Button fx:id="btnActiveOrders" layoutX="965.0" layoutY="611.0" mnemonicParsing="false" onAction="#handleActiveOrders" prefHeight="38.0" prefWidth="120.0" text="Active Orders" />
       <Button fx:id="btnNotifications" layoutX="1001.0" layoutY="14.0" mnemonicParsing="false" onAction="#showNotifications" prefHeight="46.0" prefWidth="48.0">
          <graphic>
             <ImageView fitHeight="36.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
@@ -74,6 +68,17 @@
             <ListView fx:id="notificationListView" prefHeight="275.0" prefWidth="316.0" />
         </items>
       </SplitPane>
-      <Button fx:id="btnActiveBorrows" layoutX="763.0" layoutY="638.0" mnemonicParsing="false" onAction="#handleActiveBorrows" prefHeight="38.0" prefWidth="120.0" text="Active Borrows" />
+      <Button fx:id="btnActiveBorrows" layoutX="819.0" layoutY="611.0" mnemonicParsing="false" onAction="#handleActiveBorrows" prefHeight="38.0" prefWidth="120.0" text="Active Borrows" />
+      <MenuButton fx:id="menuButton" layoutX="253.0" layoutY="14.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="77.0" text="Title">
+        <items>
+            <MenuItem onAction="#handleMenuItemAction" text="Title" />
+            <MenuItem onAction="#handleMenuItemAction" text="Genre" />
+            <MenuItem onAction="#handleMenuItemAction" text="Description" />
+        </items>
+      </MenuButton>
+      <Separator layoutX="773.0" layoutY="606.0" orientation="VERTICAL" prefHeight="48.0" prefWidth="31.0" />
+      <Separator layoutX="8.0" layoutY="600.0" prefHeight="0.0" prefWidth="1096.0" />
+      <Separator layoutX="506.0" layoutY="606.0" orientation="VERTICAL" prefHeight="48.0" prefWidth="31.0" />
+      <Label fx:id="windowTitle" layoutX="36.0" layoutY="21.0" text="Subscriber" />
    </children>
 </AnchorPane>

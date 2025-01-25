@@ -50,6 +50,7 @@ public class LandingWindowController implements Initializable {
     @FXML private TextField searchField;
     @FXML private ImageView searchIcon;
     @FXML private Button loginButton;
+    @FXML private Button exitButton;
 
     @FXML private TableView<Book> bookTable;
     @FXML private TableColumn<Book, String> bookNameColumn;
@@ -191,6 +192,7 @@ public class LandingWindowController implements Initializable {
 
             CopiesDialogController controller = loader.getController();
             controller.setCopiesData(FXCollections.observableArrayList(book.getAllCopies()));
+            controller.setLibrarianView(false);
 
             Stage dialog = new Stage();
             Scene scene = new Scene(pane);
@@ -208,6 +210,11 @@ public class LandingWindowController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    
+    private void closeAllCopiesDialogs() {
+        openDialogs.values().forEach(Stage::close);
+        openDialogs.clear();
     }
 
     @FXML
@@ -298,6 +305,7 @@ public class LandingWindowController implements Initializable {
         try {
             MessageUtils.sendMessage(ClientUI.cc, "user",  "connect" , null);
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
+                closeAllCopiesDialogs();
                 ((Node) event.getSource()).getScene().getWindow().hide();
                 // Load and display MainFrame GUI
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/LoginWindow.fxml"));
@@ -324,6 +332,18 @@ public class LandingWindowController implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
             displayMessage("Error: " + e.getMessage());
+        }
+    }
+
+    public void handleExitAction(ActionEvent event) {
+        try {
+            if (ClientUI.chat != null) {
+                MessageUtils.sendMessage(ClientUI.cc, "user",  "disconnect" , null);
+                ClientUI.chat.quit();
+            }
+            Platform.exit();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

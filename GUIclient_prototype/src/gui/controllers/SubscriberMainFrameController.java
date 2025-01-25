@@ -330,6 +330,7 @@ public class SubscriberMainFrameController implements Initializable {
 
             CopiesDialogController controller = loader.getController();
             controller.setCopiesData(FXCollections.observableArrayList(book.getAllCopies()));
+            controller.setLibrarianView(false);
 
             Stage dialog = new Stage();
             Scene scene = new Scene(pane);
@@ -349,6 +350,10 @@ public class SubscriberMainFrameController implements Initializable {
         }
     }
 
+    private void closeAllCopiesDialogs() {
+        openDialogs.values().forEach(Stage::close);
+        openDialogs.clear();
+    }
 
     @FXML
     private void handleMenuItemAction(ActionEvent event) {
@@ -437,6 +442,7 @@ public class SubscriberMainFrameController implements Initializable {
     public void logoutBtn(ActionEvent event) throws Exception {
         closeActiveOrders();
         closeActiveBorrows();
+        closeAllCopiesDialogs();
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/LandingWindow.fxml"));
         Pane root = loader.load();

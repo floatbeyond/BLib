@@ -1,10 +1,14 @@
 package gui.controllers;
 
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.chart.*;
+import javafx.scene.control.Label;
 import javafx.scene.control.TabPane;
 import common.BorrowReport;
 import common.SubscriberReport;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class ReportWindowController {
@@ -13,10 +17,11 @@ public class ReportWindowController {
     // Borrow Charts
     @FXML private BarChart<String, Number> genreBorrowChart;
     @FXML private BarChart<String, Number> lateReturnChart;
+    @FXML private CategoryAxis borrowGenreAxis;
+    @FXML private CategoryAxis returnGenreAxis;
     
     // Subscriber Charts
     @FXML private PieChart subscriberStatusChart;
-    // @FXML private BarChart<String, Number> penaltyChart;
     
     @FXML
     public void initialize() {
@@ -27,11 +32,26 @@ public class ReportWindowController {
         genreBorrowChart.setTitle("Monthly Borrows by Genre");
         lateReturnChart.setTitle("Late Returns and Lost Books");
         subscriberStatusChart.setTitle("Subscriber Status Distribution");
-        // penaltyChart.setTitle("Penalties and Freezes by Status");
+        setupAlternatingAxisLabels(borrowGenreAxis);
+        setupAlternatingAxisLabels(returnGenreAxis);
     }
 
     public void setReports(List<BorrowReport> borrowReports, List<SubscriberReport> subscriberReports) {
         updateCharts(borrowReports, subscriberReports);
+    }
+
+    private void setupAlternatingAxisLabels(CategoryAxis axis) {
+        axis.setTickLabelRotation(45);  // Set 45-degree rotation
+        axis.setTickLabelGap(10);       // Adjust gap between labels
+        
+        axis.getCategories().addListener((javafx.collections.ListChangeListener.Change<? extends String> c) -> {
+            List<Node> labels = new ArrayList<>(axis.lookupAll(".axis-label"));
+            labels.sort((n1, n2) -> {
+                String text1 = ((Label)n1).getText();
+                String text2 = ((Label)n2).getText();
+                return text1.compareTo(text2);
+            });
+        });
     }
     
     
@@ -45,43 +65,34 @@ public class ReportWindowController {
         genreBorrowChart.getData().clear();
         lateReturnChart.getData().clear();
         
-        // Total borrows by genre
-        XYChart.Series<String, Number> totalSeries = new XYChart.Series<>();
-        totalSeries.setName("Total Borrows");
+        // Sort reports by genre
+        List<BorrowReport> sortedReports = new ArrayList<>(reports);
+        sortedReports.sort((r1, r2) -> r1.getGenre().compareTo(r2.getGenre()));
         
-        // Return status by genre
+        // Create series
+        XYChart.Series<String, Number> totalSeries = new XYChart.Series<>();
+        XYChart.Series<String, Number> avgBorrowDaysSeries = new XYChart.Series<>();
         XYChart.Series<String, Number> onTimeSeries = new XYChart.Series<>();
         XYChart.Series<String, Number> lateNoPenaltySeries = new XYChart.Series<>();
         XYChart.Series<String, Number> lateWithPenaltySeries = new XYChart.Series<>();
         
+        totalSeries.setName("Total Borrows");
+        avgBorrowDaysSeries.setName("Avg Borrow Days");
         onTimeSeries.setName("On Time Returns");
         lateNoPenaltySeries.setName("Late (No Penalty)");
         lateWithPenaltySeries.setName("Late with Penalty/Lost");
         
-        for (BorrowReport report : reports) {
-            // Add total borrows data
-            totalSeries.getData().add(
-                new XYChart.Data<>(report.getGenre(), report.getTotalBorrows())
-            );
-            
-            // Add return status data
-            onTimeSeries.getData().add(
-                new XYChart.Data<>(report.getGenre(), report.getOnTimeReturns())
-            );
-            lateNoPenaltySeries.getData().add(
-                new XYChart.Data<>(report.getGenre(), report.getLateNoPenalty())
-            );
-            lateWithPenaltySeries.getData().add(
-                new XYChart.Data<>(report.getGenre(), report.getLateWithPenaltyOrLost())
-            );
+        // Add sorted data
+        for (BorrowReport report : sortedReports) {
+            totalSeries.getData().add(new XYChart.Data<>(report.getGenre(), report.getTotalBorrows()));
+            avgBorrowDaysSeries.getData().add(new XYChart.Data<>(report.getGenre(), report.getAvgBorrowDays()));
+            onTimeSeries.getData().add(new XYChart.Data<>(report.getGenre(), report.getOnTimeReturns()));
+            lateNoPenaltySeries.getData().add(new XYChart.Data<>(report.getGenre(), report.getLateNoPenalty()));
+            lateWithPenaltySeries.getData().add(new XYChart.Data<>(report.getGenre(), report.getLateWithPenaltyOrLost()));
         }
         
-        genreBorrowChart.getData().add(totalSeries);
-        lateReturnChart.getData().addAll(
-            onTimeSeries, 
-            lateNoPenaltySeries, 
-            lateWithPenaltySeries
-        );
+        genreBorrowChart.getData().addAll(List.of(totalSeries, avgBorrowDaysSeries));
+        lateReturnChart.getData().addAll(List.of(onTimeSeries, lateNoPenaltySeries, lateWithPenaltySeries));
     }
     
     private void updateSubscriberCharts(List<SubscriberReport> reports) {

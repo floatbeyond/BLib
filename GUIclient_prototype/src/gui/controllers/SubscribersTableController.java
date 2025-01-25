@@ -3,14 +3,17 @@ package gui.controllers;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import client.ClientUI;
 import client.SharedController;
 import common.MessageUtils;
 import common.Subscriber;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,12 +23,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
 import javafx.scene.control.TableRow;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 
 public class SubscribersTableController implements Initializable {
 
@@ -44,39 +49,17 @@ public class SubscribersTableController implements Initializable {
 
     @FXML private Button btnBack = null;
     @FXML private Button btnRefresh;
+    @FXML private Button searchButton;
+    @FXML private TextField searchField;
     
-
     private Map<Integer, Stage> readerCardStages = new HashMap<>();
-
+    private ObservableList<Subscriber> allSubscribers; // Add this field
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		System.out.println("Initializing controller...");
-	
-
-		// Initialize columns
-		setupColumns();
-
-		// Enable cell selection
-		subscriberTable.setEditable(false);
-	
-        // Handle double-click on a row
-        subscriberTable.setRowFactory(tv -> {
-            TableRow<Subscriber> row = new TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && (!row.isEmpty())) {
-                    Subscriber rowData = row.getItem();
-                    showReaderCard(rowData);
-                }
-            });
-            return row;
-        });
-		
-		// Load initial data
-		Platform.runLater(() -> {
-			System.out.println("Loading initial data...");
-			MessageUtils.sendMessage(ClientUI.cc, "librarian", "showSubscribersTable", null);
-		});
+        setupColumns();
+        setupSearchFunction();
+        loadData();	
 	}
 
     private void setupColumns() {
@@ -97,10 +80,41 @@ public class SubscribersTableController implements Initializable {
         colexpDate.setCellValueFactory(new PropertyValueFactory<>("sub_expiration"));
         colBorrows.setCellValueFactory(new PropertyValueFactory<>("currentlyBorrowed"));
         colOrders.setCellValueFactory(new PropertyValueFactory<>("currentlyOrdered"));
+
+        subscriberTable.setEditable(false);
+
+        subscriberTable.setRowFactory(tv -> {
+            TableRow<Subscriber> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
+                    Subscriber rowData = row.getItem();
+                    showReaderCard(rowData);
+                }
+            });
+            return row;
+        });
+    }
+
+    private void setupSearchFunction() {
+        searchButton.setOnAction(event -> handleSearchAction());
+        // Add enter key handler for search field
+        searchField.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                handleSearchAction();
+            }
+        });
+    }
+
+    private void loadData() {
+        Platform.runLater(() -> {
+			System.out.println("Loading initial data...");
+			MessageUtils.sendMessage(ClientUI.cc, "librarian", "showSubscribersTable", null);
+		});
     }
 
 	public void parseSubscriberList(ObservableList<Subscriber> subscribers) {
 		if (subscribers == null) return;
+        allSubscribers = subscribers;  // Store original data
 		subscriberTable.setItems(subscribers);
 		System.out.println("Loaded " + subscribers.size() + " subscribers");
 	}
@@ -157,6 +171,27 @@ public class SubscribersTableController implements Initializable {
             stage.close();
             readerCardStages.remove(subId);
         }
+    }
+
+    @FXML 
+    private void handleSearchAction() {
+        String searchText = searchField.getText().toLowerCase().trim();
+        
+        if (searchText.isEmpty()) {
+            // Reset to full list if search is empty
+            subscriberTable.setItems(allSubscribers);
+            return;
+        }
+        
+        // Filter subscribers
+        List<Subscriber> filteredList = allSubscribers.stream()
+            .filter(subscriber -> 
+                subscriber.getSub_name().toLowerCase().contains(searchText) ||
+                String.valueOf(subscriber.getSub_id()).contains(searchText))
+            .collect(Collectors.toList());
+        
+        // Update table with filtered results    
+        subscriberTable.setItems(FXCollections.observableArrayList(filteredList));
     }
 
     public void goBackBtn(ActionEvent event) throws Exception {

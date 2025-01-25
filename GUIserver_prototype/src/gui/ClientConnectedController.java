@@ -13,7 +13,6 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import server.InstanceManager;
-import server.ReportScheduler;
 import javafx.scene.control.Button;
 
 
