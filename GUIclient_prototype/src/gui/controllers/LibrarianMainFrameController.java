@@ -376,24 +376,30 @@ public class LibrarianMainFrameController {
     }
 
     public void addNotifications(List<Notification> newNotifications) {
-        for (Notification notification : newNotifications) {
+        // Process notifications in reverse order to maintain chronological order
+        for (int i = newNotifications.size() - 1; i >= 0; i--) {
+            Notification notification = newNotifications.get(i);
             if (!notificationMessages.contains(notification.getMessage())) {
                 LocalDate notificationDate = notification.getTimestamp().toLocalDateTime().toLocalDate();
                 String dateHeader = notificationDate.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"));
                 boolean headerExists = false;
-                
-                // Find existing header or create new one
-                for (int i = 0; i < notificationItems.size(); i++) {
-                    if (notificationItems.get(i) instanceof String && 
-                        notificationItems.get(i).equals(dateHeader)) {
-                        notificationItems.add(i + 1, notification);
+                int headerIndex = -1;
+    
+                // Find existing header
+                for (int j = 0; j < notificationItems.size(); j++) {
+                    if (notificationItems.get(j) instanceof String && 
+                        notificationItems.get(j).equals(dateHeader)) {
                         headerExists = true;
+                        headerIndex = j;
                         break;
                     }
                 }
                 
-                // Create new header if needed
-                if (!headerExists) {
+                if (headerExists) {
+                    // Add right after the header
+                    notificationItems.add(headerIndex + 1, notification);
+                } else {
+                    // Add new header and notification at the start
                     notificationItems.add(0, dateHeader);
                     notificationItems.add(1, notification);
                 }
