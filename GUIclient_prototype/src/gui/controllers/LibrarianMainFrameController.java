@@ -8,12 +8,14 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
@@ -28,15 +30,22 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.control.Button;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.css.PseudoClass;
 import client.ClientUI;
 import client.NotificationScheduler;
 import common.Book;
@@ -60,8 +69,9 @@ public class LibrarianMainFrameController {
     @FXML private Button btnNotifications = null;
     @FXML private Button btnCloseNotifications = null;
     @FXML private SplitPane notificationSplitPane;
-    @FXML private ListView<String> notificationListView;
-    private ObservableList<String> notifications = FXCollections.observableArrayList();
+    @FXML private ListView<Object> notificationListView;
+    private ObservableList<Object> notificationItems = FXCollections.observableArrayList();
+    private Set<String> notificationMessages = new HashSet<>();
 
     @FXML private MenuButton menuButton;
     @FXML private Button searchButton;
@@ -76,6 +86,7 @@ public class LibrarianMainFrameController {
     @FXML private TableColumn<Book, String> copiesColumn;
     @FXML private TableColumn<Book, Void> actionColumn;
 
+    private static final PseudoClass DATE_HEADER = PseudoClass.getPseudoClass("date-header");
     private Librarian librarian;
     private Map<Integer, Stage> openDialogs = new HashMap<>(); // Track open dialogs
 
@@ -90,10 +101,8 @@ public class LibrarianMainFrameController {
         setupColumns();
         setupSearch();
         SharedController.setLibrarianMainFrameController(this);
-        notificationSplitPane.setVisible(false);
-        notificationListView.setItems(notifications);
-        notificationListView.setItems(notifications);
         NotificationScheduler.start("librarian", librarian.getLibrarian_id());
+        setupNotificationListView();
     }
 
         private void setupButtonWidth() {
@@ -319,11 +328,80 @@ public class LibrarianMainFrameController {
         displayMessage("No books found");
     }
 
+    private void setupNotificationListView() {
+        notificationListView.setCellFactory(new Callback<ListView<Object>, ListCell<Object>>() {
+            @Override
+            public ListCell<Object> call(ListView<Object> listView) {
+                return new ListCell<Object>() {
+                    @Override
+                    protected void updateItem(Object item, boolean empty) {
+                        super.updateItem(item, empty);
+                        pseudoClassStateChanged(DATE_HEADER, item instanceof String);
+                        if (item == null || empty) {
+                            setGraphic(null);
+                        } else if (item instanceof String) {
+                            // Date header
+                            Text headerText = new Text((String) item);
+                            headerText.getStyleClass().add("date-header");
+                            setGraphic(headerText);
+                        } else if (item instanceof Notification) {
+                            // Notification item
+                            Notification notification = (Notification) item;
+                            VBox vbox = new VBox();
+                            Text messageText = new Text(notification.getMessage());
+                            Text timeText = new Text(formatTimeSince(notification.getTimestamp().toLocalDateTime()));
+                            timeText.getStyleClass().add("time-text");
+                            vbox.getChildren().addAll(messageText, timeText);
+                            setGraphic(vbox);
+                        }
+                    }
+                };
+            }
+        });
+    }
+
+    private String formatTimeSince(LocalDateTime timestamp) {
+        LocalDateTime now = LocalDateTime.now();
+        Duration duration = Duration.between(timestamp, now);
+
+        if (duration.toMinutes() < 1) {
+            return "now";
+        } else if (duration.toHours() < 1) {
+            return duration.toMinutes() + " mins ago";
+        } else if (duration.toDays() < 1) {
+            return duration.toHours() + " hours ago";
+        } else {
+            return (duration.toDays()) + " days ago";
+        }
+    }
 
     public void addNotifications(List<Notification> newNotifications) {
-        for (int i = newNotifications.size() - 1; i >= 0; i--) {
-            notifications.add(0, newNotifications.get(i).getMessage());
+        for (Notification notification : newNotifications) {
+            if (!notificationMessages.contains(notification.getMessage())) {
+                LocalDate notificationDate = notification.getTimestamp().toLocalDateTime().toLocalDate();
+                String dateHeader = notificationDate.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"));
+                boolean headerExists = false;
+                
+                // Find existing header or create new one
+                for (int i = 0; i < notificationItems.size(); i++) {
+                    if (notificationItems.get(i) instanceof String && 
+                        notificationItems.get(i).equals(dateHeader)) {
+                        notificationItems.add(i + 1, notification);
+                        headerExists = true;
+                        break;
+                    }
+                }
+                
+                // Create new header if needed
+                if (!headerExists) {
+                    notificationItems.add(0, dateHeader);
+                    notificationItems.add(1, notification);
+                }
+                
+                notificationMessages.add(notification.getMessage());
+            }
         }
+        notificationListView.setItems(notificationItems);
     }
 
     @FXML

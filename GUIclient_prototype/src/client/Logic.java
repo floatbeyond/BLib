@@ -53,12 +53,7 @@ public class Logic {
 
     // Handle received notifications
     public static void handleNotifications(List<Notification> notifications) {
-        for (Notification notification : notifications) {
-            System.out.println("Notification: " + notification.toString());
-            // You can also update the UI to display notifications
-        }
         if (notifications.isEmpty()) {
-            // print empty
             System.out.println("No notifications found");
             return;
         }
@@ -66,11 +61,6 @@ public class Logic {
         int subId = notifications.get(0).getUserId();
         notificationsMap.putIfAbsent(subId, new ArrayList<>());
         notificationsMap.get(subId).addAll(notifications);
-        // Display notifications to the user
-        for (Notification notification : notifications) {
-            System.out.println("Notification: " + notification.toString());
-            // You can also update the UI to display notifications
-        }
 
         Platform.runLater(() -> {
             if (SharedController.smfc != null) {

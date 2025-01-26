@@ -198,7 +198,7 @@ public class mysqlConnection {
      * Updates the LastFetched timestamp after retrieval.
      *
      * @param conn Active database connection
-     * @param subId Subscriber ID to fetch notifications for
+     * @param userId Subscriber or Librarian ID to fetch notifications for
      * @return List of new Notification objects, empty list if none found
      * @throws SQLException if database access error occurs
      */
@@ -211,9 +211,9 @@ public class mysqlConnection {
 		try (PreparedStatement stmt = conn.prepareStatement(query)) {
 			stmt.setString(1, userType);
 			stmt.setInt(2, userId);
+			// stmt.setInt(3, userId);
 			stmt.setString(3, userType);
 			stmt.setInt(4, userId);
-			
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
 				int notificationId = rs.getInt("NotificationID");

@@ -87,12 +87,19 @@
 }
 
 .list-cell {
-    -fx-text-fill: #01579b;
-    -fx-padding: 5px;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #fcfcfc;
+    -fx-border-width: 0 0 1 0;  /* Only bottom border */
 }
 
-.list-cell:odd {
-    -fx-background-color: #e3f2fd;
+.list-cell:date-header {
+    -fx-background-color: #fcfcfc !important;
+    -fx-padding: 10 5 10 5;
+    -fx-border-width: 0;  /* Remove border for date headers */
+}
+
+.list-cell:last-in-group {
+    -fx-border-width: 0;  /* Remove border for last notification in group */
 }
 
 .list-cell:hover {
@@ -135,6 +142,25 @@ TextField {
     -fx-text-fill: #a30303;
     -fx-font-size: 16px;
     -fx-padding: 2px;
+}
+
+#labelNotifications { 
+    -fx-font-size: 18px;
+    -fx-padding: 5px;
+}
+
+.time-text {
+    -fx-font-size: 10px;
+    -fx-text-fill: grey;
+    -fx-padding: 2px 0 0 0;
+    -fx-translate-x: 20; /* Move 20 pixels to the right */
+}
+
+.date-header {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-fill: grey;
+    -fx-padding: 10 0 5 0;
 }
 
 TableView {

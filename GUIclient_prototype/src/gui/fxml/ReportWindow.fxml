@@ -18,7 +18,7 @@
                     <Insets bottom="10" left="10" right="10" top="10" />
                 </padding>
                 
-                <BarChart fx:id="genreBorrowChart" animated="false" legendVisible="true" title="Total Borrows by Genre">
+                <BarChart fx:id="genreBorrowChart" animated="true" legendVisible="true" title="Total Borrows by Genre">
                     <xAxis>
                         <CategoryAxis fx:id="borrowGenreAxis" label="Genre" />
                     </xAxis>
@@ -27,7 +27,7 @@
                     </yAxis>
                 </BarChart>
                 
-                <BarChart fx:id="lateReturnChart" animated="false" legendVisible="true" title="Return Status by Genre">
+                <BarChart fx:id="lateReturnChart" animated="true" legendVisible="true" title="Return Status by Genre">
                     <xAxis>
                         <CategoryAxis fx:id="returnGenreAxis" label="Genre" />
                     </xAxis>

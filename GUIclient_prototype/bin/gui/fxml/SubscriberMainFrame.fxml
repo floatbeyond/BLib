@@ -16,8 +16,8 @@
 
 <AnchorPane fx:id="mainPanel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="673.0" prefWidth="1111.0" styleClass="anchor-pane" stylesheets="@../css/SubscriberMainFrame.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.SubscriberMainFrameController">
    <children>
-      <TextField fx:id="searchField" layoutX="330.0" layoutY="15.0" prefHeight="46.0" prefWidth="416.0" promptText="Search..." />
-      <Button fx:id="searchButton" graphicTextGap="0.0" layoutX="704.0" layoutY="16.0" mnemonicParsing="false" onAction="#handleSearchAction" prefHeight="46.0" prefWidth="42.0">
+      <TextField fx:id="searchField" layoutX="388.0" layoutY="14.0" prefHeight="46.0" prefWidth="416.0" promptText="Search..." />
+      <Button fx:id="searchButton" graphicTextGap="0.0" layoutX="763.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleSearchAction" prefHeight="46.0" prefWidth="42.0">
          <graphic>
             <ImageView fx:id="searchIcon" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -37,7 +37,7 @@
             <TableColumn fx:id="actionColumn" editable="false" prefWidth="105.0" resizable="false" text="Actions" />
          </columns>
       </TableView>
-      <Label fx:id="messageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="310.0" layoutY="72.0" prefHeight="46.0" prefWidth="453.0" />
+      <Label fx:id="messageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="372.0" layoutY="69.0" prefHeight="46.0" prefWidth="453.0" />
       <Button fx:id="btnLogOut" layoutX="33.0" layoutY="611.0" mnemonicParsing="false" onAction="#logoutBtn" prefHeight="38.0" prefWidth="67.0" text="Log Out" />
       <Button fx:id="btnPersonalDetails" layoutX="538.0" layoutY="611.0" mnemonicParsing="false" onAction="#personalDetailsBtn" prefHeight="38.0" prefWidth="120.0" text="Personal Detalis" />
       <Button fx:id="btnActiveOrders" layoutX="965.0" layoutY="611.0" mnemonicParsing="false" onAction="#handleActiveOrders" prefHeight="38.0" prefWidth="120.0" text="Active Orders" />
@@ -49,12 +49,12 @@
                </image></ImageView>
          </graphic>
       </Button>
-      <SplitPane fx:id="notificationSplitPane" dividerPositions="0.1575091575091575" layoutX="633.0" layoutY="62.0" orientation="VERTICAL" prefHeight="304.0" prefWidth="416.0" visible="false">
+      <SplitPane fx:id="notificationSplitPane" dividerPositions="0.1575091575091575" layoutX="566.0" layoutY="60.0" orientation="VERTICAL" prefHeight="334.0" prefWidth="477.0" visible="false">
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                <children>
                   <Label fx:id="labelNotifications" alignment="CENTER" layoutX="14.0" layoutY="4.0" prefHeight="38.0" prefWidth="253.0" text="Notifications" />
-                  <Button fx:id="btnCloseNotifications" layoutX="358.0" layoutY="6.0" mnemonicParsing="false" onAction="#closeNotifications" prefHeight="31.0" prefWidth="42.0">
+                  <Button fx:id="btnCloseNotifications" layoutX="417.0" layoutY="8.0" mnemonicParsing="false" onAction="#closeNotifications" prefHeight="31.0" prefWidth="42.0">
                      <graphic>
                         <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -69,7 +69,7 @@
         </items>
       </SplitPane>
       <Button fx:id="btnActiveBorrows" layoutX="819.0" layoutY="611.0" mnemonicParsing="false" onAction="#handleActiveBorrows" prefHeight="38.0" prefWidth="120.0" text="Active Borrows" />
-      <MenuButton fx:id="menuButton" layoutX="253.0" layoutY="14.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="77.0" text="Title">
+      <MenuButton fx:id="menuButton" layoutX="310.0" layoutY="14.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="77.0" text="Title">
         <items>
             <MenuItem onAction="#handleMenuItemAction" text="Title" />
             <MenuItem onAction="#handleMenuItemAction" text="Genre" />
