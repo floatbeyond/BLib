@@ -79,6 +79,13 @@ public class ReaderCardController {
     private List<BorrowRecordDTO> borrowRecords = new ArrayList<>();
     private List<OrderRecordDTO> orderRecords = new ArrayList<>();
 
+    /**
+     * Initializes the controller class.
+     * This method is called automatically when the FXML file is loaded.
+     * Sends a message to the server to get the user logs, borrows and orders.
+     * Sets the subscriber's details.
+     * Sets the tabs to show the logs, borrows and orders.
+     */
     @FXML
     private void initialize() {
         Subscriber subscriber = SharedController.getSubscriber();
@@ -104,6 +111,12 @@ public class ReaderCardController {
 
     }
 
+    /**
+     * Initializes the columns for the Borrowed tab.
+     * Sets the cell value factories for the columns.
+     * Sets the cell factory for the Action column.
+     * The Action column contains buttons to extend the return date and mark the book as lost.
+     */
     private void initBorrowCols() {
         colOrderId.setCellValueFactory(new PropertyValueFactory<>("orderId"));
         colBookName.setCellValueFactory(new PropertyValueFactory<>("bookTitle"));
@@ -142,6 +155,10 @@ public class ReaderCardController {
         });
     }
 
+    /**
+     * Initializes the columns for the Ordered tab.
+     * Sets the cell value factories for the columns.
+     */
     private void initOrderCols() {
         colBookName2.setCellValueFactory(new PropertyValueFactory<>("bookTitle"));
         colOrderDate.setCellValueFactory(new PropertyValueFactory<>("orderDate"));
@@ -149,6 +166,10 @@ public class ReaderCardController {
         colNotify.setCellValueFactory(new PropertyValueFactory<>("notificationTimestamp"));
     }
 
+    /**
+     * Sets the subscriber's details in the labels.
+     * @param subscriber - the subscriber
+     */
     private void loadSubscriber(Subscriber subscriber) {
         this.s = subscriber;
         appendText(lblName, s.getSub_name());
@@ -167,6 +188,10 @@ public class ReaderCardController {
         }
     }
 
+    /**
+     * Handles the reactivation of the subscriber.
+     * Sends a message to the server to reactivate the subscriber.
+     */
     @FXML
     private void handleReactivate() {
         try {
@@ -181,6 +206,10 @@ public class ReaderCardController {
         }
     }
 
+    /**
+     * Handles the reactivation of the subscriber.
+     * Receives a message from the server if the subscriber was reactivated successfully.
+     */
     public void subscriberReactivated(String status) {
         if (status.contains("reactivated")) {
             displayMessage("Subscriber reactivated successfully");
@@ -191,20 +220,36 @@ public class ReaderCardController {
         }
     }
 
+    /**
+     * Receives a message from the server of the status of book that was declared lost.
+     */
     public void lostMessage(String status) {
         displayMessage(status);
     }
 
+    /**
+     * Appends text to a label.
+     * @param label - the label
+     * @param text - the text to append
+     */
     private void appendText(Label label, String text) {
         String currentText = label.getText();
         label.setText(currentText + " " + text);
     }
 
+    /**
+     * Sets the user logs.
+     * @param logs - the user logs
+     */
     public void setAllDataLogs(List<Object> logs) {
         this.userLogs = logs;
         showDataLogs(userLogs);
     }
 
+    /**
+     * Shows the user logs in the list view.
+     * @param logs - the user logs
+     */
     public void showDataLogs(List<Object> logs) {
         ObservableList<String> items = FXCollections.observableArrayList();
         int logNumber = 1;
@@ -215,6 +260,12 @@ public class ReaderCardController {
         listViewLogs.setItems(items);
     }
 
+    /**
+     * Formats the log to display in the list view.
+     * @param log - the log
+     * @param logNumber - the log number
+     * @return the formatted log
+     */
     private String formatLog(Object log, int logNumber) {
         DataLogs dataLog = (DataLogs) log;
       
@@ -223,14 +274,21 @@ public class ReaderCardController {
         return logNumber + ". " + dataLog.getLog_action() + ", " + formattedDate;
     }
 
-    public void setBorrowRecords(List<BorrowRecordDTO> list) {
-        this.borrowRecords = list;
-    }
+    /**
+     * Sets the borrow records.
+     * @param list - the borrow records
+     */
+    public void setBorrowRecords(List<BorrowRecordDTO> list) { this.borrowRecords = list; }
 
-    public void setOrderRecords(List<OrderRecordDTO> list) {
-        this.orderRecords = list;
-    }
+    /**
+     * Sets the order records.
+     * @param list - the order records
+     */
+    public void setOrderRecords(List<OrderRecordDTO> list) { this.orderRecords = list; }
 
+    /**
+     * Shows the user borrows in the table view.
+     */
     public void showUserBorrows() {
         ObservableList<BorrowRecordDTO> borrowsData = FXCollections.observableArrayList(
             borrowRecords.stream()
@@ -241,8 +299,9 @@ public class ReaderCardController {
         tableViewBorrows.setItems(borrowsData);
     }
 
-
-
+    /**
+     * Shows the user orders in the table view.
+     */
     public void showUserOrders() {
         ObservableList<OrderRecordDTO> ordersData = FXCollections.observableArrayList(
             orderRecords.stream()
@@ -254,6 +313,11 @@ public class ReaderCardController {
         tableViewOrders.refresh();
     }
 
+    /**
+     * Opens the Extend Window.
+     * @param borrowRecord - the borrow record
+     */
+    @FXML
     private void openExtendWindow(BorrowRecordDTO borrowRecord) {
         try {
             MessageUtils.sendMessage(ClientUI.cc, "librarian", "connect", null);
@@ -281,6 +345,11 @@ public class ReaderCardController {
         }
     }
 
+    /**
+     * Handles the lost book event.
+     * Sends a message to the server to mark the book as lost.
+     * @param borrowRecord - the borrow record
+     */
     @FXML
     private void handleLost(BorrowRecordDTO borrowRecord) {
         try {
@@ -295,11 +364,20 @@ public class ReaderCardController {
         }
     }
 
+    /**
+     * Handles the close button click event.
+     * Closes the reader card.
+     * @param event
+     */
     @FXML
     private void handleClose(ActionEvent event) {
         SharedController.getSubscribersTableController().closeReaderCard(s.getSub_id());
     }
 
+    /**
+     * Displays a message to the user.
+     * @param message - the message
+     */
     public void displayMessage(String message) {
         messageLabel.setText(message);
     }

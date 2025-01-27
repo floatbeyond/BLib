@@ -3,8 +3,14 @@ package common;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+/**
+ * Represents a subscriber in the library system.
+ * Implements Serializable for client-server communication.
+ */
 public class Subscriber implements Serializable {
+    /** Ensures consistent serialization across different versions */
     private static final long serialVersionUID = 1L;
+    
     private int sub_id;
     private String sub_name;
     private String sub_status;
@@ -17,6 +23,20 @@ public class Subscriber implements Serializable {
     private int currentlyBorrowed;
     private int currentlyOrdered;
 
+    /**
+     * Constructor for Subscriber
+     * @param sub_id
+     * @param sub_name
+     * @param sub_status
+     * @param sub_phone_num
+     * @param sub_email
+     * @param sub_penalties
+     * @param sub_freeze
+     * @param sub_joined
+     * @param sub_expiration
+     * @param currentlyBorrowed
+     * @param currentlyOrdered
+     */
     public Subscriber(int sub_id, String sub_name, String sub_status, String sub_phone_num, String sub_email, 
             int sub_penalties, LocalDate sub_freeze, LocalDate sub_joined, LocalDate sub_expiration, int currentlyBorrowed, int currentlyOrdered) {       
         this.sub_id = sub_id;
@@ -32,6 +52,7 @@ public class Subscriber implements Serializable {
         this.currentlyOrdered = currentlyOrdered;
     }
 
+    // Getters
     public int getSub_id() { return sub_id; }
     public String getSub_name() { return sub_name; }
     public String getSub_status() { return sub_status; }

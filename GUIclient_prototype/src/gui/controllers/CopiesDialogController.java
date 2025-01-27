@@ -9,6 +9,10 @@ import javafx.beans.property.SimpleStringProperty;
 import common.BookCopy;
 import common.BorrowingRecord;
 
+/**
+ * This class is the controller for the CopiesDialog.fxml file. It is responsible for displaying the copies of a book
+ * in a table view. It is also responsible for displaying the status of each copy and the expected return date.
+ */
 public class CopiesDialogController {
 
     @FXML private TableView<BookCopy> copyTable;
@@ -18,6 +22,11 @@ public class CopiesDialogController {
 
     private boolean isLibrarian = false;
 
+    /**
+     * This method is called when the CopiesDialog.fxml file is loaded. 
+     * It is responsible for initializing the table view and setting the cell value factories for the columns.
+     */
+    @FXML
     public void initialize() {
         locationCol.setCellValueFactory(new PropertyValueFactory<>("location"));
 
@@ -58,10 +67,20 @@ public class CopiesDialogController {
         });
     }
 
+    /**
+     * This method is called when the copies data is set. 
+     * It is responsible for setting the copies data in the table view.
+     * @param copies
+     */
     public void setCopiesData(ObservableList<BookCopy> copies) {
         copyTable.setItems(copies);
     }
 
+    /**
+     * This method is called when the window is opened through the librarian view. 
+     * It is responsible for setting the librarian view.
+     * @param isLibrarian
+     */
     public void setLibrarianView(boolean isLibrarian) {
         this.isLibrarian = isLibrarian;
     }

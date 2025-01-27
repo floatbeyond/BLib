@@ -26,11 +26,13 @@ import java.util.stream.Collectors;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
 import java.sql.Timestamp;
-
-
-
 import client.ClientUI;
 
+
+/**
+ * Controller class for the SubscriberLogs.fxml file.
+ * This class is responsible for handling the subscriber logs functionality.
+ */
 public class SubscriberLogsController {
 	
 	@FXML private Button btnBack = null;
@@ -44,7 +46,12 @@ public class SubscriberLogsController {
     private List<DataLogs> allDataLogs;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-
+    /**
+     * Initializes the controller.
+     * This method is called automatically.
+     * It populates the ComboBoxes with months and years.
+     * It sets the current date label.
+     */
     @FXML
     private void initialize() {
         // Populate the ComboBox with months
@@ -77,13 +84,20 @@ public class SubscriberLogsController {
         // Set current date label
         currentDate.setText("Current date: " + LocalDate.now().format(DATE_FORMATTER));
     }
-    // Method to set all data logs
+
+    /**
+     * Sets the logs data.
+     * @param logs
+     */
     public void setAllDataLogs(List<Object> logs) {
         this.allDataLogs = logs.stream()
             .map(log -> (DataLogs) log)
             .collect(Collectors.toList());
     }
-    // Method to filter logs by selected month
+
+    /**
+     * Filters the logs by month and year.
+     */
     @FXML
     public void filterLogsByMonth() {
         Month selectedMonth = monthComboBox.getValue();
@@ -99,6 +113,10 @@ public class SubscriberLogsController {
         }
     }
 
+    /**
+     * Shows the logs in the ListView.
+     * @param logs
+     */
     public void showDataLogs(List<Object> logs) {
         ObservableList<String> items = FXCollections.observableArrayList();
         int logNumber = 1;
@@ -109,6 +127,12 @@ public class SubscriberLogsController {
         listViewLogs.setItems(items);
     }
 
+    /**
+     * Formats the log data.
+     * @param log
+     * @param logNumber
+     * @return
+     */
     private String formatLog(Object log, int logNumber) {
         DataLogs dataLog = (DataLogs) log;
 
@@ -118,7 +142,12 @@ public class SubscriberLogsController {
         return logNumber + ". " + dataLog.getLog_action() + ", " + formattedDate;
     }
 
-     public void goBackBtn(ActionEvent event) throws Exception {
+    /**
+     * Handles the back button click event.
+     * @param event
+     * @throws Exception
+     */
+    public void goBackBtn(ActionEvent event) throws Exception {
         System.out.println("goBackBtn clicked");
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/SubscriberMainFrame.fxml"));
 		Pane root = loader.load();

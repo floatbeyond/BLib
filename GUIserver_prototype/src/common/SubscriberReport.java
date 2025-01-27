@@ -2,7 +2,12 @@ package common;
 
 import java.io.Serializable;
 
+/**
+ * Represents a subscriber report in the library system.
+ * Implements Serializable for client-server communication.
+ */
 public class SubscriberReport implements Serializable {
+    /** Ensures consistent serialization across different versions */
     private static final long serialVersionUID = 1L;
 
     private String status;
@@ -12,7 +17,15 @@ public class SubscriberReport implements Serializable {
     private int month;
     private int year;
     
-    // Constructor, getters, setters
+    /**
+     * Constructor for SubscriberReport
+     * @param status
+     * @param statusCount
+     * @param withPenalties
+     * @param avgPenalties
+     * @param month
+     * @param year
+     */
     public SubscriberReport(String status, int statusCount, int withPenalties, double avgPenalties, int month, int year) {
         this.status = status;
         this.statusCount = statusCount;

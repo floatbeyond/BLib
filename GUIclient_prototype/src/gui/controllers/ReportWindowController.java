@@ -11,6 +11,10 @@ import common.SubscriberReport;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controller class for the ReportWindow.fxml file.
+ * This class is responsible for updating the charts in the report window.
+ */
 public class ReportWindowController {
     @FXML private TabPane reportTabPane;
     
@@ -23,11 +27,20 @@ public class ReportWindowController {
     // Subscriber Charts
     @FXML private PieChart subscriberStatusChart;
     
+    /**
+     * Initializes the controller.
+     * This method is called automatically and initializes the charts.
+     */
     @FXML
     public void initialize() {
         setupCharts();
     }
     
+    /**
+     * Sets the reports for the charts.
+     * @param borrowReports - the borrow reports
+     * @param subscriberReports - the subscriber reports
+     */
     private void setupCharts() {
         genreBorrowChart.setTitle("Monthly Borrows by Genre");
         lateReturnChart.setTitle("Late Returns and Lost Books");
@@ -36,10 +49,19 @@ public class ReportWindowController {
         setupAlternatingAxisLabels(returnGenreAxis);
     }
 
+    /**
+     * Sets the reports for the charts.
+     * @param borrowReports - the borrow reports
+     * @param subscriberReports - the subscriber reports
+     */
     public void setReports(List<BorrowReport> borrowReports, List<SubscriberReport> subscriberReports) {
         updateCharts(borrowReports, subscriberReports);
     }
 
+    /**
+     * Sets up alternating axis labels for the given axis.
+     * @param axis - the axis to set up
+     */
     private void setupAlternatingAxisLabels(CategoryAxis axis) {
         axis.setTickLabelRotation(45);  // Set 45-degree rotation
         axis.setTickLabelGap(10);       // Adjust gap between labels
@@ -54,13 +76,21 @@ public class ReportWindowController {
         });
     }
     
-    
+        /**
+     * Updates the charts with the given reports.
+     * @param borrowReport - the borrow reports
+     * @param subscriberReport - the subscriber reports
+     */
     public void updateCharts(List<BorrowReport> borrowReport, 
                            List<SubscriberReport> subscriberReport) {
         updateBorrowCharts(borrowReport);
         updateSubscriberCharts(subscriberReport);
     }
 
+    /**
+     * Updates the borrow charts with the given reports.
+     * @param reports
+     */
     private void updateBorrowCharts(List<BorrowReport> reports) {
         genreBorrowChart.getData().clear();
         lateReturnChart.getData().clear();
@@ -95,6 +125,10 @@ public class ReportWindowController {
         lateReturnChart.getData().addAll(List.of(onTimeSeries, lateNoPenaltySeries, lateWithPenaltySeries));
     }
     
+    /**
+     * Updates the subscriber charts with the given reports.
+     * @param reports
+     */
     private void updateSubscriberCharts(List<SubscriberReport> reports) {
         subscriberStatusChart.getData().clear();
     

@@ -17,6 +17,9 @@ import common.MessageUtils;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Controller for the Active Borrows window.
+ */
 public class ActiveBorrowsController {
     @FXML private TableView<BorrowRecordDTO> tableViewBorrows;
     @FXML private TableColumn<BorrowRecordDTO, String> colBookName;
@@ -26,11 +29,19 @@ public class ActiveBorrowsController {
     @FXML private TableColumn<BorrowRecordDTO, Void> colExtend;
     @FXML private Button closeButton;
 
+    /**
+     * Initializes the controller class.
+     * This method is automatically called after the fxml file has been loaded.
+     * It sets up the columns of the table.
+     */
     @FXML
     private void initialize() {
         setupColumns();
     }
     
+    /**
+     * Sets up the table and its columns.
+     */
     private void setupColumns() {
         colBookName.setCellValueFactory(new PropertyValueFactory<>("bookTitle"));
         colBorrowDate.setCellValueFactory(new PropertyValueFactory<>("borrowDate"));
@@ -58,6 +69,9 @@ public class ActiveBorrowsController {
         setupActionColumn();
     }
     
+    /**
+     * Sets up the action column with a button to extend the return date.
+     */
     private void setupActionColumn() {
         colExtend.setCellFactory(param -> new TableCell<BorrowRecordDTO, Void>() {
             private final Button extendBtn = new Button("Extend");
@@ -78,7 +92,11 @@ public class ActiveBorrowsController {
         });
     }
     
-    
+    /**
+     * Handles the Extend button click event.
+     * Opens the Extend Window for the selected BorrowRecordDTO object.
+     * @param borrow The BorrowRecordDTO object to extend the return date for.
+     */
     private void handleExtend(BorrowRecordDTO borrow) {
         try {
             MessageUtils.sendMessage(ClientUI.cc, "subscriber", "connect", null);
@@ -108,10 +126,18 @@ public class ActiveBorrowsController {
         }    
     }
     
+    /**
+     * Sets the table data with the given list of BorrowRecordDTO objects.
+     * @param borrows The list of BorrowRecordDTO objects to display in the table.
+     */
     public void setTableData(ObservableList<BorrowRecordDTO> borrows) {
         tableViewBorrows.setItems(borrows);
     }
 
+    /**
+     * Handles the Close button click event.
+     * @param event
+     */
     @FXML
     private void handleClose(ActionEvent event) {
         Stage stage = (Stage) closeButton.getScene().getWindow();

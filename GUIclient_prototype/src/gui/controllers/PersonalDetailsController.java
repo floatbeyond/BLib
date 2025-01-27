@@ -18,6 +18,10 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import client.SharedController;
 
+/**
+ * PersonalDetailsController class is the controller for the PersonalDetails.fxml file.
+ * It is responsible for handling the subscriber's personal details and updating them.
+ */
 public class PersonalDetailsController {
     private Subscriber s;
     @FXML private Button btnBack = null;
@@ -45,6 +49,11 @@ public class PersonalDetailsController {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
+	/**
+	 * Initializes the controller class.
+	 * This method is called automatically when the FXML file is loaded.
+	 * Sets the text fields to be uneditable (Other than Phone and Email).
+	 */
 	@FXML
 	private void initialize() {
 		// Set Uneditable
@@ -56,11 +65,19 @@ public class PersonalDetailsController {
 		this.txtNumBookOrdered.setEditable(false);
     }
 
+	/**
+	 * Sets the subscriber's details in the text fields.
+	 * @param subscriber
+	 */
 	public void setSubscriber(Subscriber subscriber) {
         this.s = subscriber;
         populateFields();
     }
 
+	/**
+	 * Populates the text fields with the subscriber's details.
+	 * If the subscriber is null, the text fields will be empty.
+	 */
 	private void populateFields() {
         if (s != null) {
             this.txtID.setText(String.valueOf(s.getSub_id()));
@@ -74,6 +91,15 @@ public class PersonalDetailsController {
         }
     }
     
+	/**
+	 * Handles the update button click event.
+	 * Updates the subscriber's phone number and email.
+	 * @param event
+	 * @throws Exception
+	 * @see #isValidPhoneNumber(String)
+	 * @see #isValidEmail(String)
+	 * @see #displayMessage(String)
+	 */
     public void getSaveBtn(ActionEvent event) throws Exception {
 		try {
 			MessageUtils.sendMessage(ClientUI.cc, "subscriber", "connect", null);
@@ -109,21 +135,46 @@ public class PersonalDetailsController {
 		}
 	}
     
+	/**
+	 * Checks if the phone number is valid.
+	 * The phone number must be in the format: 05X-XXXXXXX
+	 * @param phoneNumber
+	 * @return true if the phone number is valid, false otherwise
+	 */
     private boolean isValidPhoneNumber(String phoneNumber) {
         String pattern = "^05\\d-\\d{7}$";
 		// MessageUtils.sendMessage(ClientUI.cc, "subscriber", "checkUniquePhoneNumber", phoneNumber);
         return phoneNumber.matches(pattern);
     }
 
+	/**
+	 * Checks if the email is valid.
+	 * The email must be in the format:
+	 * - Contains only one '@' character
+	 * - Contains at least one '.' character after the '@' character
+	 * - Contains at least two characters after the last '.' character
+	 * @param email
+	 * @return true if the email is valid, false otherwise
+	 */
 	private boolean isValidEmail(String email) {
 		String pattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
 		return email.matches(pattern);
 	}
 
+	/**
+	 * Displays a message to the user of the updated subscriber status.
+	 * @param status
+	 */
 	public void updateSubscriberStatus(String status) {
 		displayMessage(status);
 	}
 
+	/**
+	 * Handles the back button click event.
+	 * Redirects the user to the Subscriber Main Frame.
+	 * @param event
+	 * @throws Exception
+	 */
 	public void goBackBtn(ActionEvent event) throws Exception {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/SubscriberMainFrame.fxml"));
 		Pane root = loader.load();
@@ -149,6 +200,10 @@ public class PersonalDetailsController {
 		
     }
 
+	/**
+	 * Displays a message to the user.
+	 * @param message
+	 */
     public void displayMessage(String message) {
         messageLabel.setText(message);
     }

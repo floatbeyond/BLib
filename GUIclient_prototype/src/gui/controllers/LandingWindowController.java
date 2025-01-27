@@ -43,6 +43,10 @@ import java.util.ResourceBundle;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class is the controller for the LandingWindow.fxml file. It is responsible for handling the user input and
+ * displaying the books in a table view. It is also responsible for displaying the main window of the application.
+ */
 public class LandingWindowController implements Initializable {
 
     @FXML private MenuButton menuButton;
@@ -67,6 +71,15 @@ public class LandingWindowController implements Initializable {
     private String getSearch() { return searchField.getText(); }
     private String getMenu() { return menuButton.getText(); }
 
+    /**
+     * This method is called when the LandingWindow.fxml file is loaded.
+     * It is responsible for initializing the table view and setting the cell value factories for the columns.
+     * It is also responsible for setting the controller instance in the SharedController class.
+     * It is also responsible for setting the width of the menu button based on the text.
+     * It is also responsible for setting the search action for the search button and the search field.
+     * @param location
+     * @param resources
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setupButtonWidth();
@@ -77,6 +90,13 @@ public class LandingWindowController implements Initializable {
         SharedController.setLandingWindowController(this);
     }
 
+    /**
+     * This method is called when the LandingWindow.fxml file is loaded.
+     * It is responsible for setting the width of the menu button based on the text.
+     * It is also responsible for adding a text change listener to the menu button.
+     * It is also responsible for adding a width property listener to the menu button.
+     * It is also responsible for adding a text change listener that triggers width adjustment.
+     */
     private void setupButtonWidth() {
         double totalWidth = searchField.getLayoutX() + searchField.getPrefWidth();  // Total width to maintain
 
@@ -100,6 +120,11 @@ public class LandingWindowController implements Initializable {
         });
     }
 
+    /**
+     * This method is called when the LandingWindow.fxml file is loaded.
+     * It is responsible for setting the search action for the search button and the search field.
+     * It is also responsible for adding a key pressed (Enter) listener to the search field.
+     */
     private void setupSearch() {
         searchButton.setOnAction(e -> handleSearchAction(e));
         searchField.setOnKeyPressed(e -> {
@@ -109,6 +134,12 @@ public class LandingWindowController implements Initializable {
         });
     }
 
+    /**
+     * This method is called when the LandingWindow.fxml file is loaded.
+     * It is responsible for setting the cell value factories for the columns.
+     * It is also responsible for applying a custom cell factory to wrap text and adjust cell height.
+     * It is also responsible for adding a button to the action column that shows the copies dialog.
+     */
     private void setupColumns() {
         if (bookNameColumn == null || bookTable == null) {
             System.err.println("ERROR: Table components not properly injected");
@@ -149,6 +180,11 @@ public class LandingWindowController implements Initializable {
         });
     }
 
+    /**
+     * This method is called when the LandingWindow.fxml file is loaded.
+     * It is responsible for applying a custom cell factory to wrap text and adjust cell height.
+     * @param column
+     */
     private void applyWrappingCellFactory(TableColumn<Book, String> column) {
         column.setCellFactory(new Callback<TableColumn<Book, String>, TableCell<Book, String>>() {
             @Override
@@ -178,6 +214,11 @@ public class LandingWindowController implements Initializable {
         });
     }
 
+    /**
+     * This method is called when the user clicks the Show Copies button.
+     * It is responsible for showing the copies dialog for the selected book.
+     * @param book
+     */
     private void showCopiesDialog(Book book) {
         if (openDialogs.containsKey(book.getBookId())) {
             // Bring the existing dialog to the front
@@ -212,28 +253,52 @@ public class LandingWindowController implements Initializable {
         }
     }
     
+    /**
+     * This method is called when the user clicks the Exit button.
+     * It is responsible for exiting the application.
+     * @param event
+     */
     private void closeAllCopiesDialogs() {
         openDialogs.values().forEach(Stage::close);
         openDialogs.clear();
     }
 
+    /**
+     * This method is called when the user clicks the Exit button.
+     * It is responsible for exiting the application.
+     * @param event
+     */
     @FXML
     private void handleMenuItemAction(ActionEvent event) {
         MenuItem menuItem = (MenuItem) event.getSource();
         menuButton.setText(menuItem.getText());
     }
 
+    /**
+     * This method adjusts the width of the menu button based on the text.
+     * @param text
+     */
     private void adjustMenuButtonWidth(String text) {
         double width = computeTextWidth(menuButton.getFont(), text) + 50; // Add some flexible padding
         menuButton.setPrefWidth(width);
     }
 
+    /**
+     * This method computes the width of the text based on the font.
+     * @param font
+     * @param text
+     * @return
+     */
     private double computeTextWidth(Font font, String text) {
         Text tempText = new Text(text);
         tempText.setFont(font);
         return tempText.getLayoutBounds().getWidth();
     }
 
+    /**
+     * This method is called to load the book details into the table view.
+     * @param list
+     */
     public void loadBookDetails(List<Object> list) {
         Platform.runLater(() -> {
             displayMessage("");
@@ -274,10 +339,14 @@ public class LandingWindowController implements Initializable {
         });
     }
 
+    /**
+     * This method is called when the user clicks the Search button.
+     * It is responsible for sending the search request to the server.
+     * @param event
+     */
     public void handleSearchAction(ActionEvent event) {
         String searchText = getSearch();
         String selectedMenu = getMenu();
-        // Implement your search logic here
         try {
             MessageUtils.sendMessage(ClientUI.cc,"user", "connect" , null);
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
@@ -296,11 +365,21 @@ public class LandingWindowController implements Initializable {
         }        
     }
 
+    /**
+     * This method is called when no books are found.
+     * It is responsible for hiding the book table and displaying a message.
+     */
     public void noBooksFound() {
         bookTable.setVisible(false);
         displayMessage("No books found");
     }
 
+    /**
+     * This method is called when the user clicks the Login button.
+     * It is responsible for sending the login request to the server.
+     * It is also responsible for closing all copies dialogs.
+     * @param event
+     */
     public void handleLoginAction(ActionEvent event) {
         try {
             MessageUtils.sendMessage(ClientUI.cc, "user",  "connect" , null);
@@ -335,6 +414,11 @@ public class LandingWindowController implements Initializable {
         }
     }
 
+    /**
+     * This method is called when the user clicks the Exit button.
+     * It is responsible for exiting the application.
+     * @param event
+     */
     public void handleExitAction(ActionEvent event) {
         try {
             if (ClientUI.chat != null) {
@@ -347,6 +431,11 @@ public class LandingWindowController implements Initializable {
         }
     }
 
+    /**
+     * This method is called when the user clicks the Exit button.
+     * It is responsible for exiting the application.
+     * @param event
+     */
     public void displayMessage(String message) {
         messageLabel.setText(message);
     }

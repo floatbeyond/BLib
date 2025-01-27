@@ -3,13 +3,26 @@ package common;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+/**
+ * Represents a data log in the library system.
+ * Implements Serializable for client-server communication.
+ */
 public class DataLogs implements Serializable {
+    /** Ensures consistent serialization across different versions */
     private static final long serialVersionUID = 1L;
+
     private int log_id;
-    private int sub_id;
+    private int sub_id; // Foreign key referencing Subscribers
     private String log_action; 
     private Timestamp timestamp;
 
+    /**
+     * Constructor for DataLogs
+     * @param log_id
+     * @param sub_id
+     * @param log_action
+     * @param timestamp
+     */
     public DataLogs(int log_id, int sub_id, String log_action, Timestamp timestamp) {
         this.log_id = log_id;
         this.sub_id = sub_id;

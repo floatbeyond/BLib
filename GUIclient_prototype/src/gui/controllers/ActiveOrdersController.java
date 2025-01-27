@@ -30,6 +30,15 @@ public class ActiveOrdersController {
 
     @FXML private Button closeButton;
 
+    /**
+     * Initializes the controller class.
+     * This method is automatically called after the fxml file has been loaded.
+     * It initializes the columns of the table.
+     * It sets the cell value factories for the columns.
+     * It sets the cell factories for the columns that need custom cell rendering.
+     * It sets the button column to have a button that cancels the order when clicked.
+     * It sets the items of the table to the list of orders.
+     */
     @FXML
     public void initialize() {
 
@@ -98,10 +107,18 @@ public class ActiveOrdersController {
         });
     }
 
+    /**
+     * Sets the data of the table to the list of orders.
+     * @param orders The list of orders to be displayed in the table.
+     */
     public void setOrdersData(ObservableList<OrderRecordDTO> orders) {
         activeOrdersTable.setItems(orders);
     }
 
+    /**
+     * Displays an alert message to the user.
+     * @param message The message to be displayed in the alert.
+     */
     public void alertMessage(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Cancel");
@@ -110,7 +127,10 @@ public class ActiveOrdersController {
         alert.showAndWait();
     }
 
-
+    /**
+     * Cancels the order for the given order record.
+     * @param order The order record to be cancelled.
+     */
     private void cancelOrder(OrderRecordDTO order) {
         // Implement the logic to cancel the order
         System.out.println("Cancelling order for book: " + order.getBookTitle());
@@ -119,6 +139,10 @@ public class ActiveOrdersController {
         MessageUtils.sendMessage(ClientUI.cc, "user", "cancelOrder", order.getOrderId());
     }
 
+    /**
+     * Closes the active orders window.
+     * @param event The event that triggered this method.
+     */
     @FXML
     private void handleClose(ActionEvent event) {
         Stage stage = (Stage) closeButton.getScene().getWindow();

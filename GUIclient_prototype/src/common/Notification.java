@@ -3,13 +3,26 @@ package common;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+/**
+ * Represents a notification in the library system.
+ * Implements Serializable for client-server communication.
+ */
 public class Notification implements Serializable {
+    /** Ensures consistent serialization across different versions */
     private static final long serialVersionUID = 1L;
+
     private int notificationId;
-    private int userId;
+    private int userId; // Foreign key referencing Subscribers or Librarians
     private String message;
     private Timestamp timestamp;
 
+    /**
+     * Constructor for Notification
+     * @param notificationId
+     * @param userId
+     * @param message
+     * @param timestamp
+     */
     public Notification(int notificationId, int userId, String message, Timestamp timestamp) {
         this.notificationId = notificationId;
         this.userId = userId;

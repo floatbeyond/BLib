@@ -20,7 +20,11 @@ import javafx.stage.WindowEvent;
 import javafx.event.ActionEvent;
 
 
-
+/**
+ * LoginWindowController class is the controller for the LoginWindow.fxml file.
+ * It is responsible for handling user login actions and displaying the appropriate
+ * main frame based on the user type.
+ */
 public class LoginWindowController {
 
     @FXML private MenuButton menuButton;
@@ -35,6 +39,14 @@ public class LoginWindowController {
 
     private String getId() { return idField.getText(); }
 
+    /**
+     * Initializes the controller class.
+     * This method is called automatically when the FXML file is loaded.
+     * It is used to initialize the controller and set up the login button.
+     * It also sets the controller in the SharedController class.
+     * It sets the subscriber, librarian, and book copy to null.
+     * It also sets the userType to an empty string.
+     */
     @FXML
     public void initialize() {
         setupLogin();
@@ -46,6 +58,11 @@ public class LoginWindowController {
         SharedController.setBookCopy(null);
     }
 
+    /**
+     * Sets up the login button.
+     * It sets the action for the login button to handleLoginAction.
+     * It also sets the action for the idField to handleLoginAction when the Enter key is pressed.
+     */
     private void setupLogin() {
         loginButton.setOnAction(e -> handleLoginAction(e));
         idField.setOnKeyPressed(e -> {
@@ -55,6 +72,20 @@ public class LoginWindowController {
         });
     }
 
+    /**
+     * Handles the login action.
+     * It gets the ID from the idField.
+     * It sends a message to the server to connect.
+     * If the connection is successful, it sends a message to the server to login with the ID.
+     * If the user is not found, it displays a message that the user is not found.
+     * If the user is a librarian, it sets the userType to "Librarian".
+     * If the user is a subscriber, it checks if the subscriber is eligible to login
+     * If so it sets the userType to "Subscriber".
+     * It then hides the current window and loads and displays the main frame GUI based on the userType.
+     * If the connection fails, it displays a message that the connection failed.
+     * If an exception occurs, it prints the stack trace.
+     * @param event The ActionEvent to handle.
+     */
     public void handleLoginAction(ActionEvent event) {
         String idText = getId();
         // Implement your search logic here
@@ -119,6 +150,12 @@ public class LoginWindowController {
         }        
     }
 
+    /**
+     * Handles the back action.
+     * It hides the current window and loads and displays the landing window GUI.
+     * If an exception occurs, it prints the stack trace.
+     * @param event The ActionEvent to handle.
+     */
     public void handleBackAction (ActionEvent event) {
         try {
             ((Node) event.getSource()).getScene().getWindow().hide();
@@ -136,10 +173,18 @@ public class LoginWindowController {
         }
     }
 
+    /**
+     * Sets the user status.
+     * @param user The user status to set.
+     */
     public void setUserStatus(Object user) {
         userConnected = user;
     }
 
+    /**
+     * Displays a message.
+     * @param message The message to display.
+     */
     public void displayMessage(String message) {
         messageLabel.setText(message);
     }

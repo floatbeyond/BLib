@@ -19,6 +19,10 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+/**
+ * Controller class for the ReturnBook.fxml file.
+ * This class is responsible for handling the return book functionality.
+ */
 public class ReturnBookController implements ItemLoader {
     private BookCopy bc;
 
@@ -31,6 +35,15 @@ public class ReturnBookController implements ItemLoader {
     @FXML private Label messageLabel;
     private static Stage scanWindowStage; // Track the ScanWindow stage
 
+    private String getSubId() { return txtID.getText(); }
+    private String getCopyId() { return txtCopyId.getText(); }
+    private LocalDate getActualReturnDate() { return actualReturnDate.getValue(); }
+
+    /**
+     * Initializes the controller.
+     * This method is called automatically and initializes the text fields.
+     * The actual return date is set to the current date and is disabled.
+     */
     @FXML
     public void initialize() {
         txtID.setEditable(false);
@@ -40,12 +53,24 @@ public class ReturnBookController implements ItemLoader {
         actualReturnDate.setDisable(true);
     }
 
-    private String getSubId() { return txtID.getText(); }
+    /**
+     * Sets the subscriber ID in the text field.
+     * @param sub_id
+     */
     private void setID(String sub_id) { txtID.setText(sub_id); }
-    private String getCopyId() { return txtCopyId.getText(); }
-    private void setCopyID(String copy_id) { txtCopyId.setText(copy_id); }
-    private LocalDate getActualReturnDate() { return actualReturnDate.getValue(); }
 
+    /**
+     * Sets the copy ID in the text field.
+     * @param copy_id
+     */
+    private void setCopyID(String copy_id) { txtCopyId.setText(copy_id); }
+
+    /**
+     * Handles the scan book button click event.
+     * This method shows the scan window for scanning the book copy and reader card.
+     * @param event
+     * @throws Exception
+     */
     @FXML
     private void showScanWindow(ActionEvent event) throws Exception {
         if (scanWindowStage != null && scanWindowStage.isShowing()) {
@@ -72,8 +97,12 @@ public class ReturnBookController implements ItemLoader {
         }
     }
 
-    //handle when librarian clicks submit return date button with actual return date
-      public void handleReturnDateSubmit(ActionEvent event) { 
+    /**
+     * Handles the return date submit button click event.
+     * This method sends a message to the server to return the book.
+     * @param event
+     */
+    public void handleReturnDateSubmit(ActionEvent event) { 
         try {
             LocalDate returnDate = getActualReturnDate();
             String subId = getSubId();
@@ -103,6 +132,12 @@ public class ReturnBookController implements ItemLoader {
         }
     }
 
+    /**
+     * Loads the book copy.
+     * This method is called by the ScanWindowController to load the book copy.
+     * @param bookCopy - the book copy
+     * @see ItemLoader
+     */
     @Override
     public void loadBookCopy(BookCopy bookCopy) {
         setCopyID(String.valueOf(bookCopy.getCopyId()));
@@ -116,6 +151,11 @@ public class ReturnBookController implements ItemLoader {
         }
     }
 
+    /**
+     * Loads the subscriber.
+     * @param subscriber - the subscriber
+     * @see ItemLoader
+     */
     @Override
     public void loadSubscriber(Subscriber subscriber) {
         setID(String.valueOf(subscriber.getSub_id()));
@@ -123,6 +163,11 @@ public class ReturnBookController implements ItemLoader {
         displayMessage("Subscriber found");
     }
 
+    /**
+     * Handles the return message.
+     * This method displays the return message to the user.
+     * @param msg - the return message
+     */
     public void returnMessage(String msg) {
         displayMessage(msg);
         if (msg.equals("Book has been returned successfully")) {
@@ -134,10 +179,20 @@ public class ReturnBookController implements ItemLoader {
 
     }  
 
+    /**
+     * Displays a message to the user.
+     * @param message - the message to display
+     */
     public void displayMessage(String message) { //display message to user in label
         messageLabel.setText(message);
     }
 
+    /**
+     * Handles the back button click event.
+     * This method closes the current window and loads the LibrarianMainFrame.
+     * @param event
+     * @throws Exception
+     */
     public void goBackBtn(ActionEvent event) throws Exception {
         if (scanWindowStage != null && scanWindowStage.isShowing()) {
             scanWindowStage.close();

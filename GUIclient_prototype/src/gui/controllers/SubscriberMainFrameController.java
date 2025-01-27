@@ -63,7 +63,10 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-
+/**
+ * Controller class for the SubscriberMainFrame.fxml file.
+ * This class is responsible for handling the subscriber main frame functionality.
+ */
 public class SubscriberMainFrameController implements Initializable {
 
     @FXML private MenuButton menuButton;
@@ -105,6 +108,12 @@ public class SubscriberMainFrameController implements Initializable {
     private String getSearch() { return searchField.getText(); }
     private String getMenu() { return menuButton.getText(); }
 
+    /**
+     * Initializes the controller.
+     * This method is called automatically.
+     * It sets up the button width, columns, and search functionality.
+     * It also sets the subscriber and starts the notification scheduler.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setupButtonWidth();
@@ -116,7 +125,11 @@ public class SubscriberMainFrameController implements Initializable {
         setupNotificationListView();
     }
 
-        private void setupNotificationListView() {
+    /**
+     * Sets up the notification list view with a custom cell factory.
+     * The custom cell factory displays date headers and notification items.
+     */
+    private void setupNotificationListView() {
         notificationListView.setCellFactory(new Callback<ListView<Object>, ListCell<Object>>() {
             @Override
             public ListCell<Object> call(ListView<Object> listView) {
@@ -148,6 +161,12 @@ public class SubscriberMainFrameController implements Initializable {
         });
     }
 
+    /**
+     * Formats the time since the given timestamp.
+     * Returns a string representing the time since the timestamp.
+     * @param timestamp The timestamp to format the time since.
+     * @return A string representing the time since the timestamp.
+     */
     private String formatTimeSince(LocalDateTime timestamp) {
         LocalDateTime now = LocalDateTime.now();
         Duration duration = Duration.between(timestamp, now);
@@ -163,6 +182,11 @@ public class SubscriberMainFrameController implements Initializable {
         }
     }
 
+    /**
+     * Adds the given notifications to the notification list view.
+     * Adds the notifications in reverse order to maintain chronological order.
+     * @param newNotifications The list of notifications to add.
+     */
     public void addNotifications(List<Notification> newNotifications) {
         // Process notifications in reverse order to maintain chronological order
         for (int i = newNotifications.size() - 1; i >= 0; i--) {
@@ -198,16 +222,32 @@ public class SubscriberMainFrameController implements Initializable {
         notificationListView.setItems(notificationItems);
     }
 
+    /**
+     * Handles the show notifications button action.
+     * Shows the notification split pane.
+     * @param event The action event that occurred.
+     */
     @FXML
     private void showNotifications(ActionEvent event) {
         notificationSplitPane.setVisible(true);
     }
 
+    /**
+     * Handles the close notifications button action.
+     * Closes the notification split pane.
+     * @param event The action event that occurred.
+     */    
     @FXML
     private void closeNotifications(ActionEvent event) {
         notificationSplitPane.setVisible(false);
     }
 
+    /**
+     * Handles the order response from the server.
+     * Displays an alert with the order status.
+     * Updates the book table to reflect the order status.
+     * @param response The order response from the server.
+     */
     public void handleOrderResponse(OrderResponse response) {
         String status = response.getStatus();
         Book orderedBook = response.getBook();
@@ -236,24 +276,39 @@ public class SubscriberMainFrameController implements Initializable {
         }
     }
 
+    /**
+     * Orders the given book.
+     * Sends a new order message to the server.
+     * @param book The book to order.
+     */
     private void orderBook(Book book) {
-        // Implement the logic to order the book
         System.out.println("Ordering book: " + book.getTitle());
-
-        // Send a request to the server to order the book
         MessageUtils.sendMessage(ClientUI.cc, "subscriber", "newOrder", book.getBookId() + ":" + s.getSub_id());
     }
 
+    /**
+     * Sets the order records for the subscriber.
+     * Loads the user orders into the book table.
+     * @param list The list of order records for the subscriber.
+     */
     public void setOrderRecords(List<OrderRecordDTO> list) {
         this.orderRecords = list;
         loadUserOrders();
     }
 
+    /**
+     * Sets the borrow records for the subscriber.
+     * Loads the user borrows into the book table.
+     * @param list The list of borrow records for the subscriber.
+     */
     public void setBorrowRecords(List<BorrowRecordDTO> list) {
         this.borrowRecords = list;
         loadUserBorrows();
     }
 
+    /**
+     * Loads the user orders into the book table.
+     */
     private void loadUserOrders() {
         List<String> orderedBookTitles = new ArrayList<>();
         for (OrderRecordDTO order : orderRecords) {
@@ -267,6 +322,9 @@ public class SubscriberMainFrameController implements Initializable {
         bookTable.refresh();
     }
 
+    /**
+     * Loads the user borrows into the book table.
+     */
     private void loadUserBorrows() {
         List<String> borrowedBookTitles = new ArrayList<>();
         for (BorrowRecordDTO borrow : borrowRecords) {
@@ -275,14 +333,27 @@ public class SubscriberMainFrameController implements Initializable {
         bookTable.refresh();
     }
 
+    /**
+     * Sets the active orders stage.
+     * @param stage
+     */
     public static void setActiveOrdersStage(Stage stage) {
         activeOrdersStage = stage;
     }
 
+    /**
+     * Sets the active borrows stage.
+     * @param stage
+     */
     public static void setActiveBorrowsStage(Stage stage) {
         activeBorrowsStage = stage;
     }
 
+    /**
+     * Sets up the width of the menu button and search field.
+     * Adjusts the width of the menu button based on the text.
+     * Sets the search field to the right of the menu button.
+     */
     private void setupButtonWidth() {
         double totalWidth = searchField.getLayoutX() + searchField.getPrefWidth();  // Total width to maintain
 
@@ -306,6 +377,11 @@ public class SubscriberMainFrameController implements Initializable {
         });
     }
 
+    /**
+     * This method is called when the LandingWindow.fxml file is loaded.
+     * It is responsible for setting the search action for the search button and the search field.
+     * It is also responsible for adding a key pressed (Enter) listener to the search field.
+     */
     private void setupSearch() {
         searchButton.setOnAction(e -> handleSearchAction(e));
         searchField.setOnKeyPressed(e -> {
@@ -315,6 +391,12 @@ public class SubscriberMainFrameController implements Initializable {
         });
     }
 
+    /**
+     * This method is called when the LandingWindow.fxml file is loaded.
+     * It is responsible for setting the cell value factories for the columns.
+     * It is also responsible for applying a custom cell factory to wrap text and adjust cell height.
+     * It is also responsible for adding a button to the action column that shows the copies dialog.
+     */
     private void setupColumns() {
         if (bookNameColumn == null || bookTable == null) {
             System.err.println("ERROR: Table components not properly injected");
@@ -336,45 +418,50 @@ public class SubscriberMainFrameController implements Initializable {
         
 
         actionColumn.setCellFactory(param -> new TableCell<Book, Void>() {
-        private final Button copiesButton = new Button("Show Copies");
-        private final Button orderButton = new Button("Order");
+            private final Button copiesButton = new Button("Show Copies");
+            private final Button orderButton = new Button("Order");
 
-        {
-            copiesButton.setOnAction(event -> {
-                Book book = getTableView().getItems().get(getIndex());
-                showCopiesDialog(book);
-            });
+            {
+                copiesButton.setOnAction(event -> {
+                    Book book = getTableView().getItems().get(getIndex());
+                    showCopiesDialog(book);
+                });
 
-            orderButton.setOnAction(event -> {
-                Book book = getTableView().getItems().get(getIndex());
-                orderBook(book);
-            });
-        }
+                orderButton.setOnAction(event -> {
+                    Book book = getTableView().getItems().get(getIndex());
+                    orderBook(book);
+                });
+            }
 
-        @Override
-        protected void updateItem(Void item, boolean empty) {
-            super.updateItem(item, empty);
-            if (empty) {
-                setGraphic(null);
-            }else {
-                Book book = getTableView().getItems().get(getIndex());
-                try {
-                    int copyCount = book.getAvailableCopies().size();
-                    if (copyCount > 0) {
-                        setGraphic(copiesButton);
-                    } else {
-                        setGraphic(orderButton);
-                    }
-                } catch (NumberFormatException e) {
-                    System.err.println("Invalid copy count: " + book.getCopyCount());
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
                     setGraphic(null);
+                }else {
+                    Book book = getTableView().getItems().get(getIndex());
+                    try {
+                        int copyCount = book.getAvailableCopies().size();
+                        if (copyCount > 0) {
+                            setGraphic(copiesButton);
+                        } else {
+                            setGraphic(orderButton);
+                        }
+                    } catch (NumberFormatException e) {
+                        System.err.println("Invalid copy count: " + book.getCopyCount());
+                        setGraphic(null);
+                    }
                 }
             }
-        }
-    });
+        });
     }
 
-     private void applyWrappingCellFactory(TableColumn<Book, String> column) {
+    /**
+     * This method is called when the LandingWindow.fxml file is loaded.
+     * It is responsible for applying a custom cell factory to wrap text and adjust cell height.
+     * @param column The column to apply the custom cell factory to.
+     */
+    private void applyWrappingCellFactory(TableColumn<Book, String> column) {
         column.setCellFactory(new Callback<TableColumn<Book, String>, TableCell<Book, String>>() {
             @Override
             public TableCell<Book, String> call(TableColumn<Book, String> param) {
@@ -403,6 +490,11 @@ public class SubscriberMainFrameController implements Initializable {
         });
     }
 
+    /**
+     * Shows the copies dialog for the given book.
+     * If the dialog is already open, it brings it to the front.
+     * @param book The book to show the copies dialog for.
+     */
     private void showCopiesDialog(Book book) {
         if (openDialogs.containsKey(book.getBookId())) {
             // Bring the existing dialog to the front
@@ -437,28 +529,52 @@ public class SubscriberMainFrameController implements Initializable {
         }
     }
 
+    /**
+     * Closes all copies dialogs.
+     */
     private void closeAllCopiesDialogs() {
         openDialogs.values().forEach(Stage::close);
         openDialogs.clear();
     }
 
+    /**
+     * This method is called when the LandingWindow.fxml file is loaded.
+     * It is responsible for setting the menu button text to the selected menu item.
+     * @param event The action event that occurred.
+     */
     @FXML
     private void handleMenuItemAction(ActionEvent event) {
         MenuItem menuItem = (MenuItem) event.getSource();
         menuButton.setText(menuItem.getText());
     }
 
+    /**
+     * Adjusts the width of the menu button based on the text.
+     * Adds some flexible padding to the width.
+     * @param text The text to adjust the width for.
+     */
     private void adjustMenuButtonWidth(String text) {
         double width = computeTextWidth(menuButton.getFont(), text) + 50; // Add some flexible padding
         menuButton.setPrefWidth(width);
     }
 
+    /**
+     * Computes the width of the given text using the given font.
+     * @param font The font to use for the text.
+     * @param text The text to compute the width for.
+     * @return The width of the text.
+     */
     private double computeTextWidth(Font font, String text) {
         Text tempText = new Text(text);
         tempText.setFont(font);
         return tempText.getLayoutBounds().getWidth();
     }
 
+    /**
+     * Loads the book details into the table view.
+     * Called by the server when the book details are received.
+     * @param list The list of book details to load.
+     */
     public void loadBookDetails(List<Object> list) {
         Platform.runLater(() -> {
             displayMessage("");
@@ -499,6 +615,11 @@ public class SubscriberMainFrameController implements Initializable {
         });
     }
 
+    /**
+     * Handles the search action when the search button is clicked.
+     * Sends a message to the server to search for books based on the search text and selected menu.
+     * @param event The action event that occurred.
+     */
     public void handleSearchAction(ActionEvent event) {
         String searchText = getSearch();
         String selectedMenu = getMenu();
@@ -521,11 +642,20 @@ public class SubscriberMainFrameController implements Initializable {
         }        
     }
 
+    /**
+     * Displays a message when no books are found.
+     * Hides the book table and displays the message.
+     */
     public void noBooksFound() {
         bookTable.setVisible(false);
         displayMessage("No books found");
     }
 
+    /**
+     * Logs out the subscriber and returns to the landing window.
+     * Closes all active orders, active borrows, and copies dialogs windows.
+     * @param event The action event that occurred.
+     */
     public void logoutBtn(ActionEvent event) throws Exception {
         closeActiveOrders();
         closeActiveBorrows();
@@ -555,6 +685,11 @@ public class SubscriberMainFrameController implements Initializable {
         primaryStage.show();
     }
 
+    /**
+     * Displays the logs window for the subscriber.
+     * Sends a message to the server to get the user logs.
+     * @param event The action event that occurred.
+     */
     public void logsBtn(ActionEvent event) throws Exception {
         try {
             MessageUtils.sendMessage(ClientUI.cc, "subscriber", "connect", null);
@@ -592,6 +727,11 @@ public class SubscriberMainFrameController implements Initializable {
         
     }
 
+    /**
+     * Displays the personal details window for the subscriber.
+     * Sends a message to the server to get the subscriber details.
+     * @param event The action event that occurred.
+     */
     public void personalDetailsBtn(ActionEvent event) throws Exception {
 
         try {
@@ -631,6 +771,12 @@ public class SubscriberMainFrameController implements Initializable {
         }
     }
 
+    /**
+     * Displays the active orders window for the subscriber.
+     * Only if they have active orders.
+     * Sends a message to the server to get the user orders.
+     * @param event The action event that occurred.
+     */
     public void handleActiveOrders(ActionEvent event) throws Exception {
         MessageUtils.sendMessage(ClientUI.cc, "subscriber", "connect", null);
         if (ClientUI.cc.getConnectionStatusFlag() == 1) {
@@ -668,6 +814,9 @@ public class SubscriberMainFrameController implements Initializable {
         }
     }
 
+    /**
+     * Closes the active orders window.
+     */
     private void closeActiveOrders() {
         if (activeOrdersStage != null && activeOrdersStage.isShowing()) {
             activeOrdersStage.close();
@@ -675,7 +824,12 @@ public class SubscriberMainFrameController implements Initializable {
         }
     }
 
-    
+    /**
+     * Displays the active borrows window for the subscriber.
+     * Only if they have active borrows.
+     * Sends a message to the server to get the user borrows.
+     * @param event The action event that occurred.
+     */
     public void handleActiveBorrows(ActionEvent event) throws Exception {
         MessageUtils.sendMessage(ClientUI.cc, "subscriber", "connect", null);
         if (ClientUI.cc.getConnectionStatusFlag() == 1) {
@@ -713,6 +867,9 @@ public class SubscriberMainFrameController implements Initializable {
         }
     }
 
+    /**
+     * Closes the active borrows window.
+     */
     private void closeActiveBorrows() {
         if (activeBorrowsStage != null && activeBorrowsStage.isShowing()) {
             activeBorrowsStage.close();
@@ -720,6 +877,10 @@ public class SubscriberMainFrameController implements Initializable {
         }
     }
     
+    /**
+     * Displays a message in the message label.
+     * @param message The message to display.
+     */
     public void displayMessage(String message) {
         messageLabel.setText(message);
     }

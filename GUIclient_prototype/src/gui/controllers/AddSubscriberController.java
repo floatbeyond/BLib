@@ -19,6 +19,9 @@ import common.Subscriber;
 import javafx.scene.control.Label;
 
 
+/**
+ * Controller for the Add Subscriber window.
+ */
 public class AddSubscriberController {
 
     @FXML private Button btnRegister;
@@ -34,6 +37,12 @@ public class AddSubscriberController {
 
     private static final DateTimeFormatter USER_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
+    /**
+     * Initializes the controller class.
+     * This method is automatically called after the fxml file has been loaded.
+     * It sets the join date and expiration date fields to the current date and the date one year from now, respectively.
+     * It clears the text fields.
+     */
     @FXML
     private void initialize() {
         txtJoinDate.setText(LocalDate.now().format(USER_DATE_FORMATTER));
@@ -43,12 +52,20 @@ public class AddSubscriberController {
         clearFields();
     }
 
+    /**
+     * Clears the text fields.
+     */
     private void clearFields() {
         txtFName.clear();
         txtEmail.clear();
         txtPNumber.clear();
     }
 
+    /**
+     * Handles the register button click event.
+     * It sends a message to the server to add a new subscriber with the data from the text fields.
+     * @param event
+     */
     @FXML
     private void handleRegister(ActionEvent event) {
         try {
@@ -89,6 +106,11 @@ public class AddSubscriberController {
         }
     }
 
+    /**
+     * Handles the back button click event.
+     * It loads the Librarian Main Frame window.
+     * @param event
+     */
     @FXML
     private void goBack(ActionEvent event) {
         try {
@@ -124,25 +146,51 @@ public class AddSubscriberController {
         }
     }
 
+    /**
+     * Displays a message to the user.
+     * @param message The message to be displayed.
+     */
     public void newSubAdded(String message) {
         displayMessage(message);
     }
 
+    /**
+     * Checks if the given name is a valid full name.
+     * A valid full name contains only letters, spaces, hyphens, and apostrophes.
+     * @param name
+     * @return
+     */
     private boolean isValidFullName(String name) {
         String pattern = "^[a-zA-Z]+([ '-][a-zA-Z]+)*$";
         return name.matches(pattern);
     }
 
+    /**
+     * Checks if the given phone number is a valid phone number.
+     * A valid phone number is in the format 05X-XXXXXXX, where X is a digit.
+     * @param phoneNumber
+     * @return
+     */
     private boolean isValidPhoneNumber(String phoneNumber) {
         String pattern = "^05\\d-\\d{7}$";
         return phoneNumber.matches(pattern);
     }
 
+    /**
+     * Checks if the given email is a valid email.
+     * A valid email is in the format local-part@domain, where local-part and domain are strings of letters, digits, and special characters.
+     * @param email
+     * @return
+     */
 	private boolean isValidEmail(String email) {
 		String pattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
 		return email.matches(pattern);
 	}
 
+    /**
+     * Displays a message to the user.
+     * @param message The message to be displayed.
+     */
     public void displayMessage(String message) {
         messageLabel.setText(message);
     }

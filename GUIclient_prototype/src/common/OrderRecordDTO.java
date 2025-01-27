@@ -4,7 +4,12 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.sql.Timestamp;
 
+/**
+ * Represents an order record in the library system.
+ * Implements Serializable for client-server communication.
+ */
 public class OrderRecordDTO implements Serializable {
+    /** Ensures consistent serialization across different versions */
     private static final long serialVersionUID = 1L;
 
     private int orderId;
@@ -13,6 +18,14 @@ public class OrderRecordDTO implements Serializable {
     private Timestamp notificationTimestamp;
     private String status;
 
+    /**
+     * Constructor for OrderRecordDTO
+     * @param orderId
+     * @param bookTitle
+     * @param orderDate
+     * @param status
+     * @param notificationTimestamp
+     */
     public OrderRecordDTO(int orderId, String bookTitle, LocalDate orderDate, String status, Timestamp notificationTimestamp) {
         this.orderId = orderId;
         this.bookTitle = bookTitle;

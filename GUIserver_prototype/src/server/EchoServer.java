@@ -55,9 +55,6 @@ public class EchoServer extends AbstractServer
 	
 	
 	public void handleMessageFromClient(Object msg, ConnectionToClient client) {
-		//System.out.println("Message received: " + msg + " from " + client);
-    // ccc = InstanceManager.getClientConnectedController();
-    
 		  if (msg instanceof ServerMessage) {
         ServerMessage serverMessage = (ServerMessage) msg;
         String user = serverMessage.getUser();

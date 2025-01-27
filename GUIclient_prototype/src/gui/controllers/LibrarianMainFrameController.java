@@ -56,6 +56,13 @@ import common.MessageUtils;
 import common.Notification;
 import client.SharedController;
 
+/**
+ * Controller class for the main frame of the librarian user interface.
+ * Handles the main functionality of the librarian user interface.
+ * Allows the librarian to search for books, view book details, show subscribers,
+ * borrow books, view reader cards, return books, view data reports, and log out.
+ * Also displays notifications and allows the librarian to view them.
+ */
 public class LibrarianMainFrameController {
     
     @FXML private Button btnDataReports;
@@ -94,6 +101,13 @@ public class LibrarianMainFrameController {
     private String getSearch() { return searchField.getText(); }
     private String getMenu() { return menuButton.getText(); }
 
+    /**
+     * Initializes the librarian main frame controller.
+     * Sets up the button width, columns, search functionality, and notification list view.
+     * Also sets the librarian and starts the notification scheduler.
+     * Called automatically after the fxml file has been loaded.
+     * @see NotificationScheduler
+     */
     @FXML
     public void initialize() {
         librarian = SharedController.getLibrarian();
@@ -105,10 +119,14 @@ public class LibrarianMainFrameController {
         setupNotificationListView();
     }
 
-        private void setupButtonWidth() {
+    /**
+     * Sets up the width of the menu button and search field.
+     * Adjusts the width of the menu button based on the text.
+     * Sets the search field to the right of the menu button.
+     */
+    private void setupButtonWidth() {
         double totalWidth = searchField.getLayoutX() + searchField.getPrefWidth();  // Total width to maintain
 
-        // Only add text change listener for dynamic updates
         menuButton.textProperty().addListener((obs, oldVal, newVal) -> {
             if (!oldVal.equals(newVal)) {  // Only adjust if text actually changed
                 adjustMenuButtonWidth(newVal);
@@ -128,6 +146,11 @@ public class LibrarianMainFrameController {
         });
     }
 
+    /**
+     * This method is called when the LandingWindow.fxml file is loaded.
+     * It is responsible for setting the search action for the search button and the search field.
+     * It is also responsible for adding a key pressed (Enter) listener to the search field.
+     */
     private void setupSearch() {
         searchButton.setOnAction(e -> handleSearchAction(e));
         searchField.setOnKeyPressed(e -> {
@@ -137,6 +160,12 @@ public class LibrarianMainFrameController {
         });
     }
 
+    /**
+     * This method is called when the LandingWindow.fxml file is loaded.
+     * It is responsible for setting the cell value factories for the columns.
+     * It is also responsible for applying a custom cell factory to wrap text and adjust cell height.
+     * It is also responsible for adding a button to the action column that shows the copies dialog.
+     */
     private void setupColumns() {
         if (bookNameColumn == null || bookTable == null) {
             System.err.println("ERROR: Table components not properly injected");
@@ -176,7 +205,12 @@ public class LibrarianMainFrameController {
             }
         });
     }
-
+    
+    /**
+     * This method is called when the LandingWindow.fxml file is loaded.
+     * It is responsible for applying a custom cell factory to wrap text and adjust cell height.
+     * @param column The column to apply the custom cell factory to.
+     */
     private void applyWrappingCellFactory(TableColumn<Book, String> column) {
         column.setCellFactory(new Callback<TableColumn<Book, String>, TableCell<Book, String>>() {
             @Override
@@ -206,6 +240,11 @@ public class LibrarianMainFrameController {
         });
     }
 
+    /**
+     * Shows the copies dialog for the given book.
+     * If a dialog for the book is already open, it is brought to the front.
+     * @param book The book to show the copies dialog for.
+     */
     private void showCopiesDialog(Book book) {
         if (openDialogs.containsKey(book.getBookId())) {
             // Bring the existing dialog to the front
@@ -240,28 +279,52 @@ public class LibrarianMainFrameController {
         }
     }
 
+    /**
+     * Closes all copies dialogs that are currently open.
+     */
     private void closeAllCopiesDialogs() {
         openDialogs.values().forEach(Stage::close);
         openDialogs.clear();
     }
 
+    /**
+     * This method is called when the LandingWindow.fxml file is loaded.
+     * It is responsible for setting the menu button text to the selected menu item.
+     * @param event The action event that occurred.
+     */
     @FXML
     private void handleMenuItemAction(ActionEvent event) {
         MenuItem menuItem = (MenuItem) event.getSource();
         menuButton.setText(menuItem.getText());
     }
 
+    /**
+     * Adjusts the width of the menu button based on the text.
+     * Adds some flexible padding to the width.
+     * @param text The text to adjust the width for.
+     */
     private void adjustMenuButtonWidth(String text) {
         double width = computeTextWidth(menuButton.getFont(), text) + 50; // Add some flexible padding
         menuButton.setPrefWidth(width);
     }
 
+    /**
+     * Computes the width of the given text using the given font.
+     * @param font The font to use for the text.
+     * @param text The text to compute the width for.
+     * @return The width of the text.
+     */
     private double computeTextWidth(Font font, String text) {
         Text tempText = new Text(text);
         tempText.setFont(font);
         return tempText.getLayoutBounds().getWidth();
     }
 
+    /**
+     * Loads the book details into the table view.
+     * Called by the server when the book details are received.
+     * @param list The list of book details to load.
+     */
     public void loadBookDetails(List<Object> list) {
         Platform.runLater(() -> {
             displayMessage("");
@@ -302,6 +365,11 @@ public class LibrarianMainFrameController {
         });
     }
 
+    /**
+     * Handles the search action when the search button is clicked.
+     * Sends a message to the server to search for books based on the search text and selected menu.
+     * @param event The action event that occurred.
+     */
     public void handleSearchAction(ActionEvent event) {
         String searchText = getSearch();
         String selectedMenu = getMenu();
@@ -323,11 +391,19 @@ public class LibrarianMainFrameController {
         }        
     }
 
+    /**
+     * Displays a message when no books are found.
+     * Hides the book table and displays the message.
+     */
     public void noBooksFound() {
         bookTable.setVisible(false);
         displayMessage("No books found");
     }
 
+    /**
+     * Sets up the notification list view with a custom cell factory.
+     * The custom cell factory displays date headers and notification items.
+     */
     private void setupNotificationListView() {
         notificationListView.setCellFactory(new Callback<ListView<Object>, ListCell<Object>>() {
             @Override
@@ -360,6 +436,12 @@ public class LibrarianMainFrameController {
         });
     }
 
+    /**
+     * Formats the time since the given timestamp.
+     * Returns a string representing the time since the timestamp.
+     * @param timestamp The timestamp to format the time since.
+     * @return A string representing the time since the timestamp.
+     */
     private String formatTimeSince(LocalDateTime timestamp) {
         LocalDateTime now = LocalDateTime.now();
         Duration duration = Duration.between(timestamp, now);
@@ -375,6 +457,11 @@ public class LibrarianMainFrameController {
         }
     }
 
+    /**
+     * Adds the given notifications to the notification list view.
+     * Adds the notifications in reverse order to maintain chronological order.
+     * @param newNotifications The list of notifications to add.
+     */
     public void addNotifications(List<Notification> newNotifications) {
         // Process notifications in reverse order to maintain chronological order
         for (int i = newNotifications.size() - 1; i >= 0; i--) {
@@ -410,16 +497,31 @@ public class LibrarianMainFrameController {
         notificationListView.setItems(notificationItems);
     }
 
+    /**
+     * Handles the show notifications button action.
+     * Shows the notification split pane.
+     * @param event The action event that occurred.
+     */
     @FXML
     private void showNotifications(ActionEvent event) {
         notificationSplitPane.setVisible(true);
     }
 
+    /**
+     * Handles the close notifications button action.
+     * Closes the notification split pane.
+     * @param event The action event that occurred.
+     */
     @FXML
     private void closeNotifications(ActionEvent event) {
         notificationSplitPane.setVisible(false);
     }
 
+    /**
+     * Handles the show subscribers button action.
+     * Sends a message to the server to show the subscribers.
+     * @param event The action event that occurred.
+     */
     @FXML
     private void goShowSubscribers(ActionEvent event) {
         try {
@@ -454,6 +556,11 @@ public class LibrarianMainFrameController {
         }
     }
 
+    /**
+     * Handles the data reports button action.
+     * Opens the data reports window.
+     * @param event
+     */
     @FXML
     private void goDataReports(ActionEvent event) {
         try {
@@ -491,6 +598,11 @@ public class LibrarianMainFrameController {
         }
     }
 
+    /**
+     * Handles the borrow button action.
+     * Opens the borrow form window.
+     * @param event The action event that occurred.
+     */
     @FXML
     private void goBorrow(ActionEvent event) {
         try {
@@ -526,40 +638,11 @@ public class LibrarianMainFrameController {
         }
     }
 
-    @FXML
-    private void goReaderCard(ActionEvent event) {
-        try {
-            MessageUtils.sendMessage(ClientUI.cc,"librarian", "connect" , null);
-            if (ClientUI.cc.getConnectionStatusFlag() == 1) {
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gui/fxml/ReaderCard.fxml"));
-                Parent root = fxmlLoader.load();
-
-                // SharedController.setReaderCardController(fxmlLoader.getController());
-                Stage stage = new Stage();
-                stage.setTitle("Reads Card");
-                Scene scene = new Scene(root);
-                stage.setScene(scene);
-                stage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
-                    try {
-                        if (ClientUI.chat != null) {
-                            MessageUtils.sendMessage(ClientUI.cc, "librarian",  "disconnect" , null);
-                            ClientUI.chat.quit();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                });
-                ((Node) event.getSource()).getScene().getWindow().hide();
-                stage.setResizable(false);
-                stage.show();
-            } else { 
-                displayMessage("No server connection");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
+    /**
+     * Handles the return book button action.
+     * Opens the return book window.
+     * @param event The action event that occurred.
+     */
     @FXML
     private void goReturnBook(ActionEvent event) {
         try {
@@ -594,6 +677,11 @@ public class LibrarianMainFrameController {
         }
     }
 
+    /**
+     * Handles the add subscriber button action.
+     * Opens the add subscriber window.
+     * @param event The action event that occurred.
+     */
     @FXML
     private void goAddSubscriber(ActionEvent event) {
         try {
@@ -628,6 +716,11 @@ public class LibrarianMainFrameController {
         }
     }
 
+    /**
+     * Handles the log out button action.
+     * Goes back to the landing window.
+     * @param event The action event that occurred.
+     */
     @FXML
     private void goLogOut(ActionEvent event) {
         closeAllCopiesDialogs();
@@ -661,6 +754,10 @@ public class LibrarianMainFrameController {
         }
     }
 
+    /**
+     * Displays the given message in the message label.
+     * @param message The message to display.
+     */
     public void displayMessage(String message) {
         messageLabel.setText(message);
     }

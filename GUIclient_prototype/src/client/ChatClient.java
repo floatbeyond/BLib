@@ -23,7 +23,7 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 
 /**
- * This class overrides some of the methods defined in the abstrac
+ * This class overrides some of the methods defined in the abstract
  * superclass in order to give more functionality to the client.
  *
  * @author Dr Timothy C. Lethbridge
@@ -181,8 +181,14 @@ public class ChatClient extends AbstractClient
       
 	    try {
             if (!isConnected()) {
-                openConnection();
-                connectionStatusFlag = 1; // Set flag to 1 for success
+                try {
+                    openConnection();
+                    connectionStatusFlag = 1; // Set flag to 1 for success
+                } catch (IOException e) {
+                    System.out.println("ChatClient: Error opening connection: " + e.getMessage());
+                    connectionStatusFlag = 0; // Set flag to 0 for failure
+                    e.printStackTrace();
+                }
                 // print client connected
                 System.out.println("ChatClient: Connection successful");
             }
@@ -227,9 +233,12 @@ public class ChatClient extends AbstractClient
     }
   }
 
-  public int getConnectionStatusFlag() {
-		return connectionStatusFlag;
-	}
+  /**
+   * This method gets the connection status flag.
+   *
+   * @param connectionStatusFlag The connection status flag.
+   */
+  public int getConnectionStatusFlag() { return connectionStatusFlag; }
 
   /**
    * This method terminates the client.
@@ -244,10 +253,12 @@ public class ChatClient extends AbstractClient
     System.exit(0);
   }
 
+
   @Override
   protected void connectionClosed() {
       System.out.println("Connection closed");
   }
+
 
   @Override
   protected void connectionException(Exception exception) {

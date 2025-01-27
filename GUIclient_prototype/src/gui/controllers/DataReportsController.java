@@ -25,6 +25,10 @@ import common.BorrowReport;
 import common.MessageUtils;
 import common.SubscriberReport;
 
+/**
+ * This class is the controller for the DataReports.fxml file. It is responsible for handling the user input and
+ * displaying the reports for a specific month and year. It is also responsible for displaying the main window of the application.
+ */
 public class DataReportsController {
 
     @FXML private ComboBox<Month> monthComboBox;
@@ -35,6 +39,13 @@ public class DataReportsController {
     private Map<String, List<BorrowReport>> allBorrowReports = new HashMap<>();
     private Map<String, List<SubscriberReport>> allSubscriberReports = new HashMap<>();
 
+    /**
+     * This method is called when the DataReports.fxml file is loaded.
+     * It is responsible for initializing the ComboBoxes with months and years.
+     * It is also responsible for setting the cell value factories for the columns.
+     * It is also responsible for setting the reports for the BorrowReports and SubscriberReports.
+     * It is also responsible for displaying the reports for a specific month and year.
+     */
     @FXML
     public void initialize() {
         // Populate the ComboBox with months
@@ -60,6 +71,11 @@ public class DataReportsController {
         yearComboBox.setItems(years);
     }
 
+    /**
+     * This method is called when the user clicks the Show button.
+     * It is responsible for displaying the reports for a specific month and year.
+     * @param event
+     */
     @FXML
     public void showReports(ActionEvent event) {
         Month selectedMonth = monthComboBox.getValue();
@@ -75,6 +91,13 @@ public class DataReportsController {
         }
     }
 
+    /**
+     * This method is called when the user clicks the Show button
+     * It is responsible for displaying the reports for a specific month and year.
+     * @param monthYear
+     * @param borrowReports
+     * @param subscriberReports
+     */
     private void openReportWindow(String monthYear, List<BorrowReport> borrowReports, List<SubscriberReport> subscriberReports) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gui/fxml/ReportWindow.fxml"));
@@ -86,9 +109,6 @@ public class DataReportsController {
             stage.setTitle("Reports for " + monthYear);
             Scene scene = new Scene(root);
             stage.setScene(scene);
-            // stage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
-            //     // Handle window close if needed
-            // });
             stage.setResizable(false);
             stage.show();
         } catch (Exception e) {
@@ -96,16 +116,30 @@ public class DataReportsController {
         }
     }
 
+    /**
+     * It is responsible for setting the reports for the BorrowReports.
+     * @param reports
+     */
     public void setAllBorrowReports(Map<String, List<BorrowReport>> reports) {
         System.out.println("Setting all borrow times reports: " + reports);
         this.allBorrowReports = reports;
     }
 
+    /**
+     * It is responsible for setting the reports for the SubscriberReports.
+     * @param reports
+     */
     public void setAllSubscriberReports(Map<String, List<SubscriberReport>> reports) {
         System.out.println("Setting all subscriber status reports: " + reports);
         this.allSubscriberReports = reports;
     }
 
+    /**
+     * This method is called when the user clicks the Back button.
+     * It is responsible for displaying the main window of the application.
+     * @param event
+     * @throws Exception
+     */
     public void goBackBtn(ActionEvent event) throws Exception {
 
         // Load the LibrarianMainFrame

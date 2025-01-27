@@ -3,7 +3,12 @@ package common;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+/**
+ * Represents a borrowing record in the library system.
+ * Implements Serializable for client-server communication.
+ */
 public class BorrowRecordDTO implements Serializable {
+    /** Ensures consistent serialization across different versions */
     private static final long serialVersionUID = 1L;
 
     private String bookTitle;
@@ -12,6 +17,14 @@ public class BorrowRecordDTO implements Serializable {
     private LocalDate expectedReturnDate;
     private String status;
 
+    /**
+     * Constructor for BorrowRecordDTO
+     * @param bookTitle
+     * @param borrowId
+     * @param borrowDate
+     * @param expectedReturnDate
+     * @param status
+     */
     public BorrowRecordDTO(String bookTitle, int borrowId, LocalDate borrowDate, LocalDate expectedReturnDate, String status) {
         this.bookTitle = bookTitle;
         this.borrowId = borrowId;

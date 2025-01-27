@@ -14,6 +14,10 @@ import javafx.stage.Stage;
 import server.mysqlConnection;
 
 
+/**
+ * Controller for the SqlConnection GUI.
+ * This class is responsible for setting up the SQL connection and starting the server.
+ */
 public class SqlConnectionController {
     
     @FXML private Button btnExit = null;
@@ -25,18 +29,17 @@ public class SqlConnectionController {
     @FXML private TextField usertxt;
     @FXML private TextField pwtxt;
 
-    private String getip() {
-		return iptxt.getText();
-	}
+    // Getters
+    private String getip() { return iptxt.getText(); }
+    private String getuser() { return usertxt.getText(); }
+    private String getpw() { return pwtxt.getText(); }
 
-    private String getuser() {
-        return usertxt.getText();
-    }
 
-    private String getpw() {
-        return pwtxt.getText();
-    }
-
+    /**
+     * Initializes the SqlConnection GUI if the SQL connection is set correctly.
+     * @param event
+     * @throws Exception
+     */
     public void Done(ActionEvent event) throws Exception {
         String ip, user, pw;
         ip = getip();
@@ -58,7 +61,6 @@ public class SqlConnectionController {
             if (connection == null) {
                 displayMessage("Could not connect to DB");
             } else {
-                // InstanceManager.setDbConnection(connection);
                 ((Parent)event.getSource()).getScene().getWindow().hide(); //hiding primary window
                 // Load and display the Server Port GUI
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/ServerPort.fxml"));
@@ -74,16 +76,21 @@ public class SqlConnectionController {
         }
     }
 	
+    /**
+     * Exits the server UI.
+     * @param event
+     * @throws Exception
+     */
 	public void getExitBtn(ActionEvent event) throws Exception {
-
         System.out.println("Exit server UI");
 		System.exit(1);	
 	}
 
-	public void displayMessage(String message) {
-        messageLabel.setText(message);
-    }
-
+    /**
+     * Starts the server UI.
+     * @param primaryStage
+     * @throws Exception
+     */
     public void start(Stage primaryStage) throws Exception {	
 		Parent root = FXMLLoader.load(getClass().getResource("/gui/SqlConnection.fxml"));
 		Scene scene = new Scene(root);
@@ -93,5 +100,13 @@ public class SqlConnectionController {
 		primaryStage.setResizable(false);
 		primaryStage.show();		
 	}
+
+    /**
+     * Displays a message on the GUI.
+     * @param message
+     */
+    public void displayMessage(String message) {
+        messageLabel.setText(message);
+    }
     
 }

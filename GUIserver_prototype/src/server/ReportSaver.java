@@ -15,6 +15,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+/**
+ * The ReportSaver class is responsible for saving and loading monthly reports.
+ * It handles the serialization and deserialization of reports to and from JSON files.
+ */
 public class ReportSaver {
     private static final String REPORTS_DIR = "reports/";
     private static final Gson gson = new Gson();
@@ -34,6 +39,15 @@ public class ReportSaver {
         }
     }
 
+    /**
+     * Saves the borrow and subscriber reports for a given month and year.
+     * In the format YYYY-MM, the reports are saved in the reports directory.
+     *
+     * @param borrowReport the list of borrow reports to save
+     * @param subscriberReport the list of subscriber reports to save
+     * @param monthYear the month and year in MM-yyyy format
+     * @throws RuntimeException if an error occurs while saving the reports
+     */
     public static void saveReports(List<BorrowReport> borrowReport, 
                                  List<SubscriberReport> subscriberReport, 
                                  String monthYear) {
@@ -68,6 +82,13 @@ public class ReportSaver {
         }
     }
 
+    /**
+     * Saves a report to a specified file.
+     *
+     * @param report the report object to save
+     * @param fileName the name of the file to save the report to
+     * @throws RuntimeException if an error occurs while saving the report
+     */
     private static void saveReport(Object report, String fileName) {
         try {
             String json = gson.toJson(report);
@@ -77,6 +98,11 @@ public class ReportSaver {
         }
     }
 
+    /**
+     * Retrieves a list of months for which reports are available.
+     *
+     * @return a list of month-year strings in yyyy-MM format
+     */
     public static List<String> getReportMonths() {
         File reportsDir = new File(REPORTS_DIR);
         System.out.println("Checking directory: " + reportsDir.getAbsolutePath());
@@ -103,13 +129,27 @@ public class ReportSaver {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Loads the borrow reports for a given month and year.
+     *
+     * @param monthYear the month and year in MM-yyyy format
+     * @return a list of borrow reports
+     * @throws RuntimeException if an error occurs while loading the reports
+     */
     public static List<BorrowReport> loadBorrowReport(String monthYear) {
         Type reportType = new TypeToken<List<BorrowReport>>() {}.getType();
         String path = String.format("%s%s%s%sborrow_report.json", 
             REPORTS_DIR, File.separator, monthYear, File.separator);
         return loadReport(path, reportType);
     }
-    
+
+    /**
+     * Loads the subscriber reports for a given month and year.
+     *
+     * @param monthYear the month and year in MM-yyyy format
+     * @return a list of subscriber reports
+     * @throws RuntimeException if an error occurs while loading the reports
+     */    
     public static List<SubscriberReport> loadSubscriberReport(String monthYear) {
         Type reportType = new TypeToken<List<SubscriberReport>>() {}.getType();
         String path = String.format("%s%s%s%ssubscriber_report.json",
@@ -117,6 +157,15 @@ public class ReportSaver {
         return loadReport(path, reportType);
     }
     
+    /**
+     * Loads a report from a specified file.
+     *
+     * @param fileName the name of the file to load the report from
+     * @param reportType the type of the report to load
+     * @param <T> the type of the report
+     * @return the loaded report
+     * @throws RuntimeException if an error occurs while loading the report
+     */
     private static <T> T loadReport(String fileName, Type reportType) {
         try (Reader reader = new FileReader(fileName)) {
             return gson.fromJson(reader, reportType);

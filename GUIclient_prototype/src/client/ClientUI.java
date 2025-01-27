@@ -8,17 +8,33 @@ import javafx.stage.WindowEvent;
 import common.MessageUtils;
 import gui.controllers.ClientPortController;
 
+/**
+ * ClientUI class is responsible for starting the client side of the application.
+ * This class is responsible for setting up the client connection and starting the client.
+ */
 
 public class ClientUI extends Application {
 	public static ClientController cc; 
     public static ChatClient chat;
     private static ClientUI instance;
 
+    /**
+     * Main method to start the client side of the application.
+     * 
+     * @param args
+     * @throws Exception
+     */
 	public static void main( String args[] ) throws Exception
 	   { 
 		    launch(args);  
 	   }
 	 
+    /**
+     * The start method initializes the primary stage and starts the client port controller.
+     *
+     * @param primaryStage the initial stage for this application
+     * @throws Exception if an error occurs during initialization
+     */
 	@Override
 	public void start(Stage primaryStage) throws Exception {
         instance = this;
@@ -57,6 +73,11 @@ public class ClientUI extends Application {
         }
 	}
 
+    /**
+     * Starts the client with the specified IP address.
+     * 
+     * @param ip the IP address of the client
+     */
     public void startClient(String ip) {
         try {
             // Initialize chat client
@@ -69,6 +90,11 @@ public class ClientUI extends Application {
         }
     }
     
+    /**
+     * Returns the instance of the client UI.
+     * 
+     * @return the instance of the client UI
+     */
     public static ClientUI getInstance() {
         if (instance == null) {
             instance = new ClientUI();

@@ -15,6 +15,10 @@ import common.MessageUtils;
 import common.Subscriber;
 import common.BookCopy;
 
+/**
+ * Controller class for the ScanWindow.fxml file.
+ * This class is responsible for handling the scan functionality.
+ */
 public class ScanWindowController {
 
     @FXML private TextField txtScan;
@@ -28,6 +32,11 @@ public class ScanWindowController {
         return txtScan.getText();
     }
 
+    /**
+     * Initializes the controller.
+     * This method is called automatically.
+     * It listens for the Enter key to be pressed for scanning.
+     */
     @FXML
     public void initialize() {
         txtScan.setOnKeyPressed(e -> {
@@ -37,6 +46,13 @@ public class ScanWindowController {
         });
     }
 
+    /**
+     * Handles the scan action.
+     * This method is called when the scan button is pressed.
+     * It sends a message to the server with the scan text.
+     * If a subscriber or book copy is found, it loads the item into the controller.
+     * If no item is found, it displays a message.
+     */
     public void handleScanAction() {
         String scanText = getScanText();
         if (scanText.isEmpty()) {
@@ -61,25 +77,44 @@ public class ScanWindowController {
         }
     }
 
+    /**
+     * Closes the scan window.
+     * This method closes the scan window.
+     */
     private void closeScanWindow() {
         Stage stage = (Stage) txtScan.getScene().getWindow();
         stage.close();
     }
 
-    // Keep ActionEvent version for button
+    /**
+     * Handles the scan button action.
+     * This method is called when the scan button is pressed.
+     */
     @FXML
     public void handleScanButtonAction(ActionEvent event) {
         handleScanAction();
     }
 
+    /**
+     * Sets the command (type of scan).
+     * @param msg
+     */
     public void setCommand(String msg) {
         command = msg;
     }
 
+    /**
+     * Sets the item loader.
+     * @param loader
+     */
     public void setItemLoader(ItemLoader loader) {
         itemLoader = loader;
     }
 
+    /**
+     * Displays a message.
+     * @param message
+     */
     public void displayMessage(String message) {
         messageLabel.setText(message);
     }

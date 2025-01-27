@@ -26,6 +26,10 @@ import gui.ClientConnectedController;
 import common.OrderResponse;
 
 
+/**
+ * The Logic class contains the core business logic for handling various operations
+ * such as user login, notifications, subscriber management, book management, and report generation.
+ */
 public class Logic {
     private static final Logger logger = Logger.getLogger(Logic.class.getName());
     private static Connection conn = InstanceManager.getDbConnection();
@@ -34,18 +38,28 @@ public class Logic {
     private static BookCopy bc;
     private static BorrowingRecord br;
 
-    // Login
-
+    /**
+     * Handles user login by fetching user information from the database and sending it to the client.
+     *
+     * @param user the user type (e.g., "subscriber", "librarian")
+     * @param userId the user ID
+     * @param client the client connection
+     */
     public static void userLogin(String user, int userId, ConnectionToClient client) {
         Object userInfo = mysqlConnection.userLogin(conn, userId);
         MessageUtils.sendResponseToClient(user, "LoginStatus", userInfo, client);
     }
 
-    // Notifications
-
+    /**
+     * Fetches new notifications for a user and sends them to the client.
+     *
+     * @param user the user type (e.g., "subscriber", "librarian")
+     * @param data the user ID
+     * @param client the client connection
+     */
     public static void fetchNotifications(String user, Object data, ConnectionToClient client) {
-        int sentId = (int) data;
-        List<Notification> notifications = mysqlConnection.getNewNotifications(conn, sentId, user);
+        int userId = (int) data;
+        List<Notification> notifications = mysqlConnection.getNewNotifications(conn, userId, user);
         try {
             MessageUtils.sendResponseToClient(user, "NewNotifications", notifications, client);
         } catch (Exception e) {
@@ -54,8 +68,13 @@ public class Logic {
         }
     }
 
-    // Subscriber
-
+    /**
+     * Adds a new subscriber to the database and sends the generated ID to the client.
+     *
+     * @param user the user type (e.g., "subscriber", "librarian")
+     * @param newSubscriber the new subscriber object
+     * @param client the client connection
+     */
     public static void newSubscriber(String user, Object newSubscriber, ConnectionToClient client) {
         if (newSubscriber instanceof Subscriber) {
             s = (Subscriber) newSubscriber;
@@ -67,6 +86,13 @@ public class Logic {
         }
     }
 
+    /**
+     * Fetches a specific subscriber by ID and sends the subscriber details to the client.
+     *
+     * @param user the user type (e.g., "subscriber", "librarian")
+     * @param subscriberId the subscriber ID
+     * @param client the client connection
+     */
     public static void specificSubscriber(String user, int subscriberId, ConnectionToClient client) {
         if ((s = mysqlConnection.findSubscriber(conn, subscriberId)) != null) {
             MessageUtils.sendResponseToClient(user, "foundSubscriber", s, client);
@@ -75,6 +101,15 @@ public class Logic {
         }
     }
 
+    /**
+     * Updates subscriber details such as phone number and email.
+     * Sends a success message if the subscriber is updated, or an error message if the subscriber is not found.
+     * Data is in the format "subscriberId:phoneNumber:email".
+     *
+     * @param user the user type (e.g., "subscriber", "librarian")
+     * @param data the subscriber details in the format "subscriberId:phoneNumber:email"
+     * @param client the client connection
+     */
     public static void updateSubscriberDetails(String user, Object data, ConnectionToClient client) {
         String subscriberDetails = (String) data;
         String[] parts = subscriberDetails.split(":", 3);
@@ -86,6 +121,14 @@ public class Logic {
         MessageUtils.sendResponseToClient(user, "UpdateStatus", responseFromDB, client);
 	}
 
+    /**
+     * Reactivates a subscriber account.
+     * Sends a success message if the subscriber is reactivated, or an error message if the subscriber is not found.
+     *
+     * @param user the user type (e.g., "subscriber", "librarian")
+     * @param data the subscriber ID and librarian name in the format "subscriberId:librarianName"
+     * @param client the client connection
+     */
     public static void reactivateSubscriber(String user, Object data, ConnectionToClient client) {
         String[] parts = ((String) data).split(":", 2);
         int subscriberId = Integer.parseInt(parts[0]);
@@ -94,11 +137,24 @@ public class Logic {
         MessageUtils.sendResponseToClient(user, "SubReactivated", success ? "Subscriber reactivated" : "ERROR: Subscriber not found", client);
     }
 
+    /**
+     * Fetches and sends the list of all subscribers to the client.
+     *
+     * @param user the user type (e.g., "subscriber", "librarian")
+     * @param client the client connection
+     */
     public static void showSubscribersTable(String user, ConnectionToClient client) {
         ArrayList<Subscriber> table = mysqlConnection.getSubscribers(conn);
         MessageUtils.sendResponseToClient(user, "SubscriberList", table, client);
     }
     
+    /**
+     * Fetches and sends the data logs for a specific subscriber to the client.
+     *
+     * @param user the user type (e.g., "subscriber", "librarian")
+     * @param sub_id the subscriber ID
+     * @param client the client connection
+     */
     public static void sendDataLogs(String user, int sub_id, ConnectionToClient client) {
         ArrayList<DataLogs> dataLogs = mysqlConnection.getDataLogs(conn, sub_id);
         Platform.runLater(() -> {
@@ -107,12 +163,28 @@ public class Logic {
         
     }
 
+    /**
+     * Fetches and sends the list of borrow records for a specific subscriber to the client.
+     * Borrow records are in type BorrowRecordDTO
+     * 
+     * @param user the user type (e.g., "subscriber", "librarian")
+     * @param data the subscriber ID
+     * @param client the client connection
+     */
     public static void sendUserBorrows(String user, Object data, ConnectionToClient client) {
         int subId = (int) data;
         List<BorrowRecordDTO> borrows = mysqlConnection.getUserBorrows(conn, subId);
         MessageUtils.sendResponseToClient(user, "UserBorrowsList", borrows, client);
     }
 
+    /**
+     * Fetches and sends the list of order records for a specific subscriber to the client.
+     * Order records are in type OrderRecordDTO
+     * 
+     * @param user the user type (e.g., "subscriber", "librarian")
+     * @param data the subscriber ID
+     * @param client the client connection
+     */
     public static void sendUserOrders(String user, Object data, ConnectionToClient client) {
         int subId = (int) data;
         List<OrderRecordDTO> orders = mysqlConnection.getUserOrders(conn, user, subId);
@@ -121,8 +193,14 @@ public class Logic {
         MessageUtils.sendResponseToClient(user, "UserOrdersList", orders, client);
     }
 
-    // Books
-
+    /**
+     * Searches for books based on the given criteria and sends the results to the client.
+     * Sends the list of books found in the search.
+     *
+     * @param user the user type (e.g., "subscriber", "librarian")
+     * @param data the search criteria in the format "searchType:searchText"
+     * @param client the client connection
+     */
     public static void sendSearchedBooks(String user, Object data, ConnectionToClient client) {
         String searchCriteria = (String) data;
         String[] parts = searchCriteria.split(":", 2);
@@ -134,6 +212,13 @@ public class Logic {
         MessageUtils.sendResponseToClient(user, "BookList", results, client);
     }
 
+    /**
+     * Adds a new borrowing record to the database and sends the status to the client.
+     *
+     * @param user the user type (e.g., "subscriber", "librarian")
+     * @param newborrow the new borrowing record object
+     * @param client the client connection
+     */
     public static void newBorrow(String user, Object newborrow, ConnectionToClient client) {
         if (newborrow instanceof BorrowingRecord) {
             br = (BorrowingRecord) newborrow;
@@ -145,6 +230,13 @@ public class Logic {
         }        
     }
 
+    /**
+     * Processes the return of a lost book and sends the status to the client.
+     *
+     * @param user the user type (e.g., "subscriber", "librarian")
+     * @param data the return details in the format "subscriberId:copyId:returnDate"
+     * @param client the client connection
+     */
     public static void returnLostBook(String user, Object data, ConnectionToClient client) {
         try {
             String[] parts = ((String) data).split(":", 3);
@@ -168,6 +260,13 @@ public class Logic {
         }
     }
 
+    /**
+     * Processes the return of a book and sends the status to the client.
+     *
+     * @param user the user type (e.g., "subscriber", "librarian")
+     * @param data the return details in the format "subscriberId:copyId:returnDate"
+     * @param client the client connection
+     */
     public static void returnBook(String user, Object data, ConnectionToClient client) {
         String[] parts = ((String) data).split(":", 3);
         int subId = Integer.parseInt(parts[0]);
@@ -181,6 +280,13 @@ public class Logic {
         MessageUtils.sendResponseToClient(user, "ReturnStatus", success ? "Book has been returned successfully" : "ERROR: Book does not match subscriber", client);
     }
 
+    /**
+     * Marks a book as lost and sends the status to the client.
+     *
+     * @param user the user type (e.g., "subscriber", "librarian")
+     * @param data the borrowing record ID
+     * @param client the client connection
+     */
     public static void lostBook(String user, Object data, ConnectionToClient client) {
         int borrowId = (int) data;
         boolean success = mysqlConnection.markBookAsLost(conn, borrowId);
@@ -188,6 +294,13 @@ public class Logic {
         MessageUtils.sendResponseToClient(user, "LostStatus", success ? "Book declared lost" : "ERROR: Couldn't find matching record", client);
     }
 
+    /**
+     * Adds a new order for a book and sends the status to the client.
+     *
+     * @param user the user type (e.g., "subscriber", "librarian")
+     * @param newOrder the new order details in the format "bookId:subscriberId"
+     * @param client the client connection
+     */
     public static void newOrder(String user, Object newOrder, ConnectionToClient client) {
         String[] parts = ((String) newOrder).split(":", 2);
         int bookId = Integer.parseInt(parts[0]);
@@ -211,6 +324,13 @@ public class Logic {
         MessageUtils.sendResponseToClient(user, "OrderStatus", response, client);
     }
 
+    /**
+     * Cancels an order and sends the status to the client.
+     *
+     * @param user the user type (e.g., "subscriber", "librarian")
+     * @param order the order ID
+     * @param client the client connection
+     */
     public static void cancelOrder(String user, Object order, ConnectionToClient client) {
         int orderId = (int) order;
         String cancelStatus = "ERROR: Order not found";
@@ -239,6 +359,13 @@ public class Logic {
         MessageUtils.sendResponseToClient(user, "CancelStatus", cancelStatus, client);
     }
 
+    /**
+     * Checks an order and processes an extension if no other orders exist for the book.
+     *
+     * @param user the user type (e.g., "subscriber", "librarian")
+     * @param data the order details in the format "subscriberId:borrowId:extensionDate:librarianName"
+     * @param client the client connection
+     */
     public static void checkOrder(String user, Object data, ConnectionToClient client) {
         String libName = null;
         String[] parts = ((String) data).split(":", 4);
@@ -266,8 +393,14 @@ public class Logic {
         MessageUtils.sendResponseToClient(user, "ExtendStatus" , success ? "Borrowing extended" : "ERROR: Couldn't process extension", client);
     }
 
-    // Scan
-
+    /**
+     * Scans a book copy or subscriber and sends the details to the client.
+     *
+     * @param user the user type (e.g., "subscriber", "librarian")
+     * @param msg the scan message
+     * @param unparsedId the unparsed ID
+     * @param client the client connection
+     */
     public static void scan(String user, String msg, int unparsedId, ConnectionToClient client) {
         if ((bc = mysqlConnection.findBookCopy(conn, unparsedId)) != null) {
             MessageUtils.sendResponseToClient(user, "BookCopy", bc, client);
@@ -278,8 +411,11 @@ public class Logic {
         }
     }
 
-    // Monthly reports
-
+    /**
+     * Generates monthly reports for a given date.
+     *
+     * @param reportDate the date for which to generate the reports
+     */
     public static void generateMonthlyReports(LocalDate reportDate) {
         try {
             mysqlConnection.generateMonthlyReports(conn, reportDate);
@@ -289,13 +425,16 @@ public class Logic {
         }
     }
 
+    /**
+     * Fetches monthly reports for a given user and sends them to the client.
+     *
+     * @param user the user type (e.g., "subscriber", "librarian")
+     * @param client the client connection
+     */
     public static void fetchMonthlyReports(String user, ConnectionToClient client) {
         try {
             List<String> reportMonths = ReportSaver.getReportMonths();
             System.out.println("Processing " + reportMonths.size() + " months");
-            
-            // Send total count first
-            MessageUtils.sendResponseToClient(user, "ReportCount", reportMonths.size(), client);
             
             // Collect all borrow reports and subscriber reports
             Map<String, List<BorrowReport>> allBorrowReports = new HashMap<>();
@@ -342,37 +481,13 @@ public class Logic {
         }
     }
 
-    // public static void generateMissingReports() {
-    //     LocalDate now = LocalDate.now();
-    //     System.out.println("CURRENT TIME: " + now);
-    //     LocalDate startDate = LocalDate.of(2024, 1, 1);
-    
-    //     List<String> existingReportMonths = ReportSaver.getReportMonths();
-    
-    //     while (startDate.isBefore(now.withDayOfMonth(1))) {
-    //         String monthYear = startDate.format(DateTimeFormatter.ofPattern("MM-yyyy"));
-    //         if (!existingReportMonths.contains(monthYear)) {
-    //             System.out.println("Generating reports for " + monthYear);
-    
-    //             // Generate borrow report
-    //             List<BorrowReport> borrowReport = mysqlConnection.fetchBorrowReport(conn, startDate);
-    
-    //             // Generate subscriber report
-    //             List<SubscriberReport> subscriberReport = mysqlConnection.fetchSubscriberReport(conn, startDate);
-    
-    //             // Save the reports
-    //             ReportSaver.saveReports(borrowReport, subscriberReport, monthYear);
-    //         } else {
-    //             System.out.println("Reports for " + monthYear + " already exist. Skipping generation.");
-    //         }
-    //         startDate = startDate.plusMonths(1);
-    //     }
-    // }
-
-
-
-    // Client connection
-
+    /**
+     * Prints a message to the client.
+     *
+     * @param user the user type (e.g., "subscriber", "librarian")
+     * @param message the message to print
+     * @param client the client connection
+     */
     public static void connect(String user, ConnectionToClient client) {
         String clientInfo = client.toString();
         String connectionStatus = client.isAlive() ? "Connected" : "Disconnected";
@@ -383,6 +498,13 @@ public class Logic {
         MessageUtils.sendResponseToClient(user, "Print", "Client details loaded", client);
     }
 
+    /**
+     * Prints a message to the client.
+     *
+     * @param user the user type (e.g., "subscriber", "librarian")
+     * @param message the message to print
+     * @param client the client connection
+     */
     public static void disconnect(String user, ConnectionToClient client) {
         ccc = InstanceManager.getClientConnectedController();
 

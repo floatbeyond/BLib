@@ -6,17 +6,33 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Comparator;
 
+/**
+ * Represents a book in the library system.
+ * This class implements Serializable to support transmission between client and server.
+ */
 public class Book implements Serializable {
+    /** Ensures consistent serialization across different versions */
     private static final long serialVersionUID = 1L;
+
     private int bookId;
     private String title;
     private String author;
     private String genre;
     private String description;
     private int numOfCopies;
-    private List<BookCopy> copies;
-    private boolean isOrdered; // New property
+    private List<BookCopy> copies; // list of book copies
+    private boolean isOrdered;
 
+    /**
+     * Constructs a new Book with the specified details.
+     *
+     * @param bookId unique identifier for the book
+     * @param title title of the book
+     * @param author author of the book
+     * @param genre genre/category of the book
+     * @param description brief description of the book
+     * @param numOfCopies number of copies available
+     */
     public Book(int bookId, String title, String author, String genre, String description, int numOfCopies) {
         this.bookId = bookId;
         this.title = title;
@@ -40,19 +56,30 @@ public class Book implements Serializable {
     // Setters
     public void setOrdered(boolean isOrdered) { this.isOrdered = isOrdered; } // New setter
 
-    // Copy management
+    /**
+     * Returns a string representation of the Book object.
+     * @return List of book copies containing all book details
+     */
     public List<BookCopy> getAllCopies() { return copies; }
     
+    /**
+     * Returns a list of available book copies.
+     * @return List of available book copies
+     */
     public List<BookCopy> getAvailableCopies() {
         return copies.stream()
             .filter(copy -> copy.getStatus().equals("Available"))
             .collect(Collectors.toList());
     }
 
+    // Setter for copies
     public void setCopies(List<BookCopy> copies) { this.copies = copies; }
     
+    /**
+     * Returns a string representation of the Book object.
+     * @return string containing all book details
+     */
     public String getCopyCount() {
-        // if (copies == null) return "None available until";
         long available = getAvailableCopies().size();
         if (available == 0) {
             BookCopy earliestCopy = copies.stream()

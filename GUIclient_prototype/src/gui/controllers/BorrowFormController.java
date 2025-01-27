@@ -22,7 +22,9 @@ import common.Subscriber;
 import common.BookCopy;
 import common.BorrowingRecord;
 
-    
+/**
+ * Controller for the Borrow Form window.
+ */
 public class BorrowFormController implements ItemLoader {
     private Subscriber s;
     private BookCopy bc;
@@ -42,6 +44,11 @@ public class BorrowFormController implements ItemLoader {
     private static Stage scanWindowStage; // Track the ScanWindow stage
     private LocalDate currentDate = LocalDate.now();
 
+    /**
+     * Initializes the controller class.
+     * This method is automatically called after the fxml file has been loaded.
+     * Calls setFields() to set the fields to be uneditable.
+     */
     @FXML
     private void initialize() {
         setFields();
@@ -51,6 +58,9 @@ public class BorrowFormController implements ItemLoader {
     private String getCopyId() { return txtCopyId.getText(); }
     private LocalDate getReturnDate() { return dpReturnDate.getValue(); }
 
+    /**
+     * Sets the fields to be uneditable.
+     */
     private void setFields() {
         txtID.setEditable(false);
         txtCopyId.setEditable(false);
@@ -58,6 +68,9 @@ public class BorrowFormController implements ItemLoader {
         dpReturnDate.setDayCellFactory(picker -> new BorrowDateCell());
     }
 
+    /**
+     * Custom DateCell class to disable dates before the current date and after 14 days from the current date.
+     */
     private class BorrowDateCell extends DateCell {
         @Override
         public void updateItem(LocalDate date, boolean empty) {
@@ -69,6 +82,10 @@ public class BorrowFormController implements ItemLoader {
         }
     }
 
+    /**
+     * Shows the Scan Window.
+     * If the Scan Window is already open, brings it to the front.
+     */
     @FXML
     private void showScanWindow(ActionEvent event) throws Exception {
         if (scanWindowStage != null && scanWindowStage.isShowing()) {
@@ -95,6 +112,14 @@ public class BorrowFormController implements ItemLoader {
         }
     }
     
+    /**
+     * Handles the Borrow button click event.
+     * It validates the input fields and sends a new BorrowingRecord to the server.
+     * If the server connection is lost, it displays a message to the user.
+     * According to the validation process, it displays a message to the user.
+     * @param event
+     * @throws Exception
+     */
     @FXML
     private void handleBorrowAction(ActionEvent event) throws Exception {
         try {
@@ -152,6 +177,10 @@ public class BorrowFormController implements ItemLoader {
         }
     }
 
+    /**
+     * Loads the book copy into the form.
+     * @param bookCopy The book copy to be loaded.
+     */
     @Override
     public void loadBookCopy(BookCopy bookCopy) {
         txtCopyId.setText(String.valueOf(bookCopy.getCopyId()));
@@ -161,6 +190,10 @@ public class BorrowFormController implements ItemLoader {
         displayMessage("Book found");
     }
 
+    /**
+     * Loads the subscriber into the form.
+     * @param subscriber The subscriber to be loaded.
+     */
     @Override
     public void loadSubscriber(Subscriber subscriber) {
         txtID.setText(String.valueOf(subscriber.getSub_id()));
@@ -169,6 +202,10 @@ public class BorrowFormController implements ItemLoader {
         displayMessage("Subscriber found");
     }
 
+    /**
+     * Displays a message to the user.
+     * @param message The message to be displayed.
+     */
     public void successfulBorrow(String msg) {
         displayMessage(msg);
         txtCopyId.clear();
@@ -176,6 +213,12 @@ public class BorrowFormController implements ItemLoader {
         dpReturnDate.setValue(null);
     }
 
+    /**
+     * Handles the back button click event.
+     * It loads the Librarian Main Frame window.
+     * @param event
+     * @throws Exception
+     */
     public void goBackBtn(ActionEvent event) throws Exception {
         if (scanWindowStage != null && scanWindowStage.isShowing()) {
             scanWindowStage.close();
@@ -205,6 +248,10 @@ public class BorrowFormController implements ItemLoader {
         stage.show();
     }
 
+    /**
+     * Displays a message to the user.
+     * @param message The message to be displayed.
+     */
     public void displayMessage(String message) {
         messageLabel.setText(message);
     }

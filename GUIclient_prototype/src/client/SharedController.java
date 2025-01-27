@@ -21,6 +21,10 @@ import gui.controllers.BorrowFormController;
 import gui.controllers.SubscriberLogsController;
 import gui.controllers.ItemLoader;
 
+/**
+ * SharedController class is responsible for sharing the controllers between the different classes.
+ * This class is responsible for setting and getting the controllers.
+ */
 public class SharedController {
     private static Subscriber subscriber;
     private static Librarian librarian;

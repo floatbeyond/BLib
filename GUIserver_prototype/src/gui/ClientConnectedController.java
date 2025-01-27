@@ -15,7 +15,10 @@ import javafx.stage.WindowEvent;
 import server.InstanceManager;
 import javafx.scene.control.Button;
 
-
+/**
+ * Controller for the ClientConnected GUI.
+ * This class is responsible for displaying the connected client (debugging purposes).
+ */
 public class ClientConnectedController {
 
     @FXML private Button backBtn;
@@ -24,7 +27,11 @@ public class ClientConnectedController {
 
     private Stage stage;
 
-    //initialize info and status txt as null and disconnected
+    /**
+     * Initializes the ClientConnected GUI.
+     * Sets the infoLabel and statusLabel to "null" and "Disconnected" respectively.
+     */
+    @FXML
     public void initialize() {
         infoLabel.setText("null");
         statusLabel.setText("Disconnected");
@@ -32,6 +39,11 @@ public class ClientConnectedController {
 
     }
 
+    /**
+     * Sets the stage for the ClientConnected GUI.
+     * Forces the stage to close the connection and stop listening when the window is closed.
+     * @param stage
+     */
     public void setStage(Stage stage) {
         this.stage = stage;
         this.stage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
@@ -44,7 +56,11 @@ public class ClientConnectedController {
         });
     }
 
-
+    /**
+     * Loads the client details onto the GUI.
+     * @param info
+     * @param status
+     */
     public void loadClientDetails(String info, String status) {
         // print client info and connection status
         System.out.println("LOADCLIENTDETAILS: Client info: " + info);
@@ -63,6 +79,12 @@ public class ClientConnectedController {
         });        
     }
 
+    /**
+     * Handles the back button event.
+     * Closes the connection, stops listening, and returns to the ServerPort GUI.
+     * @param event
+     * @throws Exception
+     */
     public void disconnectBtn(ActionEvent event) throws Exception {
         InstanceManager.getInstance().close();
         InstanceManager.getInstance().stopListening();

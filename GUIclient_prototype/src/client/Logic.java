@@ -23,12 +23,19 @@ import common.Librarian;
 import common.OrderRecordDTO;
 import common.OrderResponse;
 
+/**
+ * This class is responsible for handling the logic of the client side of the application.
+ * It is responsible for parsing the data received from the server and updating the UI accordingly.
+ */
 public class Logic {
     
     private static Map<Integer, List<Notification>> notificationsMap = new HashMap<>();
 
-    // Login
-
+    /**
+     * This method is responsible for parsing the login response from the server.
+     * It checks if the user is a librarian or a subscriber and updates the UI accordingly.
+     * @param user
+     */
     public static void parseLogin(Object user) {
         if (user instanceof Librarian) {
             System.out.println("User is a librarian");
@@ -43,15 +50,26 @@ public class Logic {
         SharedController.logwc.setUserStatus(user);
     }
 
-    public static void fetchNotifications(String user, int subId) {
+    /**
+     * Fetches the notifications for a specific subscriber or librarian.
+     * 
+     * @param user The user type (subscriber or librarian)
+     * @param userId The user id of the subscriber or librarian 
+     */
+    public static void fetchNotifications(String user, int userId) {
         try {
-            MessageUtils.sendMessage(ClientUI.cc, user, "fetchNotifications", subId);
+            MessageUtils.sendMessage(ClientUI.cc, user, "fetchNotifications", userId);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    // Handle received notifications
+    /**
+     * This method is responsible for handling the notifications received from the server.
+     * It updates the notifications map and the UI accordingly.
+     * 
+     * @param notifications The list of notifications received from the server
+     */
     public static void handleNotifications(List<Notification> notifications) {
         if (notifications.isEmpty()) {
             System.out.println("No notifications found");
@@ -72,15 +90,21 @@ public class Logic {
         });
     }
 
-    // Librarian
-
+    /**
+     * This method is responsible for updating the notifications map and the UI accordingly.
+     * 
+     * @param receivedLibrarian The librarian object received from the server
+     */
     public static void parseLibrarian(Librarian receivedLibrarian) {
         SharedController.setLibrarian(receivedLibrarian);
         System.out.println("Received Librarian: " + receivedLibrarian);
     }
 
-    // Subscriber
-
+    /**
+     * This method is responsible for updating the notifications map and the UI accordingly.
+     * 
+     * @param receivedSubscriber The subscriber object received from the server
+     */
     public static void newSubscriber(int subId) {
         String message;
         if (subId > 0) {
@@ -95,11 +119,21 @@ public class Logic {
         });
     }
 
+    /**
+     * This method is responsible for updating the subscriber object and the UI accordingly.
+     * 
+     * @param receivedSubscriber The subscriber object received from the server
+     */
     public static void parseSubscriber(Subscriber receivedSubscriber) {
         SharedController.setSubscriber(receivedSubscriber);
         System.out.println("Received Subscriber: " + receivedSubscriber);
     }
 
+    /**
+     * This method is responsible for updating the subscriber list and the UI accordingly.
+     * 
+     * @param list The list of subscribers received from the server
+     */
     public static void parseSubscriberList(ArrayList<Subscriber> list) {
         if (!list.isEmpty() && list.stream().allMatch(item -> item instanceof Subscriber)) {
             System.out.println("Loading table");
@@ -115,6 +149,11 @@ public class Logic {
         }
     }
 
+    /**
+     * This method is responsible for updating the subscriber status and the UI accordingly.
+     * 
+     * @param data The subscriber object or a string message received from the server
+     */
     public static void updateSubscriberStatus(Object data) {
         Platform.runLater(() -> {
             if (data instanceof String) {
@@ -126,12 +165,23 @@ public class Logic {
         });
     }
 
+    /**
+     * This method is responsible for reactivating the subscriber status and the UI accordingly.
+     * 
+     * @param status The status message received from the server
+     */
     public static void reactivateSubscriberStatus(String status) {
         Platform.runLater(() -> {
             SharedController.rcc.subscriberReactivated(status);
         });
     }
 
+    /**
+     * This method is responsible for parsing the data logs list and updating the UI accordingly.
+     * 
+     * @param user The user type (subscriber or librarian)
+     * @param list The list of data logs received from the server
+     */
     public static void parseDataLogsList(String user, ArrayList<Object> list) {
         System.out.println("parseDataLogsList method called");
         Platform.runLater(() -> {
@@ -158,6 +208,12 @@ public class Logic {
         });
     }
 
+    /**
+     * This method is responsible for parsing the user borrows list and updating the UI accordingly.
+     * 
+     * @param user The user type (subscriber or librarian)
+     * @param list The list of borrow records received from the server as BorrowRecordDTO objects
+     */
     public static void parseUserBorrowsList(String user, List<BorrowRecordDTO> list) {
         System.out.println("parseUserBorrowsList method called");
         Platform.runLater(() -> {
@@ -188,18 +244,34 @@ public class Logic {
         });
     }
 
+    /**
+     * This method is responsible for displaying the status of the borrow extension.
+     * 
+     * @param status
+     */
     public static void extendBorrowStatus(String status) {
         Platform.runLater(() -> {
             SharedController.ewc.successfulExtend(status);
         });
     }
 
+    /**
+     * This method is responsible for displaying the status of the lost book.
+     * 
+     * @param status
+     */
     public static void lostBookStatus(String status) {
         Platform.runLater(() -> {
             SharedController.rcc.lostMessage(status);
         });
     }
 
+    /**
+     * This method is responsible for parsing the user orders list and updating the UI accordingly.
+     * 
+     * @param user The user type (subscriber or librarian)
+     * @param list The list of order records received from the server as OrderRecordDTO objects
+     */
     public static void parseUserOrdersList(String user, List<OrderRecordDTO> list) {
         System.out.println("parseUserOrdersList method called");
         Platform.runLater(() -> {
@@ -230,13 +302,23 @@ public class Logic {
         });
     }
   
-    // Book
-
+    /**
+     * This method is responsible for parsing the book copy and updating the UI accordingly.
+     * 
+     * @param user The user type (subscriber or librarian)
+     * @param bookCopy The book copy received from the server as a BookCopy object
+     */
     public static void parseBookCopy(String user, BookCopy bookCopy) {
         System.out.println("Book copy found");
         SharedController.setBookCopy(bookCopy);
     }
 
+    /**
+     * This method is responsible for parsing the book list and updating the UI accordingly.
+     * 
+     * @param user The user type (subscriber or librarian)
+     * @param list The list of books received from the server
+     */
     public static void parseBookList(String user, List<Object> list) {
         // print book list
         System.out.println("parseBookList method called with list size: " + list.size());
@@ -284,6 +366,11 @@ public class Logic {
         });
     }
 
+    /**
+     * This method is responsible for displaying the status of the new borrow.
+     * 
+     * @param status
+     */
     public static void newBorrowStatus(String status) {
         Platform.runLater(() -> {
             SharedController.bfc.successfulBorrow(status);
@@ -291,12 +378,22 @@ public class Logic {
         
     }
 
+    /**
+     * This method is responsible for displaying the status of the return book.
+     * 
+     * @param status
+     */
     public static void returnBookStatus(String status) {
         Platform.runLater(() -> {
             SharedController.rbc.returnMessage(status);
         });
     }
 
+    /**
+     * This method is responsible for displaying the status of the new order.
+     * 
+     * @param status
+     */
     public static void newOrderStatus(Object status) {
         OrderResponse response = (OrderResponse) status;
         // print the book
@@ -306,14 +403,22 @@ public class Logic {
         });
     }
 
+    /**
+     * This method is responsible for displaying the status of the cancel order.
+     * 
+     * @param status
+     */
     public static void cancelOrderStatus(String status) {
         Platform.runLater(() -> {
             SharedController.aoc.alertMessage(status);
         });
     }
 
-    // Monthyly reports
-
+    /**
+     * This method is responsible for parsing all borrow reports and updating the UI accordingly.
+     * 
+     * @param reports The map of borrow reports received from the server as a Map object with String keys and List values
+     */
     public static void parseAllBorrowReports(Map<String, List<BorrowReport>> reports) {
         System.out.println("Received all borrow times reports");
         Platform.runLater(() -> {
@@ -326,6 +431,11 @@ public class Logic {
         });
     }
 
+    /**
+     * This method is responsible for parsing all subscriber reports and updating the UI accordingly.
+     * 
+     * @param reports The map of subscriber reports received from the server as a Map object with String keys and List values
+     */
     public static void parseAllSubscriberReports(Map<String, List<SubscriberReport>> reports) {
         System.out.println("Received all subscriber status reports");
         Platform.runLater(() -> {
@@ -338,12 +448,20 @@ public class Logic {
         });
     }
 
-    // Prints
-
+    /**
+     * This method is responsible for printing a message to the console.
+     * 
+     * @param message The message to be printed
+     */
     public static void print(String message) {
         System.out.println("Received message: " + message);
     }
 
+    /**
+     * This method is responsible for printing an error message to the console.
+     * 
+     * @param errorMessage The error message to be printed
+     */
     public static void printError(String errorMessage) {
         if (errorMessage.equals("Subscriber ID Not Found")) {
             SharedController.setSubscriber(null);

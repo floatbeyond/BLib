@@ -16,7 +16,11 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-
+/**
+ * This class is the controller for the ClientPort.fxml file. It is responsible for handling the user input and
+ * displaying the appropriate messages to the user. It is also responsible for starting the client and connecting to the server.
+ * It is also responsible for displaying the main window of the application.
+ */
 public class ClientPortController  {
 
 	public static ClientController chat; 
@@ -29,10 +33,16 @@ public class ClientPortController  {
 	
 	@FXML private TextField iptxt;
 
-	private String getip() {
-		return iptxt.getText();
-	}
+	private String getip() { return iptxt.getText(); }
 	
+	/**
+	 * This method is called when the user clicks the Done button.
+	 * It is responsible for starting the client and connecting to the server.
+	 * It is also responsible for displaying the main window of the application.
+	 * @param event
+	 * @throws Exception
+	 */
+	@FXML
 	public void Done(ActionEvent event) throws Exception {
 		String ip;
 		
@@ -86,11 +96,23 @@ public class ClientPortController  {
 		}
 	}
 	
+	/**
+	 * This method is called when the user clicks the Exit button.
+	 * It is responsible for exiting the application.
+	 * @param event
+	 * @throws Exception
+	 */
 	public void getExitBtn(ActionEvent event) throws Exception {
 		System.out.println("Exiting Subscriber Management Tool");
 		System.exit(1);	
 	}
 
+	/**
+	 * This method is called when the user clicks the Exit button.
+	 * It is responsible for exiting the application.
+	 * @param event
+	 * @throws Exception
+	 */
 	public void displayMessage(String message) {
         messageLabel.setText(message);
     }

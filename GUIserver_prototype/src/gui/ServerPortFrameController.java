@@ -17,6 +17,11 @@ import javafx.stage.WindowEvent;
 import server.InstanceManager;
 import server.ServerUI;
 
+
+/**
+ * Controller for the ServerPortFrame GUI.
+ * This class is responsible for setting up the server port and starting the server.
+ */
 public class ServerPortFrameController  {
 	
 	@FXML private Button btnExit = null;
@@ -27,11 +32,14 @@ public class ServerPortFrameController  {
 	
 	@FXML private TextField portxt;
 
+	// Getters
+	private String getport() { return portxt.getText();	}
 	
-	private String getport() {
-		return portxt.getText();			
-	}
-	
+	/**
+	 * Initializes the ServerPortFrame GUI if the port is set correctly.
+	 * @param event
+	 * @throws Exception
+	 */
 	public void Done(ActionEvent event) throws Exception {
 		String p;
 		
@@ -66,10 +74,12 @@ public class ServerPortFrameController  {
 		}
 	}
 	
+	/**
+	 * Exits the ServerPortFrame GUI and returns to the SQL connection GUI.
+	 * @param event
+	 * @throws Exception
+	 */
 	public void getExitBtn(ActionEvent event) throws Exception {
-		// System.out.println("Exit server UI");
-		// System.exit(1);	
-		// EchoServer.getInstance().close();
         ((Node)event.getSource()).getScene().getWindow().hide();
         // Load and display ServerPort GUI
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/SqlConnection.fxml"));
@@ -82,6 +92,10 @@ public class ServerPortFrameController  {
         stage.show();
 	}
 
+	/**
+	 * Displays a message on the GUI.
+	 * @param message
+	 */
 	public void displayMessage(String message) {
         messageLabel.setText(message);
     }

@@ -55,6 +55,14 @@ public class SubscribersTableController implements Initializable {
     private Map<Integer, Stage> readerCardStages = new HashMap<>();
     private ObservableList<Subscriber> allSubscribers; // Add this field
 	
+    /**
+     * Initializes the controller class.
+     * This method is automatically called after the fxml file has been loaded.
+     * Setups the columns and search function.
+     * Loads the subscriber data from the server.
+     * @param location
+     * @param resources
+     */
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
         setupColumns();
@@ -62,6 +70,11 @@ public class SubscribersTableController implements Initializable {
         loadData();	
 	}
 
+    /**
+     * Setups the columns of the table.
+     * Sets the value factories for each column.
+     * Adds a double click event to show the reader card of the selected subscriber.
+     */
     private void setupColumns() {
         if (colID == null || subscriberTable == null) {
             System.err.println("ERROR: Table components not properly injected");
@@ -95,6 +108,11 @@ public class SubscribersTableController implements Initializable {
         });
     }
 
+    /**
+     * Setups the search function.
+     * Adds an action event to the search button.
+     * Adds an enter key handler for the search field.
+     */
     private void setupSearchFunction() {
         searchButton.setOnAction(event -> handleSearchAction());
         // Add enter key handler for search field
@@ -105,6 +123,10 @@ public class SubscribersTableController implements Initializable {
         });
     }
 
+    /**
+     * Loads the subscriber data from the server.
+     * Sends a message to the server to show the subscribers table.
+     */
     private void loadData() {
         Platform.runLater(() -> {
 			System.out.println("Loading initial data...");
@@ -112,6 +134,12 @@ public class SubscribersTableController implements Initializable {
 		});
     }
 
+    /**
+     * Parses the subscriber list received from the server.
+     * Sets the subscriber list to the table.
+     * Stores the original data in a field.
+     * @param subscribers
+     */
 	public void parseSubscriberList(ObservableList<Subscriber> subscribers) {
 		if (subscribers == null) return;
         allSubscribers = subscribers;  // Store original data
@@ -119,6 +147,11 @@ public class SubscribersTableController implements Initializable {
 		System.out.println("Loaded " + subscribers.size() + " subscribers");
 	}
 
+    /**
+     * Shows the reader card of the selected subscriber.
+     * If the reader card is already open, brings it to front.
+     * @param subscriber
+     */
     private void showReaderCard(Subscriber subscriber) {
         try {
             // Check if window for this subscriber exists
@@ -153,6 +186,12 @@ public class SubscribersTableController implements Initializable {
         }
     }
 
+    /**
+     * Handles the refresh button click event.
+     * Closes all reader cards and clears the subscriber table.
+     * Sends a message to the server to show the subscribers table.
+     * @param event
+     */
     public void handleRefresh(ActionEvent event) {
         closeAllReaderCards();
         subscriberTable.getItems().clear();
@@ -160,11 +199,18 @@ public class SubscribersTableController implements Initializable {
         subscriberTable.refresh();
     }
 
+    /**
+     * Closes all reader cards.
+     */
     public void closeAllReaderCards() {
         readerCardStages.values().forEach(Stage::close);
         readerCardStages.clear();
     }
 
+    /**
+     * Closes the reader card of the specified subscriber.
+     * @param subId
+     */
     public void closeReaderCard(int subId) {
         Stage stage = readerCardStages.get(subId);
         if (stage != null) {
@@ -173,6 +219,11 @@ public class SubscribersTableController implements Initializable {
         }
     }
 
+    /**
+     * Handles the search action.
+     * Filters the subscriber list based on the search text.
+     * Updates the table with the filtered results.
+     */
     @FXML 
     private void handleSearchAction() {
         String searchText = searchField.getText().toLowerCase().trim();
@@ -194,6 +245,12 @@ public class SubscribersTableController implements Initializable {
         subscriberTable.setItems(FXCollections.observableArrayList(filteredList));
     }
 
+    /**
+     * Handles the back button click event.
+     * Closes the current window and opens the librarian main frame.
+     * @param event
+     * @throws Exception
+     */
     public void goBackBtn(ActionEvent event) throws Exception {
         System.out.println("goBackBtn clicked");
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/LibrarianMainFrame.fxml"));

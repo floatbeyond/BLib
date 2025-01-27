@@ -165,10 +165,10 @@ public class mysqlConnection {
 		return null;
 	}
 
-
     /**
      * Retrieves notifications for a subscriber.
      * Returns all notifications sorted by timestamp in descending order.
+	 * - Not used in the current implementation -
      *
      * @param conn Active database connection
      * @param subId Subscriber ID
