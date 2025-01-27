@@ -187,6 +187,8 @@ public class Logic {
         Platform.runLater(() -> {
             if (!list.isEmpty() && list.stream().allMatch(item -> item instanceof Object)) {
                 System.out.println("Loading logs");
+                // print logs
+                System.out.println("Logs: " + list);
                 // Handle the data logs list
                 if (user.equals("subscriber")) {
                     if (SharedController.slc != null) {

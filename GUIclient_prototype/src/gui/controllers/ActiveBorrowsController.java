@@ -101,6 +101,16 @@ public class ActiveBorrowsController {
         try {
             MessageUtils.sendMessage(ClientUI.cc, "subscriber", "connect", null);
             if (ClientUI.cc.getConnectionStatusFlag() == 1) {
+                if (SharedController.getSubscriber().getSub_status().equals("In-Active")) {
+                    SharedController.smfc.displayMessage("Your account is inactive. Please contact a librarian to activate it.");
+                    return;
+                }
+
+                if (SharedController.getSubscriber().getSub_status().equals("Frozen")) {
+                    SharedController.smfc.displayMessage("Your account is frozen. Please contact a librarian to activate it.");
+                    return;
+                }
+
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/ExtendWindow.fxml"));
                 Pane root = loader.load();
                 

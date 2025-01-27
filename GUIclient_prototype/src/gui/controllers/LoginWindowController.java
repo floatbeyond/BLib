@@ -107,15 +107,7 @@ public class LoginWindowController {
                         userType = "Librarian";
                     }
                     if ((userConnected instanceof Subscriber)) {
-                        if (((Subscriber) userConnected).getSub_status().equals("In-Active")) {
-                            displayMessage("User is In-Active, ask librarian to re-activate account");
-                            return;
-                        } else if (((Subscriber) userConnected).getSub_status().equals("Frozen")) {
-                            displayMessage("User is frozen until " + ((Subscriber) userConnected).getSub_freeze());
-                            return;
-                        } else {
-                            userType = "Subscriber";
-                        }
+                        userType = "Subscriber";
                     }
                     System.out.println("User found");
                     ((Node) event.getSource()).getScene().getWindow().hide();

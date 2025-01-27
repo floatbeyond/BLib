@@ -1373,8 +1373,7 @@ public class mysqlConnection {
 
 	public static ArrayList<DataLogs> getDataLogs(Connection conn, int subscriberId) {
 		ArrayList<DataLogs> dataLogs = new ArrayList<>();
-		String query = "SELECT LogID, SubID, Action, CONVERT_TZ(Timestamp, '+00:00', '+03:00') AS Timestamp\n" + //
-						"FROM datalogs WHERE SubID = ?";
+		String query = "SELECT LogID, SubID, Action, Timestamp FROM datalogs WHERE SubID = ?";
 		
 		try (PreparedStatement stmt = conn.prepareStatement(query)) {
 			stmt.setInt(1, subscriberId);

@@ -255,8 +255,22 @@ public class SubscriberMainFrameController implements Initializable {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Order");
         alert.setHeaderText(null);
-        alert.setContentText(status);
-        alert.showAndWait();
+
+        if (s.getSub_status().contains("In-Active")) {
+            status = "Subscriber is inactive, cant process order";
+            displayMessage(status);
+            alert.setContentText(status);
+            alert.showAndWait();
+            return;
+        }
+
+        if (s.getSub_status().contains("Frozen")){
+            status = "Subscriber is frozen, cant process order";
+            displayMessage(status);
+            alert.setContentText(status);
+            alert.showAndWait();
+            return;
+        }
 
         if (orderedBook != null && status.contains("success")) {
             System.out.println("Order successful for book: " + orderedBook.getTitle());
@@ -267,13 +281,14 @@ public class SubscriberMainFrameController implements Initializable {
                         break;
                     }
                 }
-                bookTable.refresh();
-            });
-        } else {
-            Platform.runLater(() -> {
-                bookTable.refresh();
             });
         }
+
+        alert.setContentText(status);
+        alert.showAndWait();
+        Platform.runLater(() -> {
+            bookTable.refresh();
+        });
     }
 
     /**
@@ -849,7 +864,6 @@ public class SubscriberMainFrameController implements Initializable {
                     AnchorPane pane = loader.load();
 
                     ActiveBorrowsController controller = loader.getController();
-                    // SharedController.setActiveBorrowsController(controller);
                     controller.setTableData(FXCollections.observableArrayList(borrowRecords));
 
                     activeBorrowsStage = new Stage();
