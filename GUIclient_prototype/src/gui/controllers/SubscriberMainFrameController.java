@@ -256,22 +256,6 @@ public class SubscriberMainFrameController implements Initializable {
         alert.setTitle("Order");
         alert.setHeaderText(null);
 
-        if (s.getSub_status().contains("In-Active")) {
-            status = "Subscriber is inactive, cant process order";
-            displayMessage(status);
-            alert.setContentText(status);
-            alert.showAndWait();
-            return;
-        }
-
-        if (s.getSub_status().contains("Frozen")){
-            status = "Subscriber is frozen, cant process order";
-            displayMessage(status);
-            alert.setContentText(status);
-            alert.showAndWait();
-            return;
-        }
-
         if (orderedBook != null && status.contains("success")) {
             System.out.println("Order successful for book: " + orderedBook.getTitle());
             Platform.runLater(() -> {
@@ -298,6 +282,26 @@ public class SubscriberMainFrameController implements Initializable {
      */
     private void orderBook(Book book) {
         System.out.println("Ordering book: " + book.getTitle());
+        String status;
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Order");
+        alert.setHeaderText(null);
+
+        if (s.getSub_status().contains("In-Active")) {
+            status = "Subscriber is inactive, cant process order";
+            displayMessage(status);
+            alert.setContentText(status);
+            alert.showAndWait();
+            return;
+        }
+
+        if (s.getSub_status().contains("Frozen")){
+            status = "Subscriber is frozen, cant process order";
+            displayMessage(status);
+            alert.setContentText(status);
+            alert.showAndWait();
+            return;
+        }
         MessageUtils.sendMessage(ClientUI.cc, "subscriber", "newOrder", book.getBookId() + ":" + s.getSub_id());
     }
 
