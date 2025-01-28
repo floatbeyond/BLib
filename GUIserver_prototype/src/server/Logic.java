@@ -60,6 +60,14 @@ public class Logic {
         MessageUtils.sendResponseToClient(user, "LoginStatus", userInfo, client);
     }
 
+    /**
+     * Handles user logout by removing the user from the list of logged-in users.
+     * 
+     * @param user the user type (e.g., "subscriber", "librarian")
+     * @param userId the user ID
+     * @param client the client connection
+     */
+
     public static void userLogout(String user, int userId, ConnectionToClient client) {
         String logoutStatus = "User not logged in";
         if (loggedInUsers.contains(userId)) {
