@@ -538,7 +538,7 @@ public class LibrarianMainFrameController {
                 stage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
                     try {
                         if (ClientUI.chat != null) {
-                            MessageUtils.sendMessage(ClientUI.cc, "librarian",  "disconnect" , null);
+                            MessageUtils.sendMessage(ClientUI.cc, "librarian",  "disconnect" , librarian.getLibrarian_id());
                             ClientUI.chat.quit();
                         }
                     } catch (Exception e) {
@@ -580,7 +580,7 @@ public class LibrarianMainFrameController {
                 stage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
                     try {
                         if (ClientUI.chat != null) {
-                            MessageUtils.sendMessage(ClientUI.cc, "librarian",  "disconnect" , null);
+                            MessageUtils.sendMessage(ClientUI.cc, "librarian",  "disconnect" , librarian.getLibrarian_id());
                             ClientUI.chat.quit();
                         }
                     } catch (Exception e) {
@@ -612,7 +612,6 @@ public class LibrarianMainFrameController {
                 Parent root = fxmlLoader.load();
 
                 SharedController.setBorrowFormController(fxmlLoader.getController());
-                NotificationScheduler.stop();
                 Stage stage = new Stage();
                 stage.setTitle("Borrow");
                 Scene scene = new Scene(root);
@@ -620,7 +619,7 @@ public class LibrarianMainFrameController {
                 stage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
                     try {
                         if (ClientUI.chat != null) {
-                            MessageUtils.sendMessage(ClientUI.cc, "librarian",  "disconnect" , null);
+                            MessageUtils.sendMessage(ClientUI.cc, "librarian",  "disconnect" , librarian.getLibrarian_id());
                             ClientUI.chat.quit();
                         }
                     } catch (Exception e) {
@@ -659,7 +658,7 @@ public class LibrarianMainFrameController {
                 stage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
                     try {
                         if (ClientUI.chat != null) {
-                            MessageUtils.sendMessage(ClientUI.cc, "librarian",  "disconnect" , null);
+                            MessageUtils.sendMessage(ClientUI.cc, "librarian",  "disconnect" , librarian.getLibrarian_id());
                             ClientUI.chat.quit();
                         }
                     } catch (Exception e) {
@@ -698,7 +697,7 @@ public class LibrarianMainFrameController {
                 stage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
                     try {
                         if (ClientUI.chat != null) {
-                            MessageUtils.sendMessage(ClientUI.cc, "librarian",  "disconnect" , null);
+                            MessageUtils.sendMessage(ClientUI.cc, "librarian",  "disconnect" , librarian.getLibrarian_id());
                             ClientUI.chat.quit();
                         }
                     } catch (Exception e) {
@@ -729,6 +728,7 @@ public class LibrarianMainFrameController {
                 SharedController.getSubscribersTableController().closeAllReaderCards();
             } else System.out.println("SubscribersTableController is null");
             NotificationScheduler.stop();
+            MessageUtils.sendMessage(ClientUI.cc, "librarian",  "logout" , librarian.getLibrarian_id());
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/LandingWindow.fxml"));
             Pane root = loader.load();
             
@@ -739,7 +739,7 @@ public class LibrarianMainFrameController {
             stage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
                 try {
                     if (ClientUI.chat != null) {
-                        MessageUtils.sendMessage(ClientUI.cc, "librarian",  "disconnect" , null);
+                        MessageUtils.sendMessage(ClientUI.cc, "librarian",  "disconnect" , librarian.getLibrarian_id());
                         ClientUI.chat.quit();
                     }
                 } catch (Exception e) {

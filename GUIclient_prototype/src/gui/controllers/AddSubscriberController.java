@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 
 import common.MessageUtils;
 import client.ClientUI;
+import client.SharedController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -127,7 +128,7 @@ public class AddSubscriberController {
                 stage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
                     try {
                         if (ClientUI.chat != null) {
-                            MessageUtils.sendMessage(ClientUI.cc, "user", "disconnect", null);
+                            MessageUtils.sendMessage(ClientUI.cc, "librarian",  "disconnect" , SharedController.getLibrarian().getLibrarian_id());
                             ClientUI.chat.quit();
                         }
                     } catch (Exception e) {

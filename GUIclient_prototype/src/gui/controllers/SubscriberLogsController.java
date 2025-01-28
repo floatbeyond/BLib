@@ -27,6 +27,7 @@ import javafx.scene.control.Label;
 import javafx.util.StringConverter;
 import java.sql.Timestamp;
 import client.ClientUI;
+import client.SharedController;
 
 
 /**
@@ -159,7 +160,7 @@ public class SubscriberLogsController {
         primaryStage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
             try {
                 if (ClientUI.chat != null) {
-                    MessageUtils.sendMessage(ClientUI.cc, "user",  "disconnect" , null);
+                    MessageUtils.sendMessage(ClientUI.cc, "subscriber", "disconncet", SharedController.getSubscriber().getSub_id());
                     ClientUI.chat.quit();
                 }
             } catch (Exception e) {

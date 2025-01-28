@@ -682,7 +682,8 @@ public class SubscriberMainFrameController implements Initializable {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/fxml/LandingWindow.fxml"));
         Pane root = loader.load();
-        // NotificationScheduler.stop();
+        NotificationScheduler.stop();
+        MessageUtils.sendMessage(ClientUI.cc, "subscriber", "logout", SharedController.getSubscriber().getSub_id());
         
         Stage primaryStage = new Stage();
         Scene scene = new Scene(root);			
@@ -691,7 +692,7 @@ public class SubscriberMainFrameController implements Initializable {
         primaryStage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
             try {
                 if (ClientUI.chat != null) {
-                    MessageUtils.sendMessage(ClientUI.cc, "user",  "disconnect" , null);
+                    MessageUtils.sendMessage(ClientUI.cc, "subscriber", "disconncet", SharedController.getSubscriber().getSub_id());
                     ClientUI.chat.quit();
                 }
             } catch (Exception e) {
@@ -726,7 +727,7 @@ public class SubscriberMainFrameController implements Initializable {
                 primaryStage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
                     try {
                         if (ClientUI.chat != null) {
-                            MessageUtils.sendMessage(ClientUI.cc, "user",  "disconnect" , null);
+                            MessageUtils.sendMessage(ClientUI.cc, "subscriber", "disconncet", SharedController.getSubscriber().getSub_id());
                             ClientUI.chat.quit();
                         }
                     } catch (Exception e) {
@@ -770,7 +771,7 @@ public class SubscriberMainFrameController implements Initializable {
                 primaryStage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
                     try {
                         if (ClientUI.chat != null) {
-                            MessageUtils.sendMessage(ClientUI.cc, "user",  "disconnect" , null);
+                            MessageUtils.sendMessage(ClientUI.cc, "subscriber", "disconncet", SharedController.getSubscriber().getSub_id());
                             ClientUI.chat.quit();
                         }
                     } catch (Exception e) {

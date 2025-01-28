@@ -3,8 +3,10 @@ package server;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
@@ -37,6 +39,7 @@ public class Logic {
     private static Subscriber s;
     private static BookCopy bc;
     private static BorrowingRecord br;
+    private static Set<Integer> loggedInUsers = new HashSet<>();
 
     /**
      * Handles user login by fetching user information from the database and sending it to the client.
@@ -46,8 +49,24 @@ public class Logic {
      * @param client the client connection
      */
     public static void userLogin(String user, int userId, ConnectionToClient client) {
+        if (loggedInUsers.contains(userId)) {
+            MessageUtils.sendResponseToClient(user, "LoginStatus", "User already logged in", client);
+            return;
+        }
         Object userInfo = mysqlConnection.userLogin(conn, userId);
+        if (userInfo != null) {
+            loggedInUsers.add(userId);
+        }
         MessageUtils.sendResponseToClient(user, "LoginStatus", userInfo, client);
+    }
+
+    public static void userLogout(String user, int userId, ConnectionToClient client) {
+        String logoutStatus = "User not logged in";
+        if (loggedInUsers.contains(userId)) {
+            loggedInUsers.remove(userId);
+            logoutStatus = "User logged out";
+        }
+        MessageUtils.sendResponseToClient(user, "LogoutStatus", logoutStatus, client);
     }
 
     /**
@@ -388,6 +407,7 @@ public class Logic {
                     String msg = subId + " has extended the borrowing of book " + bookId + " to " + extensionDate;
                     mysqlConnection.sendLibNotification(conn, i, msg);
                 }
+                mysqlConnection.logExtensionBySubscriber(conn, subId, bookId, extensionDate);
             }
         }
         MessageUtils.sendResponseToClient(user, "ExtendStatus" , success ? "Borrowing extended" : "ERROR: Couldn't process extension", client);
@@ -505,9 +525,12 @@ public class Logic {
      * @param message the message to print
      * @param client the client connection
      */
-    public static void disconnect(String user, ConnectionToClient client) {
+    public static void disconnect(String user, ConnectionToClient client, Object data) {
+        if (data != null) {
+            int userId = (int) data;
+            loggedInUsers.remove(userId);
+        }
         ccc = InstanceManager.getClientConnectedController();
-
         ccc.loadClientDetails("null", "Disconnected");
         MessageUtils.sendResponseToClient(user, "Print", "Server disconnected", client);
     }

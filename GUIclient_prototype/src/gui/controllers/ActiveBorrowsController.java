@@ -107,7 +107,7 @@ public class ActiveBorrowsController {
                 }
 
                 if (SharedController.getSubscriber().getSub_status().equals("Frozen")) {
-                    SharedController.smfc.displayMessage("Your account is frozen. Please contact a librarian to activate it.");
+                    SharedController.smfc.displayMessage("Your account is frozen. Please wait until " + SharedController.getSubscriber().getSub_freeze());
                     return;
                 }
 

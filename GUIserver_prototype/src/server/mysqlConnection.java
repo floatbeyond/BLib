@@ -1048,6 +1048,37 @@ public class mysqlConnection {
 		}
 	}
 
+	public static boolean logExtensionBySubscriber(Connection conn, int subId, int bookId, LocalDate extensionDate) {
+		String bookTitleQuery = "SELECT Title FROM books WHERE BookID = ?";
+		String logQuery = "INSERT INTO datalogs (SubID, Action, Timestamp) VALUES (?, ?, ?)";
+		try (PreparedStatement bookTitleStmt = conn.prepareStatement(bookTitleQuery)) {
+	
+			// Query the book title
+			bookTitleStmt.setInt(1, bookId);
+			ResultSet rs = bookTitleStmt.executeQuery();
+			if (rs.next()) {
+				String bookTitle = rs.getString("Title");
+				String action = "Extended book '" + bookTitle + "' until " + extensionDate;
+				try (PreparedStatement logStmt = conn.prepareStatement(logQuery)) {
+					logStmt.setInt(1, subId);
+					logStmt.setString(2, action);
+					logStmt.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+					logStmt.executeUpdate();
+					return true;
+				} catch (SQLException e) {
+					e.printStackTrace();
+					return false;
+				}
+			} else {
+				System.out.println("Book not found.");
+				return false;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
 	/**
 	 * Processes book return and updates related records.
 	 * Updates borrow status and handles waiting list if applicable.

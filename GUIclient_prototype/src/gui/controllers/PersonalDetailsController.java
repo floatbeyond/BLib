@@ -186,7 +186,7 @@ public class PersonalDetailsController {
 		primaryStage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
             try {
                 if (ClientUI.chat != null) {
-                    MessageUtils.sendMessage(ClientUI.cc, "subscriber", "disconncet", null);
+                    MessageUtils.sendMessage(ClientUI.cc, "subscriber", "disconncet", SharedController.getSubscriber().getSub_id());
                     ClientUI.chat.quit();
                 }
             } catch (Exception e) {

@@ -122,6 +122,10 @@ public class ExtendWindowController {
                 displayMessage("Can only extend within 7 days of return date");
                 return false;
             }
+            if (borrowRecord.getStatus().equals("Late") || borrowRecord.getStatus().equals("Lost")) {
+                displayMessage("Cannot extend late or lost borrowings");
+                return false;
+            }
         }
     
         return true;

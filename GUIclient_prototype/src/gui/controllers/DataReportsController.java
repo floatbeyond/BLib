@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import client.ClientUI;
+import client.SharedController;
 import common.BorrowReport;
 import common.MessageUtils;
 import common.SubscriberReport;
@@ -153,7 +154,7 @@ public class DataReportsController {
         stage.setOnCloseRequest((WindowEvent xWindowEvent) -> {
             try {
                 if (ClientUI.chat != null) {
-                    MessageUtils.sendMessage(ClientUI.cc, "user", "disconnect", null);
+                    MessageUtils.sendMessage(ClientUI.cc, "librarian",  "disconnect" , SharedController.getLibrarian().getLibrarian_id());
                     ClientUI.chat.quit();
                 }
             } catch (Exception e) {

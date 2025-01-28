@@ -103,6 +103,10 @@ public class LoginWindowController {
                         displayMessage("User not found");
                         return;
                     }
+                    if (userConnected.equals("User already logged in")) {
+                        displayMessage("User already logged in");
+                        return;
+                    }
                     if ((userConnected instanceof Librarian)) {
                         userType = "Librarian";
                     }
@@ -122,6 +126,7 @@ public class LoginWindowController {
                             // print message to console
                             System.out.println("clientui.chat: " + ClientUI.chat);
                             if (ClientUI.chat != null) {
+                                MessageUtils.sendMessage(ClientUI.cc, userType,  "disconnect" , Integer.parseInt(idText));
                                 ClientUI.chat.quit();
                             }
                         } catch (Exception e) {

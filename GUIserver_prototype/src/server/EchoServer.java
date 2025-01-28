@@ -64,8 +64,11 @@ public class EchoServer extends AbstractServer
         System.out.println("Received message, Case: " + type + " | from user: " + user);
         try {
           switch (type) {
-            case "login" : {
+              case "login" : {
               Logic.userLogin(user, (int) data, client);
+              break;
+            } case "logout": {
+              Logic.userLogout(user, (int) data, client);
               break;
             } case "fetchNotifications": {
               Logic.fetchNotifications(user, data, client);
@@ -126,7 +129,7 @@ public class EchoServer extends AbstractServer
               Logic.connect(user, client);
               break;
             } case "disconnect": {
-              Logic.disconnect(user, client);
+              Logic.disconnect(user, client, data);
               break;
             }default: {
               MessageUtils.sendResponseToClient(user, "Error", "Invalid command", client);
